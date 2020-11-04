@@ -3,6 +3,7 @@ function [T_over_w] = Take_off_constraint(runway_length, Clmax_takeoff,sigma)
 % inputs:
 % runway_length in m
 % Clmax_takeoff 
+% sigma is square root (rho/rho0)
 
 % output
 % an array of T_over_W for different W/S
