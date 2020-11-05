@@ -1,9 +1,8 @@
-function [T_over_w] = Take_off_constraint(runway_length, Clmax_takeoff,sigma)
+function [T_over_w, wo] = Take_off_constraint(runway_length, Clmax_takeoff,sigma)
 
 % inputs:
 % runway_length in m
 % Clmax_takeoff 
-% sigma is square root (rho/rho0)
 
 % output
 % an array of T_over_W for different W/S
@@ -18,7 +17,7 @@ TOP = runway_length_ft/37.5;
 TOP_N_over_m_squared = TOP*9.81*4.88243;
 
 % Creating an array for Wo/Sref (PLEASE CHANGE THIS IF YOU HAVE A BETTER METHOD)
-wo = [0,10,11000];
+wo = [0:10:11000];
 
-T_over_w = 0.9801*wo./(Clmax_takeoff*TOP_N_over_m_squared*sigma);
+T_over_w = wo./(Clmax_takeoff*TOP_N_over_m_squared*sigma);
 end
