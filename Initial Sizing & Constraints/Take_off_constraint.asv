@@ -5,8 +5,8 @@ function [T_over_w, wo] = Take_off_constraint(runway_length, Clmax_takeoff, sigm
 % Clmax_takeoff 
 % Sigma is the square root of densities
 
-% The OUTPUT is: (ALL SI UNITS)
-% An array of T_over_W for different W/S
+% The
+% an array of T_over_W for different W/S
 
 % Converting the runway length in metres to feet
 runway_length_ft = runway_length*1250/381;
