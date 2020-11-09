@@ -10,7 +10,7 @@ etaH = 0.9; %crude approximation for jet planes
 VbarH = 1; %volume coefficient estimates based off Raymer's historical data
 VbarV = 0.09;
 ARhoriz = 4; %typically 3-5
-ARvert = 2; %typically 1.2-2 where AR = b^2/Sv and b is the semi-span
+ARvert = 4; %typically 3-5
 
 %fuselage length and width initial guesses
 lf = 60;
@@ -23,12 +23,16 @@ xWing = xHoriz - 0.5*lf;
 
 %intial guess values for wing
 SWing = W0/WingLoading;
+taperWing = 0.25;
+cBarWing = 2/3*8*(1+taperWing+taperWing^2)/(1+taperWing);
+ARwing = 10.5;
+wingSpan = 54;
+quarterSweepWing = 20; %degrees
 
+[SHoriz, SVert] = tailplaneSizing(cBarWing, wingSpan, SWing, xWing, xHoriz, xVert, VbarH, VbarV, );
 
-% [SHoriz, SVert, spanHoriz, semiSpanVert] = tailplaneSizing(cBarWing, wingSpan, SWing, xWing, xHoriz, xVert, VbarH, VbarV, ARhoriz, ARvert);
-% 
-% CMalphaF = fuselagePitchingMoment(lf, wf, cBarWing, SWing, xWing);
-% 
+CMalphaF = fuselagePitchingMoment(lf, wf, cBarWing, SWing, xWing);
+
 % downwash = downwash(lHoriz, hHoriz, wingSpan, quarterSweepWing, ARwing, taperWing, CLalphaW, CLalphaW_M0);
 % 
 % %power off static margin and neutral point
