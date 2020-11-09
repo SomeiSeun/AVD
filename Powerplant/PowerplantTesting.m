@@ -101,24 +101,6 @@ disp(['The required thrust (assuming no losses) is: ', num2str(round(Thrust_Requ
 % efficiency. For a subsonic nozzle, the exit area can be estimated to be
 % 0.5-0.7 times the capture area.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %% Notes
 
 % Axial compressor engines are sensitive to incoming airflow. This may mean

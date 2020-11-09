@@ -111,6 +111,7 @@ hold off
 saveas(figure(1), 'Constraints Diagram', 'png') 
 disp(['The design point selected gives a wing loading of ', num2str(WingLoading), ' N/m^2 and a thrust to weight ratio of ', num2str(ThrustToWeight), '.'])
 
+save('InitialSizing')
 % Reasoning:
 
 % Our entire initial sizing and therefore constraints analysis is based on
