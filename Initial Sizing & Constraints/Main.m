@@ -25,6 +25,9 @@ SWet_SRef = 5.6;
 TrappedFuelFactor = 0.02;
 H_Divert = 12000;
 
+
+%trial comment
+
 % Functions
 [W_Payload, W_Crew] = payloadAndCrewWeights(N_Pilots, N_Crew, N_Pax, Mass_Person, Mass_Luggage);
 L_DMax = LiftToDragRatio(K_LD, AspectRatio, SWet_SRef);
