@@ -1,2 +1,0 @@
-% Requirements from FAR25
-
