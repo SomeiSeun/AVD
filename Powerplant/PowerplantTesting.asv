@@ -87,21 +87,7 @@ disp(['The required thrust (assuming no losses) is: ', num2str(round(Thrust_Requ
 % to assume the systems air to air passing through the engine is 3% for a
 % transport aircraft.
 
-% Boundary layer diverters. BL entering the engine can reduce performance
-% and can be removed using a variety of methods, check if this is
-% applicable to our type of engine and nacelle arrangement.
-
-%% Nozzle Integration
-
-% Nozzle accelerates the exhaust to the correct speed as governed by the
-% area. The ideal area depends on the speeds the aircraft is operating at -
-% can use cruise as optimiser. Variable area might be required but for
-% subsonic transport aircraft, a fixed nozzle is usually used as it is not
-% worth the complexity, weight, part count, etc for that slight addition of
-% efficiency. For a subsonic nozzle, the exit area can be estimated to be
-% 0.5-0.7 times the capture area.
-
-
+% Boundary
 
 
 
