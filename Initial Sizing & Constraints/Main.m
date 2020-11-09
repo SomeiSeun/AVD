@@ -55,7 +55,7 @@ beta_Loiter = 0.8; e_Loiter = 0.75; C_D0_Loiter = 0.02;             % Loiter
 alpha_AbsC = 1; beta_AbsC = 0.2; C_D0_AbsC = 0.02; e_AbsC = 0.85;   % Absolute ceiling
 TODA = 2200; CL_TakeOff = 1.7;                                      % Takeoff
 NumberOfEngines = 2; ClimbGradient = 0.012;                         % One engine inoperative
-C_LMaxLanding = 2.2; 
+C_LMaxLanding = 2.2;                                                % Landing
 
 % Functions
 % Walk team through functions!
@@ -87,6 +87,7 @@ plot(Const_WS_LandingNoTrev, Const_TW_LandingNoTrev)
 plot(TargetMatchX, TargetMatchY, 'x')
 ylim([0 1])
 xlim([0 12500])
+grid on
 legend('Cruise', 'Diversion', 'Loiter', 'Constant Velocity 30 deg Turns', 'Absolute Ceiling', 'Take-off', 'OEI', 'Landing with trev', 'Landing w/o trev', 'Matching target VimD')
 saveas(figure(1), 'Constraints Diagram', 'png') 
 
