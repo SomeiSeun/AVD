@@ -1,4 +1,4 @@
-function [WF5, V_Cruise] = WFLeg5(R_Cruise, C_Cruise, H_Cruise, M_Cruise, L_DMax)
+function [WF5, V_Cruise, V_MaxVelocity] = WFLeg5(R_Cruise, C_Cruise, H_Cruise, M_Cruise, L_DMax)
 % Leg 5: Cruise
 
 % This is calculated using the Breguet range equation which gives the
@@ -12,5 +12,6 @@ function [WF5, V_Cruise] = WFLeg5(R_Cruise, C_Cruise, H_Cruise, M_Cruise, L_DMax
 
 [~, A_Cruise, ~, ~] = atmosisa(H_Cruise*0.3048);
 V_Cruise = M_Cruise * A_Cruise;
+V_MaxVelocity = 0.82 * A_Cruise;
 WF5 = exp(- (R_Cruise * 1000 * C_Cruise)/(V_Cruise * L_DMax * 0.866 * 3600));
 end

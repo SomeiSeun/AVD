@@ -30,7 +30,7 @@ WF1 = WFLeg1();                                                                 
 WF2 = WFLeg2();                                                                         % Taxi
 WF3 = WFLeg3();                                                                         % Take off
 WF4 = WFLeg4();                                                                         % Climb and ascent from 0 ft to 35k ft
-[WF5, V_Cruise] = WFLeg5(R_Cruise, C_Cruise, H_Cruise, M_Cruise, L_DMax);               % Cruise
+[WF5, V_Cruise, V_MaxVelocity] = WFLeg5(R_Cruise, C_Cruise, H_Cruise, M_Cruise, L_DMax);               % Cruise
 VimD = VimDCalculator(H_Cruise, M_Cruise);  
 WF6 = WFLeg6();                                                                         % Descent from 35k ft to 0 ft
 WF7 = WFLeg7(WF4,H_Divert,H_Cruise);                                                    % Climb from 0 ft to 12k ft
@@ -62,6 +62,7 @@ C_LMaxLanding = 2.2;                                                % Landing
 [Const_WS_Cruise, Const_TW_Cruise] = SEP(H_Cruise, V_Cruise, 0, 0, WF1*WF2*WF3*WF4, beta_Cruise, 1, AspectRatio, e_Cruise, C_D0_Cruise);
 [Const_WS_Divert, Const_TW_Divert] = SEP(H_Divert, V_Divert, 0, 0, WF1*WF2*WF3*WF4*WF5*WF6*WF7, beta_Divert, 1, AspectRatio, e_Divert, C_D0_Divert);
 [Const_WS_Loiter, Const_TW_Loiter] = SEP(H_Loiter, V_Loiter, 0, 0, WF1*WF2*WF3*WF4*WF5*WF6*WF7*WF8, beta_Loiter, 1, AspectRatio, e_Loiter, C_D0_Loiter);
+[Const_WS_MaxSpeed, Const_TW_MaxSpeed] = SEP(H_Cruise, V_MaxVelocity, 0, 0, WF1*WF2*WF3*WF4, beta_Cruise, 1, AspectRatio, e_Cruise, C_D0_Cruise);
 [Const_WS_ConsVT, Const_TW_ConsVT] = ConsVT(rho_ConsVT, 30, V_Loiter);
 [Const_WS_AbsCeil, Const_TW_AbsCeil, TargetMatchX, TargetMatchY] = Absolute_Ceiling(H_Absolute, 1, alpha_AbsC, beta_AbsC, L_DMax, C_D0_AbsC, AspectRatio, e_AbsC);
 [Const_TW_TakeOff, Const_WS_TakeOff] = Take_off_constraint(TODA, CL_TakeOff, 1);
@@ -74,21 +75,23 @@ C_LMaxLanding = 2.2;                                                % Landing
 % Sanity check graph!
 % Add landing constraints!
 figure(1)
-plot(Const_WS_Cruise, Const_TW_Cruise)
+plot(Const_WS_Cruise, Const_TW_Cruise, '--', 'LineWidth', 1.5)
 hold on
-plot(Const_WS_Divert, Const_TW_Divert, '--')
-plot(Const_WS_Loiter, Const_TW_Loiter, '--')
-plot(Const_WS_ConsVT, Const_TW_ConsVT, '--')
-plot(Const_WS_AbsCeil, Const_TW_AbsCeil, '--')
-plot(Const_WS_TakeOff, Const_TW_TakeOff)
-plot(Const_WS_OEI, Const_TW_OEI, '--')
-plot(Const_WS_LandingTrev, Const_TW_LandingTrev, '--')
-plot(Const_WS_LandingNoTrev, Const_TW_LandingNoTrev)
-plot(TargetMatchX, TargetMatchY, 'x')
+plot(Const_WS_Divert, Const_TW_Divert, '--', 'LineWidth', 1.5)
+plot(Const_WS_Loiter, Const_TW_Loiter, '--', 'LineWidth', 1.5)
+plot(Const_WS_MaxSpeed, Const_TW_MaxSpeed, 'LineWidth', 1.5)
+plot(Const_WS_ConsVT, Const_TW_ConsVT, '--', 'LineWidth', 1.5)
+plot(Const_WS_AbsCeil, Const_TW_AbsCeil, '--', 'LineWidth', 1.5)
+plot(Const_WS_TakeOff, Const_TW_TakeOff, 'LineWidth', 1.5)
+plot(Const_WS_OEI, Const_TW_OEI, '--', 'LineWidth', 1.5)
+plot(Const_WS_LandingTrev, Const_TW_LandingTrev, '--', 'LineWidth', 1.5)
+plot(Const_WS_LandingNoTrev, Const_TW_LandingNoTrev, 'LineWidth', 1.5)
+plot(TargetMatchX, TargetMatchY, 'x', 'LineWidth', 1.5)
 ylim([0 1])
 xlim([0 12500])
 grid on
-legend('Cruise', 'Diversion', 'Loiter', 'Constant Velocity 30 deg Turns', 'Absolute Ceiling', 'Take-off', 'OEI', 'Landing with trev', 'Landing w/o trev', 'Matching target VimD')
+legend('Cruise', 'Diversion', 'Loiter', 'Maximum velocity', 'Constant Velocity 30 deg Turns', 'Absolute Ceiling', 'Take-off', 'OEI', 'Landing with trev', 'Landing w/o trev', 'Matching target VimD')
+hold off
 saveas(figure(1), 'Constraints Diagram', 'png') 
 
 
