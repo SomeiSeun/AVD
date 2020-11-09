@@ -8,7 +8,7 @@ function [WS, TW, X, Y] = Absolute_Ceiling(Altitude, n, alpha, beta, L_DMax, C_D
 % wing loadings. This comes straight from the AP formula for VimD (the one
 % with A and B.
 
-WS = [0:1:12500];
+WS = [0:10:12500];
 [T_SL, A_SL, P_SL, RHO_SL] = atmosisa(0);
 [T_H, A_H, P_H, RHO_H] = atmosisa(Altitude*0.3048);
 gamma = 1.4;

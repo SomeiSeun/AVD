@@ -70,20 +70,6 @@ C_LMaxLanding = 2.2;                                                % Landing
 [Const_WS_LandingTrev, Const_TW_LandingTrev] = Landing(C_LMaxLanding, 0.66, WF1*WF2*WF3*WF4*WF5*WF6*WF7);
 [Const_WS_LandingNoTrev, Const_TW_LandingNoTrev] = Landing(C_LMaxLanding, 1, WF1*WF2*WF3*WF4*WF5*WF6*WF7);
 
-% "Reading" design point off of the constraints diagram. This is not the
-% most robust method for reading it, but for reasonable values taken in
-% initial sizing, it should work. Make sure to double check with the
-% constraints diagram!
-WingLoading = TargetMatchX;
-ThrustToWeightTakeOff = Const_TW_TakeOff(Const_WS_TakeOff == TargetMatchX);
-if ThrustToWeightTakeOff > TargetMatchY
-    ThrustToWeight = ThrustToWeightTakeOff;
-elseif ThrustToWeightTakeOff < TargetMatchY
-    ThrustToWeight = TargetMatchY;
-else
-    ThrustToWeight = TargetMatchY;
-end
-
 % Outputs
 % Sanity check graph!
 figure(1)
@@ -99,16 +85,51 @@ plot(Const_WS_OEI, Const_TW_OEI, '--', 'LineWidth', 1.5)
 plot(Const_WS_LandingTrev, Const_TW_LandingTrev, '--', 'LineWidth', 1.5)
 plot(Const_WS_LandingNoTrev, Const_TW_LandingNoTrev, 'LineWidth', 1.5)
 plot(TargetMatchX, TargetMatchY, 'x', 'LineWidth', 1.5)
-plot(WingLoading, ThrustToWeight, 'o', 'LineWidth', 1.5)
 ylim([0 1])
 xlim([0 12500])
 grid on
-legend('Cruise', 'Diversion', 'Loiter', 'Maximum velocity', 'Constant Velocity 30 deg Turns', 'Absolute Ceiling', 'Take-off', 'OEI', 'Landing with trev', 'Landing w/o trev', 'VimD optimiser', 'Selected Design Point')
+legend('Cruise', 'Diversion', 'Loiter', 'Maximum velocity', 'Constant Velocity 30 deg Turns', 'Absolute Ceiling', 'Take-off', 'OEI', 'Landing with trev', 'Landing w/o trev', 'Matching target VimD')
 hold off
 saveas(figure(1), 'Constraints Diagram', 'png') 
-disp(['The design point selected gives a wing loading of ', num2str(WingLoading), ' N/m^2 and a thrust to weight ratio of ', num2str(ThrustToWeight), '.'])
 
-% Reasoning:
+% "Reading" design point off of the constraints diagram. 
+
+% If the absolute ceiling constraint is lower than the take off constraint,
+% we can extrapolate upwards to find the corresponding wing loading value
+% on the take off line. If the absolute ceiling is higher than the take off
+% constraint, then we take the target match values as the wing loading and
+% thrust to weight ratio directly.
+
+WingLoading = TargetMatchX;
+ThrustToWeightTakeOff = Const_TW_TakeOff(find(Const_WS_TakeOff == TargetMatchX));
+if ThrustToWeightTakeOff > TargetMatchY
+    ThrustToWeight = 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PalashWeirdMethodWingArea = W0/TargetMatchX;
+
+% Thoughts:
 
 % Our entire initial sizing and therefore constraints analysis is based on
 % the target/assumption that the aircraft we make would have a VimD (in
