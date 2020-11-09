@@ -22,9 +22,6 @@ SWet_SRef = 6;
 TrappedFuelFactor = 0.02;
 H_Divert = 12000;
 
-
-%trial comment
-
 % Functions
 % Updated weight fractions, sanity check with team!
 [W_Payload, W_Crew] = payloadAndCrewWeights(N_Pilots, N_Crew, N_Pax, Mass_Person, Mass_Luggage);
