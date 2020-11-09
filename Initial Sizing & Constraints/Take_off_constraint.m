@@ -17,7 +17,7 @@ TOP = runway_length_ft/37.5;
 TOP_N_over_m_squared = TOP*9.81*4.88243;
 
 % Creating an array for Wo/Sref (PLEASE CHANGE THIS IF YOU HAVE A BETTER METHOD)
-wo = [0:10:11000];
+wo = [0:10:12500];
 
 T_over_w = wo./(Clmax_takeoff*TOP_N_over_m_squared*sigma);
 end

@@ -7,7 +7,7 @@
 %theta=30
 %v=depends on what segment- eg: loiter=112.02m/s
 
-function [Toverw]= ConsVT(rho, theta, v);
+function [Wo, Toverw]= ConsVT(rho, theta, v);
 %Bank Angle 
 %Density (depends on altitude)
 %Velocity (depends on segment)
@@ -26,10 +26,10 @@ q=0.5*rho*v^2;
 n=1/cos(theta*(pi/180));
  
 %Array for Wo/Sref
-Wo=[0.1:10:11000];
+Wo=[0.1:10:12500];
 
 Toverw=q*((Cd_min./(Wo)+k*((n/q)^2).*(Wo)));
-plot(Wo,Toverw)
-ylim([0,1]);
-xlim([0,11000]);
+%plot(Wo,Toverw)
+%ylim([0,1]);
+%xlim([0,11000]);
 end 

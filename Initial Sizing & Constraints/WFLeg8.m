@@ -1,4 +1,4 @@
-function WF8 = WFLeg8(R_Divert, C_Divert, H_Divert, L_DMax, VimD, WeightRatio)
+function [WF8, V_Divert] = WFLeg8(R_Divert, C_Divert, H_Divert, L_DMax, VimD, WeightRatio)
 % Leg 8: Diversion
 
 % This is calculated using the Breguet range equation which gives the

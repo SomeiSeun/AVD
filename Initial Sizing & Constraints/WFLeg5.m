@@ -1,4 +1,4 @@
-function WF5 = WFLeg5(R_Cruise, C_Cruise, H_Cruise, M_Cruise, L_DMax)
+function [WF5, V_Cruise] = WFLeg5(R_Cruise, C_Cruise, H_Cruise, M_Cruise, L_DMax)
 % Leg 5: Cruise
 
 % This is calculated using the Breguet range equation which gives the

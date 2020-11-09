@@ -1,4 +1,4 @@
-function WF9 = WFLeg9(E_Loiter, C_Loiter, L_DMax, VimD, WeightRatio, H_Loiter)
+function [WF9, V_Loiter] = WFLeg9(E_Loiter, C_Loiter, L_DMax, VimD, WeightRatio, H_Loiter)
 % Leg 9: Loiter
 % This is calculated using the Breguet endurance equation which gives the
 % weight fraction as exp(-Ec/(L/D)) where

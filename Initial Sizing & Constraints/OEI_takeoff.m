@@ -1,4 +1,4 @@
-function [T_over_W] = OEI_takeoff(N,L_over_D,CGR)
+function [WS, TW] = OEI_takeoff(N,L_over_D,CGR)
 
 % inputs are
 % N = number of engines
@@ -15,7 +15,7 @@ function [T_over_W] = OEI_takeoff(N,L_over_D,CGR)
 % outputs are
 % T_over_W
 
-T_over_W_value = (N/N-1)*((L_over_D)^1 + CGR);
-T_over_W(1,11000) = T_over_W_value;
-
+WS = [0:10:12500];
+TW = zeros(1, length(WS));
+TW = TW + (N/(N-1)) * (L_over_D^(-1) + CGR);
 end
