@@ -67,7 +67,7 @@ C_LMaxLanding = 2.2;
 [Const_TW_TakeOff, Const_WS_TakeOff] = Take_off_constraint(TODA, CL_TakeOff, 1);
 [Const_WS_OEI, Const_TW_OEI] = OEI_takeoff(NumberOfEngines, L_DMax, ClimbGradient);
 [Const_WS_LandingTrev, Const_TW_LandingTrev] = Landing(C_LMaxLanding, 0.66, WF1*WF2*WF3*WF4*WF5*WF6*WF7);
-[Const_WS_LandingNoTrev, Const_TW_LandingNoTrev] = Landing(C_LMaxLanding, 1, WF1*WF2*WF3*WF4*WF5*WF6*WF7);
+[Const_WS_LandingNoTrev, Const_TW_LandingNoTrev] = Landing(C_LMaxLanding, 1, );
 
 % Outputs
 % Talk about target match!
