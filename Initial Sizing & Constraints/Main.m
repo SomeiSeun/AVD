@@ -18,7 +18,7 @@ C_Divert = 11.55 * 0.035316;
 C_Loiter = 11.3 * 0.035316;
 K_LD = 15.5;
 AspectRatio = 10.5;
-SWet_SRef = 5.6;
+SWet_SRef = 6;
 TrappedFuelFactor = 0.02;
 H_Divert = 12000;
 
@@ -52,7 +52,7 @@ beta_Cruise = 0.2; e_Cruise = 0.85; C_D0_Cruise = 0.02;             % Cruise
 beta_Divert = 0.5; e_Divert = 0.85; C_D0_Divert = 0.02;             % Divert
 beta_Loiter = 0.8; e_Loiter = 0.75; C_D0_Loiter = 0.02;             % Loiter
 [~,~,~,rho_ConsVT] = atmosisa(H_Loiter);                            % Constant turns
-alpha_AbsC = 1; beta_AbsC = 0.2; C_D0_AbsC = 0.02; e_AbsC = 0.85;   % Absolute ceiling
+alpha_AbsC = WF1*WF2*WF3*WF4; beta_AbsC = 0.14; C_D0_AbsC = 0.02; e_AbsC = 0.85;   % Absolute ceiling   UPDATE!
 TODA = 2200; CL_TakeOff = 1.7;                                      % Takeoff
 NumberOfEngines = 2; ClimbGradient = 0.012;                         % One engine inoperative
 C_LMaxLanding = 2.2;                                                % Landing
