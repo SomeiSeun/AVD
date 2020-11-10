@@ -18,7 +18,7 @@ function [ROC_max, altitude] = climb(W, C_Dmin, L_Dmax, S)
 % constant. The absolute ceiling is at 42000 ft AMSL. 
 
 height = 0;          % Setting a value for altitude
-i = 1;                 % Setting a value for i
+i = 1;               % Setting a value for i
 while height < 10000 
     
 [T, a, P, rho] = atmosisa(height);
