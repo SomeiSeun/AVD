@@ -1,4 +1,4 @@
-function [t] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx, S_w, S_ht, S_vt)
+function [t, Max_ail_def] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx, S_w, S_ht, S_vt)
 
 % The INPUTS are: (ALL SI UNITS)
 % b is the wing span in m
@@ -14,6 +14,7 @@ function [t] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx, S_w, S_ht, S
 
 % The OUTPUTS are: (ALL SI UNITS)
 % t is the time taken by the aircraft to achieve bank angle in seconds
+% Max_ail_def is the maximum aileron deflection in degrees
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -30,6 +31,7 @@ C_l_delta_A = ((2 * C_L_aw * tau * C_r) / (S * b)) *...
 % ^ Finding out the Aileron Rolling Moment Coefficient
 
 delta_A = 0.75 * 20 * pi / 180;  % Max deflection angle is 20 deg for aileron, then multiplied by 0.75 since Control systems cannot stretch so much
+Max_ail_def = delta_A * 180 / pi;
 C_l = C_l_delta_A * delta_A;     % Finding out the Aircraft Rolling Moment Coefficient
 
 V_app = 1.3 * Vs;                           % Approach velocity during landing

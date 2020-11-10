@@ -15,7 +15,8 @@ function [ROC_max, altitude] = climb(W, C_Dmin, L_Dmax, S)
 % To plot the ROC curve against altitude, need to use a loop to get the
 % differet ROC values at different altitudes. For this, WILL NEED AN
 % EXPRESSION FOR THRUST AS A FUNCTION OF ALTITUDE, keeping the weight
-% constant. The absolute ceiling is at 42000 ft AMSL. 
+% constant. The absolute ceiling is at 42000 ft AMSL. FIND THE DENISTY OF
+% AIR AT THAT ALTITUDE.
 
 height = 0;          % Setting a value for altitude
 i = 1;               % Setting a value for i
