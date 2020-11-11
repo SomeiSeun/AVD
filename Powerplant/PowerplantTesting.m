@@ -12,12 +12,15 @@ clc
 %% Get data
 
 W0 = 155585*9.81;
-TW_0_Required = 0.36;
+TW_0_req = 0.36;
+BPR = 5;
+M = 0.8;
 
 %% Required Thrust
 
-Thrust_Required = TW_0_Required * W0;
-disp(['The required thrust (assuming no losses) is: ', num2str(round(Thrust_Required)), ' N'])
+T_req = TW_0_req * W0;
+disp(['The required thrust (assuming no losses) is: ', num2str(round(T_req)), ' N'])
+T_a = 1.03 * T_req;
 
 %% Engine Sizing
 
@@ -34,6 +37,9 @@ disp(['The required thrust (assuming no losses) is: ', num2str(round(Thrust_Requ
 % regression data and is not reliable, but can be used as a ballpark figure
 % for finding the correct engines for Method 2 or 1. Only good for sanity
 % checking.
+W = 0.084 * (T_a^1.1) * exp(-0.045*BPR);
+L = 2.22 * (T_a^0.4) * (M^0.2);
+D = 0.393 * ((T_a*0.224808)^0.5) * exp(0.04*BPR)
 
 %% Inlet Geometry
 

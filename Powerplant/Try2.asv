@@ -1,0 +1,4 @@
+% This script is try #2.
+
+% Get data
+load('../Initial Sizing/InitialSizing.mat')
