@@ -9,8 +9,8 @@ load('../Initial Sizing/InitialSizing.mat', 'W0', 'WingLoading')
 etaH = 0.9; %crude approximation for jet planes
 VbarH = 1; %volume coefficient estimates based off Raymer's historical data
 VbarV = 0.09;
-ARhoriz = 4; %typically 3-5
-ARvert = 2; %typically 1.2-2 where AR = b^2/Sv and b is the semi-span
+ARhoriz = 4; %typically 3-5 where AR = b^2/Sh and b is the tail span
+ARvert = 2; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
 
 %fuselage length and width initial guesses
 lf = 60;
