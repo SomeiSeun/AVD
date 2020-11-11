@@ -2,13 +2,13 @@
 clear
 clc
 
-% load('../Initial Sizing/InitialSizing.mat')
-load('../Initial Sizing/InitialSizing.mat', 'W0', 'WingLoading')
+addpath('../Initial Sizing/', '../Xfoil/', '../Wing Design')
+load('InitialSizing.mat', 'W0', 'WingLoading')
 
 %horizontal and vertical stabiliser 
 etaH = 0.9; %crude approximation for jet planes
-VbarH = 1; %volume coefficient estimates based off Raymer's historical data
-VbarV = 0.09;
+VbarH = 1; %horizontal volume coefficient estimates based off Raymer's historical data
+VbarV = 0.09; %vertical volume coefficient estimates based off Raymer's historical data
 ARhoriz = 4; %typically 3-5 where AR = b^2/Sh and b is the tail span
 ARvert = 2; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
 
@@ -16,24 +16,18 @@ ARvert = 2; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
 lf = 60;
 wf = 5.5;
 
-%initial estimates for wing and tail 1/4-chord positions based on fuselage
-xVert = 0.9*lf;
-xHoriz = 0.95*lf;
-xWing = xHoriz - 0.5*lf;
-
-%intial guess values for wing
 SWing = W0/WingLoading;
 
+[SHoriz, SVert, spanHoriz, heightVert] = tailplaneSizing(cBarWing, wingSpan, SWing, xWing, xHoriz, xVert, VbarH, VbarV, ARhoriz, ARvert);
 
-% [SHoriz, SVert, spanHoriz, semiSpanVert] = tailplaneSizing(cBarWing, wingSpan, SWing, xWing, xHoriz, xVert, VbarH, VbarV, ARhoriz, ARvert);
-% 
-% CMalphaF = fuselagePitchingMoment(lf, wf, cBarWing, SWing, xWing);
-% 
-% downwash = downwash(lHoriz, hHoriz, wingSpan, quarterSweepWing, ARwing, taperWing, CLalphaW, CLalphaW_M0);
-% 
-% %power off static margin and neutral point
-% [KnOff, xNPOff] = longStaticMargin(xCG, SWing, SHoriz, xWing, xHoriz, cBarW, CLalphaH, CLalphaW, CMalphaF, downwash, etaH);
-% 
-% %power-on static margin and neutral point
-% KnOn = KnOff - 0.02;
-% xNPPOn = KnOn*cBarW + xCG;
+CMalphaF = fuselagePitchingMoment(lf, wf, cBarWing, SWing, xWing);
+
+downwash = downwash(lHoriz, hHoriz, wingSpan, quarterSweepWing, ARwing, taperWing, CLalphaW, CLalphaW_M0);
+
+%power-off neutral point and static margin
+xNPOff = neutralPoint(xCG, SWing, SHoriz, xWing, xHoriz, cBarW, CLalphaH, CLalphaW, CMalphaF, downwash, etaH);
+KnOff = (xNPOff - xCG)/cBarW;
+
+%power-on static margin and neutral point
+KnOn = KnOff - 0.02;
+xNPPOn = KnOn*cBarW + xCG;

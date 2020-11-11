@@ -1,4 +1,4 @@
-function [SHoriz, SVert, spanHoriz, semiSpanVert] = tailplaneSizing(cBarWing, wingSpan, SWing, xWing, xHoriz, xVert, VbarH, VbarV, ARhoriz, ARvert)
+function [SHoriz, SVert, spanHoriz, heightVert] = tailplaneSizing(cBarWing, wingSpan, SWing, xWing, xHoriz, xVert, VbarH, VbarV, ARhoriz, ARvert)
 %this function determines the size of the horizontal and vertical
 %stabilizers SHoriz and SVert
 
@@ -17,7 +17,7 @@ SHoriz = VbarH*cBarWing*SWing/(xHoriz - xWing);
 SVert = VbarV*wingSpan*SWing/(xVert - xWing);
 
 spanHoriz = sqrt(SHoriz*ARhoriz);
-semiSpanVert = sqrt(SVert*ARvert);
+heightVert = sqrt(SVert*ARvert);
 end
 
 
