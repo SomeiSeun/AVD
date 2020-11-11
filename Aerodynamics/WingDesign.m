@@ -27,7 +27,7 @@ b=sqrt(Sref*AspectRatio);
 %wing geometry
 TaperRatio= 0.38;       %from Raymer's graph
 Sweep_LE= 29;           %degrees --> from the graph in Raymer
-% Sweep_quarterchord= ;  %need to check
+Sweep_quarterchord= sweepConverter(29, 0, 0.25, AspectRatio, TaperRatio);  %need to check
 Dihedral=5;             %degrees --> between 3 and 7; 5 chosen (midpoint)
 % Twist=                %use historical data for initial selection
 Wing_incidence =1;      %degrees --> initial approx as per Raymer
@@ -41,7 +41,7 @@ tip_chord=root_chord*TaperRatio;
 
 MAC= (2/3)*root_chord*(1+TaperRatio+TaperRatio^2)/(1+TaperRatio);
 y_MAC=(b/6)*(1+2*TaperRatio)/(1+TaperRatio);
-x_AC=y_MAC*tan(sweep_quarterchord)+0.25*MAC;
+x_AC=y_MAC*tan(Sweep_quarterchord)+0.25*MAC;
 
 
 save('wingDesign.mat')
