@@ -1,4 +1,4 @@
-function [Kn, xNP] = longStaticMargin(xCG, SWing, SHoriz, xWing, xHoriz, cBarW, CLalphaH, CLalphaW, CMalphaF, downwash, etaH)
+function xNP = neutralPoint(SWing, SHoriz, xWing, cBarW, CLalphaH, CLalphaW, CMalphaF, VbarH, downwash, etaH)
 % this function aims to determine the power-off a/c longitudinal static margin Kn
 
 % INPUTS
@@ -15,12 +15,8 @@ function [Kn, xNP] = longStaticMargin(xCG, SWing, SHoriz, xWing, xHoriz, cBarW, 
 % lf - fuselage length (m)
 % wf - fuselage max width (m)
 
-VbarH = SHoriz*(xHoriz-xWing)/(SWing*cBarW);
-
 CLalpha = CLalphaW + etaH*SHoriz/SWing*(1 - downwash)*CLalphaH;
 
 xNP = xWing + etaH*VbarH*cBarW*CLalphaH/CLalpha*(1 - downwash) - CMalphaF/CLalpha;
-
-Kn = (xNP - xCG)/cBarW;
 end
 

@@ -20,13 +20,14 @@ function [ROC_max, altitude] = climb(W, C_Dmin, L_Dmax, S)
 
 height = 0;          % Setting a value for altitude
 i = 1;               % Setting a value for i
-while height < 10000 
-    
+
+while height < 10000
+
 [T, a, P, rho] = atmosisa(height);
 Z = 1 + sqrt(1 + (3) / ((L_Dmax^2) * (Thrust / W)^2));
 ROC_max_metres = ((Thrust / W)^1.5) * sqrt((W / S) * Z / (3 * rho * C_Dmin)) * ...
     (1 - (Z / 6) - ((3 * cos(theta) * cos(theta)) / (2 * (T / W)^2 * Z * L_Dmax^2)));
-ROC_max(i) = ROC_max_metres * 3.28084 * 60; 
+ROC_max(i) = ROC_max_metres * 3.28084 * 60;
 height = height + 100;
 altitude(i) = height * 3.28084;
 i = i + 1;
