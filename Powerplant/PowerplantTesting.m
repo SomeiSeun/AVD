@@ -1,8 +1,6 @@
 %% Powerplant sizing
 
-% This script would be used to size the powerplant and can later be
-% converted into a function in order to be used when merged with the main
-% script.
+% Currently this script is useless. Might revisit later.
 
 %% Housekeeping
 
