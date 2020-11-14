@@ -1,5 +1,8 @@
 function [E, R, FC] = Range(W_ini, rho, V, S, C_Dmin, c_t, AR, W_fin, e)
 
+% This function can be used to give the Range, Endurance and Fuel
+% Consumption for the aircraft, only in the Cruise phase. 
+
 % The INPUTS are: (ALL SI UNITS)
 % W_ini is the weight of aircraft at start of cruise phase in Newtons
 % rho is the density of air at the altitude of the cruise phase in kg/m^3

@@ -1,5 +1,7 @@
 function [S_to] = Take_off_distance(alpha_liftoff, V_stall_takeoff, V_S1, T, W_to, Cd0, AR, e, Cl0, Cl_alpha, alpha_T0, L_over_D, S)
 
+% This function can be used to find the Take off distance for the aircraft.
+
 % The INPUTS are: (ALL IN SI UNITS)
 % alpha_liftoff is the AOA at start of lift off stage in radians
 % V_stall_takeoff is the stall velocity in stall config in m/s
