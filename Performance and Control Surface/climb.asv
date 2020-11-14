@@ -25,7 +25,7 @@ i = 1;               % Setting a value for i
 
 while height < 10000
 
-[T, a, P, rho] = atmosisa(height);                                % Finding out Temperature and Density at that altitude in SI Units
+[T, a, P, rho] = atmosisa(height);                                                    % Finding out Temp and density at 
 Z = 1 + sqrt(1 + (3) / ((L_Dmax^2) * (Thrust / W)^2));                                % A variable used for Rate of Climb calculation
 ROC_max_metres = ((Thrust / W)^1.5) * sqrt((W / S) * Z / (3 * rho * C_Dmin)) * ...
     (1 - (Z / 6) - ((3 * cos(theta) * cos(theta)) / (2 * (T / W)^2 * Z * L_Dmax^2))); % Finding out Rate of Climb in m/s
