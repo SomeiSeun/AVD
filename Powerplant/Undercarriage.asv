@@ -38,8 +38,8 @@ y_mg_max = 2;                                                                   
 %% Landing gear positioning constraint space
 
 % Initialising arrays to use as axes in constraint space
-x_mg = 0:0.1:Length_ac;                                                       
-x_ng = 0:0.1:Length_ac;
+x_mg = [0:0.1:Length_ac];                                                       
+x_ng = [0:0.1:Length_ac];
 
 % Calculate constraining arrays using the formulae available
 x_ng_min = zeros(1, length(x_mg)) + x_ng_min; % For foremost nose gear position
@@ -53,8 +53,6 @@ x_overturnneg = real(-sqrt((((y_mg_max*tand(overturn_angle))^2 .* (x_cg_min - x_
 % Trying what happens when you try and equate the wheel loads
 x_ng_WWMGequalsWWNG_MaxCG = 5*x_cg_max - 4.*x_mg;
 x_ng_WWMGequalsWWNG_MinCG = 5*x_cg_min - 4.*x_mg;
-x_mg_WWNGequalsWDNG_maxCG = 0.1770138042*z_cg_max + x_cg_max;
-x_mg_WWNGequalsWDNG_minCG = 0.1770138042*z_cg_max + x_cg_min;
 
 % Plotting constraint space
 plot(x_mg, x_ng, '--r', 'LineWidth', 1.25) % For ensuring tricycle configuration
@@ -68,12 +66,11 @@ plot(x_overturnpos, x_ng, '--k', 'LineWidth', 1.25)
 plot(x_overturnneg, x_ng, '--k', 'LineWidth', 1.25)
 
 % Plotting trials
-plot(x_mg, x_ng_WWMGequalsWWNG_MinCG, ':r', 'LineWidth', 0.5)
-plot(x_mg, x_ng_WWMGequalsWWNG_MaxCG, ':r', 'LineWidth', 0.5)
-plot(x_mg_WWNGequalsWDNG_minCG, x_ng, ':r', 'LineWidth', 0.5)
-plot(x_mg_WWNGequalsWDNG_maxCG, x_ng, ':r', 'LineWidth', 0.5)
+%plot(x_mg, x_ng_WWMGequalsWWNG_MinCG, '.r', 'LineWidth', 0.5)
+%plot(x_mg, x_ng_WWMGequalsWWNG_MaxCG, '.r', 'LineWidth', 0.5)
 
-% Graph shenanigans
+
+
 xlim([0 Length_ac])
 ylim([0 Length_ac])
 xlabel('Main gear x position')
@@ -81,7 +78,6 @@ ylabel('Nose gear x position')
 grid on
 axis equal
 legend('Tricycle arrangement (stay below)', 'Foremost nose gear placement (stay above)', 'Minimum nose gear load (stay right)', 'Maximum nose gear load (stay left)', 'Tailstrike prevention (stay right)', 'CG tipback prevention (stay right)', 'Overturn prevention (stay within cone)')
-hold off
 
 %% Design point selection
 
