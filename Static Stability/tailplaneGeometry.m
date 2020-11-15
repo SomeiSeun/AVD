@@ -1,5 +1,6 @@
 function [] = tailplaneGeometry()
-%this function calculates the vertical and horizontal tailplane geometries
+
+% This function calculates the vertical and horizontal tailplane geometries
 
 
 
@@ -7,4 +8,3 @@ function [] = tailplaneGeometry()
 
 
 end
-
