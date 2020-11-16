@@ -3,6 +3,8 @@
 % exactly under the tip of the nose. The x axis then runs through to the
 % tail, y axis runs sideways along wing directionn and z axis runs up.
 
+
+
 %% Undercarriage baseline configuration
 
 % The undercarriage for our aircraft is a tricycle configuration, with nose
@@ -17,6 +19,9 @@
 clear
 clc
 close all
+
+%% Get external data
+load('../Initial Sizing/InitialSizing.mat', 'W0')
 
 %% Constraining values
 x_cg_max = 32;                                                                  % Allowing for the fact that CG approximations are not going to be accurate yet
@@ -38,8 +43,8 @@ y_mg_max = 2;                                                                   
 %% Landing gear positioning constraint space
 
 % Initialising arrays to use as axes in constraint space
-x_mg = 0:0.1:Length_ac;                                                       
-x_ng = 0:0.1:Length_ac;
+x_mg = 0:0.001:Length_ac;                                                       
+x_ng = 0:0.001:Length_ac;
 
 % Calculate constraining arrays using the formulae available
 x_ng_min = zeros(1, length(x_mg)) + x_ng_min; % For foremost nose gear position
@@ -49,38 +54,46 @@ x_mg_min = zeros(1, length(x_mg)) + x_fuse_tapers - ground_clearance/(tand(max([
 x_mg_min2 = zeros(1, length(x_mg)) + tand(max([AoA_liftoff, AoA_landing]))*z_cg_max + x_cg_max; % For preventing tipping the CG back too far when rotating to liftoff
 x_overturnpos = real(sqrt((((y_mg_max*tand(overturn_angle))^2 .* (x_cg_min - x_ng).^2)./(z_cg_max^2)) - y_mg_max^2) + x_ng); % For preventing overturn
 x_overturnneg = real(-sqrt((((y_mg_max*tand(overturn_angle))^2 .* (x_cg_min - x_ng).^2)./(z_cg_max^2)) - y_mg_max^2) + x_ng); % For preventing overturn
+Const_OptimumNoseGearRatio = (x_cg_max - x_mg + 0.08 .* x_mg)./0.08;
 
 % Trying what happens when you try and equate the wheel loads
-x_ng_WWMGequalsWWNG_MaxCG = 5*x_cg_max - 4.*x_mg;
-x_ng_WWMGequalsWWNG_MinCG = 5*x_cg_min - 4.*x_mg;
-x_mg_WWNGequalsWDNG_maxCG = 0.1770138042*z_cg_max + x_cg_max;
-x_mg_WWNGequalsWDNG_minCG = 0.1770138042*z_cg_max + x_cg_min;
+% x_ng_WWMGequalsWWNG_MaxCG = 5*x_cg_max - 4.*x_mg;
+% x_ng_WWMGequalsWWNG_MinCG = 5*x_cg_min - 4.*x_mg;
+% x_mg_WWNGequalsWDNG_maxCG = 0.1770138042*z_cg_max + x_cg_max + zeros(1, length(x_mg));
+% x_mg_WWNGequalsWDNG_minCG = 0.1770138042*z_cg_max + x_cg_min + zeros(1, length(x_mg));
+% x_ng_WWMGequalsWDNG_maxCG = x_cg_max - 0.7080552167*z_cg_max + zeros(1, length(x_mg));
+% x_ng_WWMGequalsWDNG_minCG = x_cg_min - 0.7080552167*z_cg_max + zeros(1, length(x_mg));
 
 % Plotting constraint space
-plot(x_mg, x_ng, '--r', 'LineWidth', 1.25) % For ensuring tricycle configuration
+plot(x_mg, x_ng, '--r', 'LineWidth', 1.5) % For ensuring tricycle configuration
 hold on
-plot(x_mg, x_ng_min, '--g', 'LineWidth', 1.25)
-plot(x_mg, Const_Min_NoseGearRatio, '--b', 'LineWidth', 1.25)
-plot(x_mg, Const_Max_NoseGearRatio, '--c', 'LineWidth', 1.25)
-plot(x_mg_min, x_ng, '--y', 'LineWidth', 1.25)
-plot(x_mg_min2, x_ng, '--m', 'LineWidth', 1.25)
-plot(x_overturnpos, x_ng, '--k', 'LineWidth', 1.25)
-plot(x_overturnneg, x_ng, '--k', 'LineWidth', 1.25)
+plot(x_mg, x_ng_min, '--g', 'LineWidth', 1.5)
+plot(x_mg, Const_Min_NoseGearRatio, '--b', 'LineWidth', 1.5)
+plot(x_mg, Const_Max_NoseGearRatio, '--c', 'LineWidth', 1.5)
+plot(x_mg_min, x_ng, '--y', 'LineWidth', 1.5)
+plot(x_mg_min2, x_ng, '--m', 'LineWidth', 1.5)
+plot(x_overturnpos, x_ng, '--k', 'LineWidth', 1.5)
+plot(x_overturnneg, x_ng, '--k', 'LineWidth', 1.5)
+plot(x_mg, Const_OptimumNoseGearRatio, ':', 'LineWidth', 2)
 
 % Plotting trials
-plot(x_mg, x_ng_WWMGequalsWWNG_MinCG, ':r', 'LineWidth', 0.5)
-plot(x_mg, x_ng_WWMGequalsWWNG_MaxCG, ':r', 'LineWidth', 0.5)
-plot(x_mg_WWNGequalsWDNG_minCG, x_ng, ':r', 'LineWidth', 0.5)
-plot(x_mg_WWNGequalsWDNG_maxCG, x_ng, ':r', 'LineWidth', 0.5)
+% plot(x_mg, x_ng_WWMGequalsWWNG_MinCG, ':', 'LineWidth', 1)
+% plot(x_mg, x_ng_WWMGequalsWWNG_MaxCG, ':', 'LineWidth', 1)
+% plot(x_mg_WWNGequalsWDNG_minCG, x_ng, ':', 'LineWidth', 1)
+% plot(x_mg_WWNGequalsWDNG_maxCG, x_ng, ':', 'LineWidth', 1)
+% plot(x_mg, x_ng_WWMGequalsWDNG_minCG, ':', 'LineWidth', 1)
+% plot(x_mg, x_ng_WWMGequalsWDNG_maxCG, ':', 'LineWidth', 1)
 
-% Graph shenanigans
+% Graph settings
+legend('Tricycle arrangement (stay below)', 'Foremost nose gear placement (stay above)', 'Minimum nose gear load (stay right)', ...
+     'Maximum nose gear load (stay left)', 'Tailstrike prevention (stay right)', 'CG tipback prevention (stay right)', ...
+     'Overturn prevention (stay within cone)', 'Overturn prevention (stay within cone)', 'Common (8%) load on nose gear')
 xlim([0 Length_ac])
 ylim([0 Length_ac])
 xlabel('Main gear x position')
 ylabel('Nose gear x position')
 grid on
 axis equal
-legend('Tricycle arrangement (stay below)', 'Foremost nose gear placement (stay above)', 'Minimum nose gear load (stay right)', 'Maximum nose gear load (stay left)', 'Tailstrike prevention (stay right)', 'CG tipback prevention (stay right)', 'Overturn prevention (stay within cone)')
 hold off
 
 %% Design point selection
@@ -92,11 +105,30 @@ hold off
 % As a rough guide, it is known that the nose gear should carry around 8%
 % of the MTOW. To prepare the constraint space, we plotted for a range of
 % MTOW that are acceptable. One way to simplify the problem would be to
-% plot another line line for 8% MTOW and see where that leads.
+% plot another line at 8% MTOW and take its intersection point with the
+% foremost nose gear placement line. This essentially means that we put the
+% nose gear as forward as possible and accordingly place the main gear
+% assuming the 8% figure.
 
-% Actually it might be possible to include dynamic load etc into the
-% constraint space. Hold...
+x_NoseGear = x_ng_min(1);
+x_MainGear = x_mg(abs(Const_OptimumNoseGearRatio-x_NoseGear) == min(abs(Const_OptimumNoseGearRatio-x_NoseGear)));
 
+%% Calculating loads on each wheel based on above selected design point
+
+% Going off of the rough guidelines, we can decide to have the main gear
+% split into two struts each carrying a twin tandem bogey configuration of
+% wheels. For the dynamic load we are assuming a 10ft/s2 deceleration. That
+% is the value 10 input there.
+
+W_WheelMainGear = (1.07/8)*W0*( ((x_cg_min+x_cg_max)/2) - x_NoseGear )/(x_MainGear - x_NoseGear);   % With 7% safety factor. Removing this can show true load.
+W_WheelNoseGear = (1.07/2)*W0*( x_MainGear - ((x_cg_min+x_cg_max)/2) )/(x_MainGear - x_NoseGear);   % With 7% safety factor. It adds up correctly.
+W_DynamNoseGear = (10*z_cg_max*W0)/( 32.1850394*(1/0.3048)*(x_MainGear-x_NoseGear) );               % Need to take MTOW because this can occur during takeoff run.
+
+LbsReqMainGear = (W_WheelMainGear/9.81) * 2.20462262;
+LbsReqNoseGearStatic = (W_WheelNoseGear/9.81) * 2.20462262;
+LbsReqNoseGearDynamic = (W_DynamNoseGear/9.81) * 2.20462262;
+
+disp(['The maximum load on any tire is ', num2str(max([LbsReqMainGear, LbsReqNoseGearStatic, LbsReqNoseGearDynamic])), ' lbs' ])
 
 
 %% Next steps
