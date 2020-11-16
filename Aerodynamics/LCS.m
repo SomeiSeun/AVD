@@ -18,7 +18,7 @@
 %Vertical Tail LCS
 
 
-function [CL_a]=LCS(AspectRatio,S_exposed,Sref,d,b,M,sweepanglemax,Cl_am);
+function [CL_a]=LCS(AspectRatio,S_exposed,Sref,d,b,M,sweepanglemax,Cl_am)
 beta=sqrt(1-M^2);% to account for compressibility effects;
 F=1.07*(1+(d/b))^2;% fuselage spillover lift factor
 eta=0.95;

@@ -8,7 +8,7 @@ close all
 %load data 
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat')
-
+load('../Static Stability/tailplane_Sizing_Variable_Values.mat')
 %Define velocities and mach no for take-off and landing
 rho_takeoff=1.225;
 rho_landing=1.225;
@@ -22,13 +22,18 @@ M_landing=V_landing/sqrt(1.4*287*288.2);
 [CL_a_takeoff]=LCS(AspectRatio,S_exposed,Sref,4.175556,b,M_takeoff,26,0);
 [CL_a_landing]=LCS(AspectRatio,S_exposed,Sref,4.175556,b,M_landing,26,0);
 %Lift Curve Slope for Horizontal Tail:
-%[CL_ah]=HLCS(AR,S_exposed,S_ref,d,b,M,sweepanglemax,Cl_am);
+[CL_ah_landing]=LCS(AR_HT,S_HT_exposed,S_HT,4.175556,b_HT,M_landing,0,0);
+[CL_ah_takeoff]=LCS(AR_HT,S_HT_exposed,S_HT,4.175556,b_HT,M_takeoff,0,0);
+[CL_ah_cruise]=LCS(AR_HT,S_HT_exposed,S_HT,4.175556,b_HT,M_Cruise,0,0);
 %Lift Curve Slope for Vertical Tail:
-%[CL_av]=HLCS(AR,S_exposed,S_ref,M,sweepanglemax,Cl_am);
+[CL_av_landing]=LCS(AR_VT,S_VT,S_VT,4.175556,b_VT,M_landing,0,0);
+[CL_av_takeoff]=LCS(AR_VT,S_VT,S_VT,4.175556,b_VT,M_takeoff,0,0);
+[CL_av_cruise]=LCS(AR_VT,S_VT,S_VT,4.175556,b_VT,M_Cruise,0,0);
 %Maximum Lift Coefficient for Clean and HLD configuration:
-%[CL_max_clean_wing,delta_CL_max_wing, delta_alpha_zero_wing]=MaxLift(Cl_max,sweep_quarterchord,S_flapped,S_ref,sweep_HLD,Cl_alpha);
+[CL_max_clean_wing]=MaxLift(1.6,27,0,0,0);
+[CL_max_HT]=MaxLift(1.4,34,0,0,0);
 %Maximum Lift Coefficient for Horizontal Tail:
-%[CL_max_clean_horizontal,delta_CL_max_horizontal, delta_alpha_zero_horizontal]=MaxLift(Cl_max,sweep_quarterchord,S_flapped,S_ref,sweep_HLD,Cl_alpha);
+% [CL_max_clean_horizontal,~,~]=MaxLift(1.4,0,S_flapped,S_ref,sweep_HLD,Cl_alpha);
 %Maximum Lift Coefficient for Vertical Tail:
 %[CL_max_clean_vertical,delta_CL_max_vertical, delta_alpha_zero_vertical]=MaxLift(Cl_max,sweep_quarterchord,S_flapped,S_ref,sweep_HLD,Cl_alpha);
 %% Skin Friction, Form and Interference Drag
@@ -53,4 +58,4 @@ M_landing=V_landing/sqrt(1.4*287*288.2);
 %[Vstall_Cruise]= StallAnalysis(W/S,rho,Clmax);
 %[Vstall_Landing]= StallAnalysis(W/S,rho,Clmax);
 
-save('AerodynamicsMain.mat','CL_a_cruise','CL_a_takeoff','CL_a_landing')
+save('AerodynamicsMain.mat','CL_a_cruise','CL_a_takeoff','CL_a_landing','CL_ah_cruise','CL_ah_takeoff','CL_ah_landing','CL_av_cruise','CL_av_takeoff','CL_av_landing','CL_max_clean_wing','CL_max_HT')

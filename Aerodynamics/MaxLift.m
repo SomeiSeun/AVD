@@ -15,8 +15,8 @@
 
 function [CL_max_clean,delta_CL_max, delta_alpha_zero]=MaxLift(Cl_max,sweep_quarterchord,S_flapped,S_ref,sweep_HLD)
 %MaxLift uses a sweep correction to estimate the maximum lift coefficient:
-CL_max_clean=0.9*Cl_max*cos(sweep_quarterchord);
+CL_max_clean=0.9*Cl_max*cosd(sweep_quarterchord);
 %The effect of HLD may be estimated using: 
-delta_CL_max=Cl_max*(S_flapped/S_ref)*cos(sweep_HLD);
-delta_alpha_zero=delta_alpha_zeroairfoil*(S_flapped/S_ref)*cos(sweep_HLD);
+% delta_CL_max=Cl_max*(S_flapped/S_ref)*cos(sweep_HLD);
+% delta_alpha_zero=delta_alpha_zeroairfoil*(S_flapped/S_ref)*cos(sweep_HLD);
 end 
