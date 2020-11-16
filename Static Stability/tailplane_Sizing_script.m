@@ -9,7 +9,8 @@ load('../Aerodynamics/wingDesign.mat');
 
 % Using the function to find some of the geometries for the tail plane
 [S_HT, S_VT, b_HT, b_VT, C_avg_HT, C_avg_VT] = tailplaneSizing(4, 1.5, Sref, MAC, b, 1.5, 4);
-
+AR_VT = 1.5;  % Vertical tailplane Aspect Ratio
+AR_HT = 4;    % Horizontal tailplane Aspect Ratio
 % I will list the variables here for reference, (ALL SI UNITS)
 % S_HT is the area of the Horizontal tail
 % S_VT is the area of the Vertical tail
@@ -27,5 +28,11 @@ Horizontal_tailplane_sweep = Sweep_LE + 5; % Horizontal tail plane sweep in degr
 Vertical_tailplane_sweep = Sweep_LE + 5;   % Vertical tail plane sweep in degrees
 twist_tailplane = 0;                       % 0 deg twist for both Horizontal and Vertical tail planes
 Dihedral_tailplane = 0;                    % 0 dihedral for both Horizontal and Vertical tail plane
-Vertical_tailplane_thickness_ratio = Airfoil_ThicknessRatio; % Same thickness ratio for vertical tail plane as for the main wing
-Horizontal_tailplane_thickness_ratio = Airfoil_ThicknessRatio - 0.02; % Thickness ratio for the Horizontal tail plane
+Vertical_tailplane_thickness_ratio = Airfoil_ThicknessRatio_used; % Same thickness ratio for vertical tail plane as for the main wing
+Horizontal_tailplane_thickness_ratio = Airfoil_ThicknessRatio_used - 0.02; % Thickness ratio for the Horizontal tail plane
+
+filename = 'tailplane_Sizing_variable_values.mat' ;
+save(filename, 'S_HT', 'S_VT', 'b_HT', 'b_VT', 'C_avg_HT', 'C_avg_VT', 'AR_VT', 'AR_HT',...
+    'Dihedral_tailplane', 'Horizontal_tailplane_sweep', 'Horizontal_tailplane_thickness_ratio',...
+    'TaperRatioTailplane', 'twist_tailplane', 'Vertical_tailplane_sweep',...
+    'Vertical_tailplane_thickness_ratio'); 
