@@ -8,7 +8,7 @@ clc
 load('../Aerodynamics/wingDesign.mat');
 
 % Using the function to find some of the geometries for the tail plane
-[S_HT, S_VT, b_HT, b_VT, C_avg_HT, C_avg_VT] = tailplaneSizing(4, 1.5, Sref, MAC, b, 1.5, 4);
+[S_HT, S_VT, b_HT, b_VT, C_avg_HT, C_avg_VT] = tailplaneSizing(fuselage_diameter, 1.5, Sref, MAC, b, 1.5, 4);
 AR_VT = 1.5;  % Vertical tailplane Aspect Ratio
 AR_HT = 4;    % Horizontal tailplane Aspect Ratio
 % I will list the variables here for reference, (ALL SI UNITS)
@@ -23,6 +23,8 @@ AR_HT = 4;    % Horizontal tailplane Aspect Ratio
 % Mean Geometric Chord like it was given in GUDMUNDSSON. Maybe they are not
 % very different? 
 
+S_HT = S_HT - (1.5 * )
+
 TaperRatioTailplane = 0.4;                 % Taper Ratio is chosen to be 0.4 for both vertical and horizontal tail plane
 Horizontal_tailplane_sweep = Sweep_LE + 5; % Horizontal tail plane sweep in degrees
 Vertical_tailplane_sweep = Sweep_LE + 5;   % Vertical tail plane sweep in degrees
@@ -34,4 +36,5 @@ Horizontal_tailplane_thickness_ratio = Airfoil_ThicknessRatio_used - 0.02; % Thi
 filename = 'tailplane_Sizing_variable_values.mat' ;
 save(filename, 'S_HT', 'S_VT', 'b_HT', 'b_VT', 'C_avg_HT', 'C_avg_VT', 'AR_VT', 'AR_HT',...
     'Dihedral_tailplane', 'Horizontal_tailplane_sweep', 'Horizontal_tailplane_thickness_ratio',...
-    'TaperRatioTailplane', 'twist_tailplane', 'Vertical_tailplane_sw', '', '', ''); 
+    'TaperRatioTailplane', 'twist_tailplane', 'Vertical_tailplane_sweep',...
+    'Vertical_tailplane_thickness_ratio'); 
