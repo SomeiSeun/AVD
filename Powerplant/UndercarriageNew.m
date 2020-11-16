@@ -70,6 +70,7 @@ disp(['Static load on main gear is approx ', num2str(round(LbsReqMainGear)), ' l
 
 %% Step 4: Choose tires
 
+Radial_Ww = GimmeTiresRaymer();
 
 
 
