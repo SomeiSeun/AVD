@@ -18,7 +18,9 @@ M_takeoff=V_takeoff/sqrt(1.4*287*288.2);
 M_landing=V_landing/sqrt(1.4*287*288.2);
 %% Lift Aerodynamic Analyis: 
 %Lift Curve Slope for Main Wing:
-%[CL_a]=LCS(AR,S_exposed,S_ref,d,b,M,sweepanglemax,Cl_am);
+[CL_a_cruise]=LCS(AspectRatio,S_exposed,Sref,4.175556,b,M_Cruise,26,0);
+[CL_a_takeoff]=LCS(AspectRatio,S_exposed,Sref,4.175556,b,M_takeoff,26,0);
+[CL_a_landing]=LCS(AspectRatio,S_exposed,Sref,4.175556,b,M_landing,26,0);
 %Lift Curve Slope for Horizontal Tail:
 %[CL_ah]=HLCS(AR,S_exposed,S_ref,d,b,M,sweepanglemax,Cl_am);
 %Lift Curve Slope for Vertical Tail:

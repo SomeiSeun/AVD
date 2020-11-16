@@ -49,7 +49,7 @@ x_AC=y_MAC*tan(Sweep_quarterchord)+0.25*MAC;
 
 
 %various wing areas
-fuselage_diameter= 14.075; %from Structures
+fuselage_diameter= 4.175556; %from Structures
 
 c_fuselage = root_chord - fuselage_diameter*( tand(Sweep_LE) - tand(Sweep_TE) );
 WingArea_fuselage=0.5*fuselage_diameter*(root_chord+c_fuselage);
