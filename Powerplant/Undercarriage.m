@@ -3,8 +3,6 @@
 % exactly under the tip of the nose. The x axis then runs through to the
 % tail, y axis runs sideways along wing directionn and z axis runs up.
 
-
-
 %% Undercarriage baseline configuration
 
 % The undercarriage for our aircraft is a tricycle configuration, with nose
