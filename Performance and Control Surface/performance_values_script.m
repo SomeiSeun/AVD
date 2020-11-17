@@ -95,7 +95,7 @@ W = W_ini_1;  % Weight of the aircraft at start of cruise 1
 
 W_cruise = W_ini_1;  % Weight of aircraft at start of cruise 1
 [ROC_max, altitude] = climb(W_cruise, C_Dmin, L_DMax, Sref);  
-% ^ Values still needed: C_Dmin
+% ^ Values still needed: C_Dmin, Thrust
 
 figure 1
 plot(ROC_max, altitude, '-xr')
