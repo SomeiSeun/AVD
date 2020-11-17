@@ -6,13 +6,15 @@
 % conditions will be used as we want to ensure trimmed flight during cruise
 %. 
 
-function [CL_ah]=HLCS(AR,S_exposed,S_ref,M,sweepanglemax,Cl_am)
+function [CL_ah]=HLCS(AR,S_exposed,S_ref,d,b,M,sweepanglemax,Cl_am)
 %exposed area same as reference area for the horizontal tail? 
 beta=sqrt(1-M^2); % to account for compressibility effects
-F=1; % neglect fuselage spillover lift factor for horixontal tail. 
-eta=(beta*Cl_am)/2*pi; %airfoil efficiency factor
+F=1.07*(1+(d/b))^2; 
+eta=0.95;
+%eta=(beta*Cl_am)/2*pi; %airfoil efficiency factor- approx at 0.95 if cl at
+%mach no is not known
 a=2*pi*AR*(S_exposed/S_ref)*F;
 b=((AR*beta)/eta)^2;
 c=((1+(tan(sweepanglemax))^2)/beta^2);
-CL_a=a/(2+sqrt(4+b*c));
+CL_ah=a/(2+sqrt(4+b*c));
 end 

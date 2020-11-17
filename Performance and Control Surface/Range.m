@@ -22,8 +22,8 @@ function [E, R, FC] = Range(W_ini, rho, V, S, C_Dmin, c_t, AR, W_fin, e)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 k = 1 / (pi * AR * e);
 
-E_seconds = (1 / (c_t * sqrt(k * C_Dmin))) * (arctan((2 * sqrt(k) * W_ini) / (rho * V^2 * S * sqrt(C_Dmin)))...
-    - arctan((2 * sqrt(k) * W_fin) / (rho * V^2 * S * sqrt(C_Dmin))));    % This equation gives the Endurance in seconds
+E_seconds = (1 / (c_t * sqrt(k * C_Dmin))) * (atan((2 * sqrt(k) * W_ini) / (rho * V^2 * S * sqrt(C_Dmin)))...
+    - atan((2 * sqrt(k) * W_fin) / (rho * V^2 * S * sqrt(C_Dmin))));    % This equation gives the Endurance in seconds
 
 E = E_seconds/3600;  % This equation gives the Endurance in hours
 
