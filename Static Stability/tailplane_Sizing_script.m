@@ -8,7 +8,9 @@ clc
 load('../Aerodynamics/wingDesign.mat');
 
 % Using the function to find some of the geometries for the tail plane
-[S_HT, S_VT, b_HT, b_VT, C_avg_HT, C_avg_VT] = tailplaneSizing(fuselage_diameter, 1.5, Sref, MAC, b, 1.5, 4);
+MGC = (2 / 3) * root_chord * ((1 + TaperRatio + TaperRatio^2) / (1 + TaperRatio)); % Mean Geometric Chord
+
+[S_HT, S_VT, b_HT, b_VT, C_avg_HT, C_avg_VT] = tailplaneSizing(fuselage_diameter, 1.5, Sref, MGC, b, 1.5, 4);
 AR_VT = 1.5;  % Vertical tailplane Aspect Ratio
 AR_HT = 4;    % Horizontal tailplane Aspect Ratio
 % I will list the variables here for reference, (ALL SI UNITS)
@@ -18,10 +20,6 @@ AR_HT = 4;    % Horizontal tailplane Aspect Ratio
 % b_VT is the span of Vertical tail
 % C_avg_HT is average chord of Horizontal tail
 % C_avg_VT is average chord of Vertical tail
-
-% ^ A little unsure about using the Mean Aerodynamic Chord value instead of
-% Mean Geometric Chord like it was given in GUDMUNDSSON. Maybe they are not
-% very different? 
 
 S_HT_exposed = S_HT - (1.5 * 6);    % Very rough estimation for Exposed horizontal tail plane area
 

@@ -1,11 +1,11 @@
-function [S_L] = Landing_distance(Cl0, Cl_alpha, VS1, W_L, VS0, T_L, L_over_D, S, AR, e)
+function [S_L] = Landing_distance(Cl0, Cl_alpha, V_S1, W_L, VS0, T_L, L_over_D, S, AR, e)
 
 % This function is used to find the Landing distance for the aircraft. 
 
 % The INPUTS are: (ALL SI UNITS)
 % Cl0 is the lift coefficient at 0 AOA
 % Cl_alpha is the 3D lift curve slope
-% VS1 is the stall speed in clean config in m/s
+% V_S1 is the stall speed in clean config in m/s
 % W_L is the weight of aircraft at start of landing approach in Newtons
 % VS0 is the stall speed in landing config in m/s
 % T_L is the thrust at start of landing approach in Newtons
@@ -21,7 +21,7 @@ function [S_L] = Landing_distance(Cl0, Cl_alpha, VS1, W_L, VS0, T_L, L_over_D, S
 h_obs = 50*0.3048;                                 % Obstacle height according to FAR 25 being converted to metres
 g = 9.81;                                          % Gravitational Acceleration
 n = 1.2;                                           % Load factor during landing approximately
-R = (1.15^2 * VS1^2) / ((n - 1)*g);                % Gives the radius of rotation
+R = (1.15^2 * V_S1^2) / ((n - 1)*g);               % Gives the radius of rotation
 theta_approach = arcsin((1/L_over_D) - (T_L/W_L)); % Gives the theta approach angle. Also initially can be assumed to be 3 deg
 h_f = R * (1 - cos(theta_approach));               % Gives the flare height
 
