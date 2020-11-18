@@ -86,12 +86,6 @@ disp(['Static load on main gear is approx ', num2str(round(LbsReqMainGear)), ' l
 
 % Also how tf do we find the PCN?
 
-% Anyway, this step can almost be ignored because we can assume that the
-% aircraft ACNs are less than the PCNs that we wish to design for. Making
-% this assumption would allow us to carry on with the development of the
-% landing gear without needing to perform this ACN PCN runway suitability
-% check.
-
 %% Step 6: Size oleos and find strut length
 
 
