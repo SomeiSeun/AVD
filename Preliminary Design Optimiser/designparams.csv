@@ -1,0 +1,102 @@
+Property,Value,Comments
+Maximum Takeoff Weight [N],,
+Maximum Landing Weight [N],,
+Total Passenger/Crew/Payload Weight [N],,
+Design Fuel Weight [N],,
+Total Length [m],,
+Max Diameter [m],,
+Number of seats abreast [-],,
+Tailcone Dimameter [m],,
+Nose fineness (Ln/D) [-],,
+Afterbody fineness (La/D) [-],,
+Afterbody upsweep angle [deg],,measured as the angle between the bottom of the main cabin section and the bottom of the afterbody. Zero if the two are parallel.
+Wing horizontal position [m],,measured from the nose to the wing leading edge at the root
+Wing vertical position [m],,measured from the fuselage centreline to the wing root. +ve above the centreline
+Wing airfoil section,,
+Wing airfoil thickness-to-chord (t/c] [-],,
+Wing airfoil lift curve slope [1/rad],,
+Wing airfoil zero-lift AoA [deg],,
+Wing airfoil max lift coef [-],,
+Wing Ref Area [m^2],,
+Wing Taper Ratio [-],,
+Wing Aspect Ratio [-],,
+Wing Sweep Angle [deg],,positive when aftswept
+Wing Dihedral Angle [deg],,
+Wing Twist [deg],,positive when aftswept
+Wing Setting Angle [deg],,
+Wing front spar position [% chord],,
+Wing aft spar position [% chord],,
+TE device type ,,[none/plain/slotted/fowler/ double/ triple]
+TE device chord ratio (cf/c) [-],,
+TE device Extension ratio (c'/c) [-],,
+TE device Start position [% semi span],,measured as % from root to tip
+TE device End position [% semi span],,measured as % from root to tip
+LE device type ,,[none/ slot/ slat/ kruger]
+LE device chord ratio (cf/c) [-],,
+LE device Extension ratio (c'/c) [-],,
+LE device Start position [% semi span],,measured as % from root to tip
+LE device End position [% semi span],,measured as % from root to tip
+Aileron chord ration (cA/c) [-],,
+Aileron Start position [% semi span],,measured as % from root to tip
+Aileron End position [% semi span],,measured as % from root to tip
+HT airfoil section,,
+HT airfoil thickness-to-chord (t/c] [-],,
+HT airfoil lift curve slope [1/rad],,
+HT airfoil zero-lift AoA [deg],,
+HT horizontal position [m],,measured from the nose to the tail leading edge at the root
+HT vertical position [m],,measured from the fuselage centreline to the wing root. +ve above the centreline
+HT Ref Area [m^2],,
+HT Taper Ratio [-],,
+HT Aspect Ratio [-],,
+HT Sweep Angle [deg],,positive when aftswept
+HT Dihedral Angle [deg],,
+HT Setting Angle [deg],,
+HT front spar position [% chord],,
+HT aft spar position [% chord],,
+Elevator chord ratio (cE/c) [-],,
+Elevator Start position [% semi span],,measured as % from root to tip
+Elevator End position [% semi span],,measured as % from root to tip
+VT airfoil section,,
+VT airfoil thickness-to-chord (t/c] [-],,
+VT horizontal position [m],,measured from the nose to the tail leading edge at the root
+VT vertical position [m],,measured from the fuselage centreline to the wing root. +ve above the centreline
+VT Ref Area [m^2],,
+VT Taper Ratio [-],,
+VT Aspect Ratio [-],,
+VT Sweep Angle [deg],,positive when aftswept
+VT front spar position [% chord],,
+VT aft spar position [% chord],,
+Rudder chord ratio (cR/c) [-],,
+Rudder Start position [% semi span],,measured as % from root to tip
+Rudder End position [% semi span],,measured as % from root to tip
+Main Gear horizontal position [m],,measured from the nose to the strut centreline
+Main Gear half width [m],,measuered in the spanwise direction form the centreline
+Main Gear Height (fully extended) [m],,
+Main Gear Stroke [m],,
+Number of tires per main gear strut,,
+Horizontal main gear wheel spacing [m],,measure from centre of wheel disk to centre of wheel disk
+Lateral main gear wheel spacing [m],,measuerd from mid tire thickness to mid-thickness
+Main Gear Tire Outer Diameter [m],,
+Main Gear Tire Inner Diameter [m],,
+Main Gear Tire width [m],,
+Main Gear Tire inflation Pressure [Pa],,
+Nose Gear horizontal position [m],,measured from the nose to the strut centreline
+Nose Gear Height (fully extended) [m],,
+Nose Gear Stroke [m],,
+Number of tires per nose gear strut,,[1/2]
+Lateral nose gear wheel spacing [m],,measuerd from mid tire thickness to mid-thickness
+Nose Gear Tire Outer Diameter [m],,
+Nose Gear Tire Inner Diameter [m],,
+Nose Gear Tire width [m],,
+Nose Gear Tire inflation Pressure [Pa],,
+Max engine uninstalled thrust at sea level [N],300439,per engine
+Engine fan diameter [m],2.911,
+Engine uninstalled length [m],4.853,
+Engine Bypass Ratio [-],10,
+Nacelle throat diameter [m],,
+Nacelle length [m],,for nacelle front face to engine fan front face
+Innermost Engine spanwise position [m],,measured from aircraft plane of symmetry
+Outermost Engine spanwise position [m],,as above. If twin engine aircraft enter NaN
+Engine cruise sfc [lbs/hr/lbf],,
+Engine uninstalled mass [kg],6323,
+Reverse thrust used?,1,"[0 = no, 1 = yes]"

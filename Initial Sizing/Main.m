@@ -54,7 +54,7 @@ beta_Loiter = 0.8; e_Loiter = 0.75; C_D0_Loiter = 0.02;             % Loiter
 [~,~,~,rho_ConsVT] = atmosisa(H_Loiter);                            % Constant turns
 alpha_AbsC = WF1*WF2*WF3*WF4; beta_AbsC = 0.14; C_D0_AbsC = 0.02; e_AbsC = 0.85;   % Absolute ceiling   UPDATE!
 TODA = 2200; CL_TakeOff = 1.7;                                      % Takeoff
-NumberOfEngines = 2; ClimbGradient = 0.012;                         % One engine inoperative
+NumberOfEngines = 2; ClimbGradient = 0.024;                         % One engine inoperative
 C_LMaxLanding = 2.2;                                                % Landing
 
 % Functions
