@@ -22,6 +22,7 @@ function [L_over_D_max, Vs, V_LDmax, V_max, V_min] = Cruise_leg_calculations(C_D
 % V_max is the Maximum Level airspeed in m/s
 % V_min is the Minimum Level airspeed in m/s
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 k = 1/(pi * AR * e);                                                      % Finding out the Induced drag coefficient

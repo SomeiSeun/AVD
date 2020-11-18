@@ -6,19 +6,19 @@ clc
 close all
 
 %% Import data from initial sizing
-load('../Initial Sizing/InitialSizing.mat', 'ThrustToWeight', 'W0')
+load('../Initial Sizing/InitialSizing.mat', 'ThrustToWeight', 'W0', 'C_Cruise', 'C_Divert', 'C_Loiter')
 
 %% Finding thrust required
 
 T_req_all_engines_fly = ThrustToWeight * W0;                                    % This is how much thrust is required to fly when all engines are operating
-T_req_all_engines_operate = T_req_all_engines_fly * 1.03;                       % This is how much thrust is required accounting for losses in bleed air
+T_req_all_engines_operate = T_req_all_engines_fly * 1.03;                       % This is how much thrust is required accounting for losses in bleed air/equivalent systems. This would also be known as the installed thrust.
 T_req_per_engine_operate = T_req_all_engines_operate/2;                         % This is how much thrust we want each engine to produce (assuming two engines)
 
 disp(['Look for engines that provide thrust in the range of ', num2str(round(T_req_per_engine_operate/1000)), 'kN (aka ', num2str(round(T_req_per_engine_operate*0.2248089)), ' pounds-force).'])
 
 %% Pure rubber engine sizing for sanity checking
 
-BPR = 12;
+BPR = 10;
 Rubber_W = 14.7 * ((T_req_per_engine_operate/1000)^1.1) * exp(-0.045*BPR);
 Rubber_L = 0.49 * ((T_req_per_engine_operate/1000)^0.4) * 0.8^0.2;
 Rubber_D = 0.15 * ((T_req_per_engine_operate/1000)^0.5) * exp(0.04*BPR);
@@ -26,6 +26,7 @@ Rubber_SFC_maxT = 19 * exp(-0.12*BPR);
 Rubber_T_Cruise = 0.35 * ((T_req_per_engine_operate/1000)^0.9) * exp(0.02 * BPR);
 Rubber_SFC_cruise = 25 * exp(-0.05 * BPR);
 
+disp(' ')
 disp(['For a pure rubber engine requiring approx ', num2str(round(T_req_per_engine_operate/1000)), ' kN of thrust:'])
 disp(['Assuming a bypass ratio of ', num2str(BPR)])
 disp(['Mass = ', num2str(Rubber_W), ' kg'])
@@ -96,7 +97,7 @@ disp(['Cruise SFC = ', num2str(Rubber_SFC_cruise), ' lbs/lbs/hr (probably)'])
 % Engine family 8: CFM International
     % Meh
     
-% Engine family 9: Trent 1000 family (specifically 1000-A
+% Engine family 9: Trent 1000 family (specifically 1000-A)
     % Overall length = 4.771m
     % Maximum diameter = 3.798m
     % Dry weight = 5936kg without SB 72-G319, 6033kg with.
@@ -105,28 +106,102 @@ disp(['Cruise SFC = ', num2str(Rubber_SFC_cruise), ' lbs/lbs/hr (probably)'])
     
 %% Engine selection
 
-% In this section, assume you have selected your engine and input the data
-% for the following variables. 
+% The Trent 1000-A model seems to fit our requirements quite well. It is a
+% three-shaft, high BPR, axial flow turbofan engine with LP, IP and HP
+% compressors driven by separate turbines through coaxial shafts. The LP
+% compressor fan diameter is 2.85m with a swept fan blade and OGV's. The
+% combustion system consists of a single annular combustor with 18-off fuel
+% spray nozzles.
+    % Compressors: 
+        % LP - single stage (fan). Diam 2.85m
+        % IP - 8 stage
+        % HP - 6 stage
+    % Turbines:
+        % LP - 6 stage
+        % IP - single stage
+        % HP - single stage
+        
+% The engine control system utilises an EEC (Electronic Engine Controller)
+% which has an airframe interface for digital bus comms. An EMU (Engine
+% Monitor Unit) is fitted to provide vibration signals to the aircraft.
 
-% Taking Trent 768-60:
-    % Application date: 30 June 1991
-    % EASA Certification date: 24 January 1994
-    % Three shaft, high BPR, axial flow, turbofan engine with LP, IP, HP
-    % compressors driven by separate turbines through coaxial shafts.
-    % Single annular combustor. LP, IP, HP assemblies all rotate same
-    % direction. Engine is equipped with digital engine control. Engine's
-    % accessory gearbox may be fitted with up to two hydraulic pumps and
-    % one Integrated Drive Generator to provide electrical and hydraulic
-    % power to the aircraft. These are formally part of the airframe.
-    % Environmental control system bleed is bled from IP8 off take at
-    % takeoff, cruise and climb; from HP6 at descent and idle ground
-    % conditions. Re-refer to bleed requirements when needed. Nacelle
-    % thermal anti-icing bleed and fan bleed also included.
+% The engine is certified for use with an operable thrust reverser unit.
+% Note that this does not form part of the engine type design and is
+% certified as part of the aircraft type design.
 
-Engine_Length = 5.639; %m
-Engine_Radius = 1.372; %m
+% Dimensions:
+    % Overall length mm (ins) = 4771 (187.8). This length is measured from
+    % tip of spinner to rear of the tail bearing housing inner plug flange.
+    % Maximum radius mm (ins) = 1899 (74.8). From centreline, not including
+    % drains mast.
+
+% Dry weight:
+    % Max dry engine weight (kg) (Without SB 72-G319) = 5936
+    % Max dry engine weight (kg) (With SB 72-G319) = 6033
+    
+% Thrust ratings kN (lbf): 
+    % Take-off (net) (5 mins)
+        % 307.8 (69,194)
+    % Equivalent bare engine take-off
+        % 310.9 (69,885)
+    % Maximum continuous (net)
+        % 287.9 (64,722)
+    % Equivalent bare engine maximum continuous 
+        % 290.8 (65,382)
+
+% The equiv bare engine take off and max cont thrusts are derived from
+% approved net take off and max cont thrust by excluding the losses
+% attributable to the inlet, cold nozzle, hot nozzle, by-pass duct flow
+% leakage and after body.
+% The take off ratings are based on having no air bleed for CTAI but the
+% max cont ratings include the effect of CTAI.
+        
+% Aircraft accessory drives
+    % The engine's accessory gearbox may be fitted with two Variable
+    % Frequency Starter Generators (VFSG) and one Hydraulic Pump to provide
+    % electrical and hydraulic power to the aircraft. Details on torque and
+    % power limitations in Engine Installation Manual which I can't find
+    % lol.
+    
+% Maximum permissible air bleed extraction:
+    % The Trent 1000 does not supply compressor air for airframe
+    % ventilation (Cabin Bleed), but does supply compressor air for the
+    % purpose of preventing ice build-up on the engine nacelle (Cowl
+    % Thermal Anti-Ice (CTAI)).
+    
+    % The nacelle thermal anti-icing flow demand is modulated via a
+    % regulating valve.
+    
+    % Engine power setting TET (K) vs Maximum CTAI % core mass flow
+        % Idle to 1430: 2.67
+        % 1430 to 1785: 2.67 to 1.25 varying linearly
+        % 1785 to 1820: 1.25 to 0.54 varying linearly
+        % 1820 and above: 0.54
+  
+% Operating limitations
+    % Temperature limits
+    % Pressure limits (fuel pressure, oil pressure)
+    % Oil consumption limits (max allowable oil consumption = 0.60
+    % litres/hr
+    % Maximum permissible rotor speeds
+    % Installation assumptions
+    % Time limited dispatch
+
+Engine_Length = 4.771; %m
+Engine_Radius = 1.899; %m
 Engine_Diameter = 2 * Engine_Radius; %m
-Engine_Mass_Dry = 6160; %kg
-Engine_Takeoff_Thrust_5min = 300.3; %kN
-Engine_MaxContThrust = 268.7; %kN
-Engine_EquivalentBareEngine_TakeoffThrust = 304.3; %kN
+Engine_Mass_Dry = 6033; %kg
+Engine_Takeoff_Thrust_5min = 307.8; %kN
+Engine_MaxContThrust = 287.9; %kN
+Engine_EquivalentBareEngine_TakeoffThrust = 310.9; %kN
+Engine_EquivalentBareEngine_MaxContinuous = 290.8; %kN
+Engine_BPR = 10;
+
+%% Rubber sizing selected engine to match requirements
+
+SF = T_req_per_engine_operate/(Engine_MaxContThrust*1000);
+L = Engine_Length * (SF^0.4);
+D_e = Engine_Diameter * (SF^0.5);
+D_f = 2.85 * (SF^0.5);
+W = Engine_Mass_Dry * (SF^1.1);
+

@@ -1,3 +1,5 @@
+function[] = Undercarriage(W0, x_cg_max, x_cg_min, y_cg, z_cg_max, z_cg_min, Length_ac, x_ng_min, x_fuse_tapers)
+
 %% Undercarriage
 
 % This script is going to be used to follow the suggested process in slides
@@ -9,12 +11,11 @@ clc
 close all
 
 %% Get data
-load('../Initial Sizing/InitialSizing.mat', 'W0')
-disp(['The mass of aircraft is ', num2str(round(W0*2.20462262/9.81)), ' lbs'])
+%disp(['The mass of aircraft is ', num2str(round(W0*2.20462262/9.81)), ' lbs'])
 
 %% Step 1: Assume tire pressure, number of u/c struts and wheels per strut
 
-% Inputs
+% Decisions
 NoseTirePressure = 150;
 MainTirePressure = 150;
 NoseStruts = 1;
@@ -73,7 +74,7 @@ disp(['Static load on main gear is approx ', num2str(round(LbsReqMainGear)), ' l
 %% Step 4: Choose tires
 
 GimmeTiresRaymer(LbsReqMainGear, LbsReqNoseGearStatic + LbsReqNoseGearDynamic)
-
+end
 
 
 
