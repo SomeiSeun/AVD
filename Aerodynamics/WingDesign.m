@@ -32,9 +32,12 @@ Sweep_quarterchord= sweepConverter(29, 0, 0.25, AspectRatio, TaperRatio);%need t
 %fraction
 
 Sweep_TE= sweepConverter(29,0,1 ,AspectRatio, TaperRatio);
+Sweep_maxt= sweepConverter(29,0,0.349 ,AspectRatio, TaperRatio);
 Dihedral=5;             %degrees --> between 3 and 7; 5 chosen (midpoint)
 % Twist=                %use historical data for initial selection
 Wing_incidence =1;      %degrees --> initial approx as per Raymer
+
+
 
 %planform coordinates
 y_root=0;
