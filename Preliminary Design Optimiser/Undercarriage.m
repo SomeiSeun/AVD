@@ -1,5 +1,5 @@
 function[] = Undercarriage(W0, WF6, x_cg_max, x_cg_min, y_cg, z_cg_max, z_cg_min, ...
-    Length_ac, x_ng_min, x_fuse_tapers, AoA_GroundMax, groundclearance, y_mg_max)
+    Length_ac, x_ng_min, x_fuse_tapers, AoA_liftoff, AoA_landing, ground_clearance, y_mg_max)
 
 %% Undercarriage
 
@@ -46,7 +46,7 @@ W_NoseGear_Ratio_Min = 0.05;                                                    
 %x_fuse_tapers = 50;                                                             % Point where fuselage starts to taper upwards (for tailstrike calculations)
 %AoA_liftoff = 5;                                                                % Required to know largest angle encountered near ground (for tailstrike calculations)
 %AoA_landing = 2;                                                                % Angles given in degrees
-%AoA_GroundMax = max([AoA_landing, AoA_liftoff]);                                % Simplify
+AoA_GroundMax = max([AoA_landing, AoA_liftoff]);                                % Simplify
 %ground_clearance = 1.5;                                                         % Required for a lot of things, probably would need to be iterated within the code
 overturn_angle = 63;                                                            % Assumption from slides
 %y_mg_max = 3;                                                                   % Limitations can arise due to structural constraints

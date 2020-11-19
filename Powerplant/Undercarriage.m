@@ -1,5 +1,5 @@
-function[] = Undercarriage(W0, WF6, x_cg_max, x_cg_min, y_cg, z_cg_max, z_cg_min, ...
-    Length_ac, x_ng_min, x_fuse_tapers, AoA_GroundMax, groundclearance, y_mg_max)
+%function[] = Undercarriage(W0, WF6, x_cg_max, x_cg_min, y_cg, z_cg_max, z_cg_min, ...
+   % Length_ac, x_ng_min, x_fuse_tapers, AoA_GroundMax, groundclearance, y_mg_max)
 
 %% Undercarriage
 
@@ -12,7 +12,7 @@ function[] = Undercarriage(W0, WF6, x_cg_max, x_cg_min, y_cg, z_cg_max, z_cg_min
 %close all
 
 %% Get data
-%load('../Initial Sizing/InitialSizing.mat', 'W0', 'WF6')
+load('../Initial Sizing/InitialSizing.mat', 'W0', 'WF6')
 disp(['The mass of aircraft is ', num2str(round(W0*2.20462262/9.81)), ' lbs'])
 
 %% Step 1: Assume tire pressure, number of u/c struts and wheels per strut
@@ -29,27 +29,27 @@ disp(['The mass of aircraft is ', num2str(round(W0*2.20462262/9.81)), ' lbs'])
 
 % Inputs 1: Assuming CG height and position
 
-%x_cg_max = 32;                                                                  % Allowing for the fact that CG approximations are not going to be accurate yet
-%x_cg_min = 30;                                                                  % See above
+x_cg_max = 32;                                                                  % Allowing for the fact that CG approximations are not going to be accurate yet
+x_cg_min = 30;                                                                  % See above
 x_cg_avg = (x_cg_max + x_cg_min)/2;                                             % If required
-%y_cg = 0;                                                                       % For completeness sake, should be zero for symmetric aircraft
-%z_cg_max = 3;                                                                   % Again allowing deviation
-%z_cg_min = 2;                                                                   % Value not really used tbh so might not be required
+y_cg = 0;                                                                       % For completeness sake, should be zero for symmetric aircraft
+z_cg_max = 3;                                                                   % Again allowing deviation
+z_cg_min = 2;                                                                   % Value not really used tbh so might not be required
 z_cg_avg = (z_cg_max + z_cg_min)/2;                                             % If required
 
 % Inputs 2: Assuming other inputs required to place u/c
 
-%Length_ac = 60;                                                                 % Only really relevant for plotting the graph within limits
+Length_ac = 60;                                                                 % Only really relevant for plotting the graph within limits
 W_NoseGear_Ratio_Max = 0.20;                                                    % Assumption from slides - to prevent overloading
 W_NoseGear_Ratio_Min = 0.05;                                                    % Assumption from slides - to prevent loss of steering friction
-%x_ng_min = 5;                                                                   % Foremost position of nose gear possible (based on nose and cockpit geometry)
-%x_fuse_tapers = 50;                                                             % Point where fuselage starts to taper upwards (for tailstrike calculations)
-%AoA_liftoff = 5;                                                                % Required to know largest angle encountered near ground (for tailstrike calculations)
-%AoA_landing = 2;                                                                % Angles given in degrees
-%AoA_GroundMax = max([AoA_landing, AoA_liftoff]);                                % Simplify
-%ground_clearance = 1.5;                                                         % Required for a lot of things, probably would need to be iterated within the code
+x_ng_min = 5;                                                                   % Foremost position of nose gear possible (based on nose and cockpit geometry)
+x_fuse_tapers = 50;                                                             % Point where fuselage starts to taper upwards (for tailstrike calculations)
+AoA_liftoff = 5;                                                                % Required to know largest angle encountered near ground (for tailstrike calculations)
+AoA_landing = 2;                                                                % Angles given in degrees
+AoA_GroundMax = max([AoA_landing, AoA_liftoff]);                                % Simplify
+ground_clearance = 1.5;                                                         % Required for a lot of things, probably would need to be iterated within the code
 overturn_angle = 63;                                                            % Assumption from slides
-%y_mg_max = 3;                                                                   % Limitations can arise due to structural constraints
+y_mg_max = 3;                                                                   % Limitations can arise due to structural constraints
 
 % Functions
 [x_NoseGear, x_MainGear] = PlaceMyUndercarriage(x_cg_max, x_cg_min, ...
@@ -128,4 +128,4 @@ disp(['The height of undercarriage is approx ', num2str( (MainOleo.TotalLength +
 % considered in the constraint diagram.
 
 
-end
+%end
