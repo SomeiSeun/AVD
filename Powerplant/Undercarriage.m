@@ -1,4 +1,4 @@
-%function[] = Undercarriage(W0, WF6, x_cg_max, x_cg_min, y_cg, z_cg_max, z_cg_min, ...
+function[] = Undercarriage(W0, WF6, x_cg_max, x_cg_min, y_cg, z_cg_max, z_cg_min, ...
     Length_ac, x_ng_min, x_fuse_tapers, AoA_GroundMax, groundclearance, y_mg_max)
 
 %% Undercarriage
@@ -128,4 +128,4 @@ disp(['The height of undercarriage is approx ', num2str( (MainOleo.TotalLength +
 % considered in the constraint diagram.
 
 
-%end
+end
