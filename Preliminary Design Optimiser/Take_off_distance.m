@@ -1,9 +1,8 @@
-function [S_to] = Take_off_distance(alpha_liftoff, V_stall_takeoff, V_S1, T, W_to, Cd0_takeoff, AR, e, Cl0, Cl_alpha, alpha_T0, L_over_D, S)
+function [S_to] = Take_off_distance(V_stall_takeoff, V_S1, T, W_to, Cd0_takeoff, AR, e, Cl0, L_over_D, S)
 
 % This function can be used to find the Take off distance for the aircraft.
 
 % The INPUTS are: (ALL IN SI UNITS)
-% alpha_liftoff is the AOA at start of lift off stage in radians
 % V_stall_takeoff is the stall velocity in take off config in m/s
 % V_S1 is the stall speed in clean config in m/s
 % T is the thrust at V_TR which is the velocity at end of transition phase in Newtons
@@ -12,8 +11,6 @@ function [S_to] = Take_off_distance(alpha_liftoff, V_stall_takeoff, V_S1, T, W_t
 % AR is Aspect Ratio
 % e is Oswald Efficiency
 % Cl0 is lift coefficient at 0 AOA
-% Cl_alpha is 3d lift curve slope of the aircraft
-% alpha_T0 is AOA of aircraft during take-off in radians
 % L_over_D is the lift to drag ratio at 1.15*V_S1 (V_TR)
 % S is the wing reference area in m^2
 
@@ -22,11 +19,9 @@ function [S_to] = Take_off_distance(alpha_liftoff, V_stall_takeoff, V_S1, T, W_t
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-d_theta_by_d_z = 0.03;           % Given in slides this value
 V_LOF = 1.1*V_stall_takeoff;     % Finding the Liftoff velocity
-alpha_G = 0;                     % This is the AOA when aircraft is on ground. Should be 0 deg in our case. 
 
-S_R = ((alpha_liftoff - alpha_G)/(d_theta_by_d_z))*V_LOF; % This gives the Rotation distance in metres
+S_R = 3 * V_LOF; % This gives the Rotation distance in metres
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -52,7 +47,7 @@ V_1 = 0;                                    % This is the starting velocity whic
 V_2 = V_LOF;                                % Lift off velocity
 mu = 0.05;                                  % Friction coefficient of tarmac
 K_T = (T/W_to) - mu;                        % A constant
-C_LTO = Cl0 + Cl_alpha * alpha_T0;          % Lift coefficient during take-off
+C_LTO = Cl0                                 % Lift coefficient during take-off
 K_A = (rho/(2*W_to/S))*((mu*C_LTO) - Cd0_takeoff - ((C_LTO)^2/(pi*AR*e))); 
 
 S_G = (1/(2*g*K_A))*ln((K_T + K_A*(V_2)^2)/(K_T + K_A*(V_1)^2));  % This is the Ground distance in metres
