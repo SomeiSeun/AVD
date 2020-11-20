@@ -60,6 +60,9 @@ S_exposed= Sref-WingArea_fuselage;
 S_wetted= S_exposed*(1.997+0.52*Airfoil_ThicknessRatio_used);            %check--> depends on t/c of airfoil
 
 
+%% wing incidence
+
+
 %% HLD selection: LE
 CLmax_required=2.2;
 CLmax_clean=1.283;
@@ -71,6 +74,4 @@ Sweep_hingeline_LE= Sweep_LE;
 deltaClmax_HLD_LE = Delta_CLmax/ (0.9*Sflapped_over_Sref*cosd(Sweep_hingeline_LE));
 
 % SLATS chosen as HLD at LE
-
-
 save('WingDesign.mat')
