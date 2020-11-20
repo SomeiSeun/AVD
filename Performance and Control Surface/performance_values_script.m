@@ -14,10 +14,9 @@ load('../Aerodynamics/AerodynamicsMain.mat');
 V_S1 = sqrt((2 * W0) / (1.225 * Sref * CL_max_clean_wing));   % Finding out the stall speed in clean config
 
 % This equation gives the Take off distance in metres
-S_to = Take_off_distance(alpha_liftoff, V_stall_takeoff, V_S1, T, W0,...
+S_to = Take_off_distance(V_stall_takeoff, V_S1, T, W0,...
     Cd0_takeoff, AspectRatio, e, Cl0, Cl_alpha, alpha_T0, L_over_D, Sref)    
-% ^ Values still needed: Cd0_takeoff, e, Cl0, Cl_alpha, alpha_liftoff,
-% V_stall_takeoff, T, alpha_T0, L_over_D
+% ^ Values still needed: Cd0_takeoff, e, Cl0, Cl_alpha, V_stall_takeoff, T, alpha_T0, L_over_D
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 W_L = W0 * WF8 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF9 * WF10;
@@ -38,8 +37,7 @@ BFL = Balanced_Field_Length(W0, Sref, Cl_TakeOff,...
 % ^ Values still needed: T_oei, D2, BPR, Cl_climb, T_takeoff_static
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% This section gives the Range, Endurance and Fuel Consumption for the 2
-% cruise phases
+% This section gives the Range, Endurance and Fuel Consumption for the 2 cruise phases
 
 W_ini_1 = W0 * WF1 * WF2 * WF3 * WF4;       % Weight at start of cruise 1 in Newtons
 W_fin_1 = W0 * WF1 * WF2 * WF3 * WF4 * WF5; % Weight at end of cruise 1 in Newtons
@@ -79,8 +77,7 @@ fprintf('The fuel consumption of the aircraft during Loiter is %f.\n',FC3);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% The equation below is used to find several variables during cruise 1
-% phase of the flight
+% The equation below is used to find several variables during cruise 1 phase of the flight
 
 W = W_ini_1;  % Weight of the aircraft at start of cruise 1
 
