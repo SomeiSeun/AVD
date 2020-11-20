@@ -6,7 +6,7 @@ clc
 close all
 
 %% Import data from initial sizing
-load('../Initial Sizing/InitialSizing.mat', 'ThrustToWeight', 'W0', 'C_Cruise', 'C_Divert', 'C_Loiter')
+load('../Initial Sizing/InitialSizing.mat', 'ThrustToWeight', 'W0', 'C_Cruise', 'C_Divert', 'C_Loiter', 'V_Cruise')
 
 %% Finding thrust required
 
@@ -204,4 +204,40 @@ L = Engine_Length * (SF^0.4);
 D_e = Engine_Diameter * (SF^0.5);
 D_f = 2.85 * (SF^0.5);
 W = Engine_Mass_Dry * (SF^1.1);
+
+disp(' ')
+disp('Using the Trent 1000-A as the basis engine to rubber size, we get: ')
+disp(['Mass = ', num2str(W), ' kg'])
+disp(['Length = ', num2str(L), ' m'])
+disp(['Diameter of engine = ', num2str(D_e), ' m'])
+disp(['Diameter of fan = ', num2str(D_f), ' m'])
+disp(['Area of fan = ', num2str( pi*(D_f/2)^2 ), ' m^2'])
+
+%% Capture area calculation
+
+% First method is a statistical approach. Here we find that A_c / mdot
+% should equal 0.36 for flight below Mach 1. mdot is approximated as
+% 0.183*D_i^2
+
+Capture_area_estimate = 3.6 * 0.183 * (D_f*39.3700787)^2 * 0.0006451600000025807; %sqm
+
+% Second method is based on the assumption that the inlet is aiming to slow
+% the flow down to Mach 0.4 to prevent supersonic blade tips. Also assume
+% that half the flow deceleration occurs before the inlet, which means at
+% cruise, inlet is receiving air at Mach 0.6 and slowing it down to Mach
+% 0.4
+A_engine = pi*(D_f/2)^2;
+A_throat = A_engine * ( (1/0.6) * ((1+0.2*(0.6)^2)/1.2)^3 )  /  ( (1/0.4) * ((1+0.2*(0.4)^2)/1.2)^3 ); %sqm
+
+disp(' ')
+disp(['Capture area estimate from statistical data = ', num2str(Capture_area_estimate), ' sqm'])
+disp(['Capture area estimate from compressible flow = ', num2str(A_throat), ' sqm'])
+
+Capture_radius = sqrt(A_throat/pi);
+Engine_radius = sqrt(A_engine/pi);
+Length_inlet = (Engine_radius - Capture_radius)/tand(10);
+
+disp(['Diffuser length from inlet to fan = ', num2str(Length_inlet), ' m'])
+
+
 
