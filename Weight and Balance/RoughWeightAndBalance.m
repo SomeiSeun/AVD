@@ -1,7 +1,11 @@
 %% Weight and Balance
 
 % This is a rough script which would be later used to properly make a
-% weight and balance code. 
+% weight and balance code.
+
+% Aims of this code:
+    % Ensure that the x cg is placed approximately at 30% MAC
+    % Sufficient static margin 
 
 %% Housekeeping
 clear
@@ -18,7 +22,9 @@ close all
 % y axis runs laterally (sideways)
 % z axis runs up
 
-% Placement of components then begins using this as the origin. 
+% Placement of components then begins using this as the origin. Placements
+% would be indicated by small x, y, z and centres of mass would be
+% indicated by capital X, Y, Z.
 
 x.origin = 0;
 y.origin = 0;
