@@ -48,7 +48,7 @@ BFL = Balanced_Field_Length(W0, Sref, Cl_TakeOff,...
 W_ini_1 = W0 * WF1 * WF2 * WF3 * WF4;       % Weight at start of cruise 1 in Newtons
 W_fin_1 = W0 * WF1 * WF2 * WF3 * WF4 * WF5; % Weight at end of cruise 1 in Newtons
 c_t1 = 14.10 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 1 in 1/second
-C_Dmin = 0.01783;                           % Just a random value for the time being
+C_Dmin = 0.01783;   % Just a random value for the time being
 [E1, R1, FC1] = Range(W_ini_1, rho_cruise, V_Cruise, Sref,...
     C_Dmin, c_t1, AspectRatio, W_fin_1, e_Cruise); 
 % ^ Values still needed: C_Dmin
@@ -97,8 +97,8 @@ W = W_ini_1;  % Weight of the aircraft at start of cruise 1
 % then used to find the Absolute and Service ceilings
 
 W_cruise = W_ini_1;  % Weight of aircraft at start of cruise 1
-[ROC_max, altitude] = climb(W_ini_1, C_Dmin, L_DMax, Sref);  
-% ^ Values still needed: C_Dmin, Thrust (Equation needed inside the function)
+[ROC_max, altitude] = climb(W_cruise, C_Dmin, L_DMax, Sref);  
+% ^ Values still needed: C_Dmin, Thrust
 
 figure 1
 plot(ROC_max, altitude, '-xr')
@@ -106,11 +106,11 @@ xlabel('Maximum Rate of Climb (feet/minute)');
 ylabel('Altitude (feet)');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% The equation below gives the Maximum aileron deflection and the time 
+Vs = sqrt((2 * ) / ())
+% The equation below gives the Maximum aileron deflection and the time
 % taken by the aircraft to achieve the max bank angle
-[t, Max_ail_def] = aileron_sizing_new(b, Sref, AspectRatio, TaperRatio, C_L_aw, VS0, Ixx, S_w, S_ht, S_vt)
-% ^ Values still needed: C_L_aw, Ixx, S_w, S_ht, S_vt
+[t, Max_ail_def] = aileron_sizing_new(b, Sref, AspectRatio, TaperRatio, C_L_aw, Vs, Ixx, S_w, S_ht, S_vt)
+% ^ Values still needed: C_L_aw, Ixx, S_w, S_ht, S_vt, Vs
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
