@@ -44,6 +44,6 @@ aftArea = 0.589 + 81.371;
 
 % Total
 totalLength = frontLength + aftLength + mainLength;
-totalArea = noseArea + mainArea + aftArea;
+totalArea = frontArea + mainArea + aftArea;
 
 save fuselageOutputs
