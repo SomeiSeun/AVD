@@ -34,7 +34,7 @@ Sweep_quarterchord= sweepConverter(29, 0, 0.25, AspectRatio, TaperRatio);%need t
 Sweep_TE= sweepConverter(29,0,1 ,AspectRatio, TaperRatio);
 Sweep_maxt= sweepConverter(29,0,0.349 ,AspectRatio, TaperRatio);
 Dihedral=5;             %degrees --> between 3 and 7; 5 chosen (midpoint)
-% Twist=                %use historical data for initial selection
+Twist=-3;                %use historical data for initial selection
 Wing_incidence =1;      %degrees --> initial approx as per Raymer
 
 
@@ -60,6 +60,9 @@ S_exposed= Sref-WingArea_fuselage;
 S_wetted= S_exposed*(1.997+0.52*Airfoil_ThicknessRatio_used);            %check--> depends on t/c of airfoil
 
 
+%% wing incidence
+i_w=2.28;
+
 %% HLD selection: LE
 CLmax_required=2.2;
 CLmax_clean=1.283;
@@ -71,6 +74,4 @@ Sweep_hingeline_LE= Sweep_LE;
 deltaClmax_HLD_LE = Delta_CLmax/ (0.9*Sflapped_over_Sref*cosd(Sweep_hingeline_LE));
 
 % SLATS chosen as HLD at LE
-
-
 save('WingDesign.mat')
