@@ -35,7 +35,7 @@ Sweep_TE= sweepConverter(29,0,1 ,AspectRatio, TaperRatio);
 Sweep_maxt= sweepConverter(29,0,0.349 ,AspectRatio, TaperRatio);
 Dihedral=5;             %degrees --> between 3 and 7; 5 chosen (midpoint)
 Twist=-3;                %use historical data for initial selection
-Wing_incidence =1;      %degrees --> initial approx as per Raymer
+Wing_incidence_initialapprox =1;      %degrees --> initial approx as per Raymer
 
 
 
@@ -61,7 +61,17 @@ S_wetted= S_exposed*(1.997+0.52*Airfoil_ThicknessRatio_used);            %check-
 
 
 %% wing incidence
-i_w=2.28;
+i_w_approx=2.28;
+
+%% wing incidence from Gudmundsson
+alpha_zl= -1.8; %zero lift AoA
+CL_alpha=6.7913; %lift curve slope
+fus_angle =1.5; %fuselage upsweep angle
+alpha_c=(1.1358e+06+1.1244e+06)/(CL_alpha*rho_cruise*(V_Cruise^2)*Sref) + alpha_zl;
+
+twist_correction=(1+2*TaperRatio)*(-3)/(3+3*TaperRatio);
+i_w_GMS=alpha_c+fus_angle-twist_correction;
+
 
 %% HLD selection: LE
 CLmax_required=2.2;
