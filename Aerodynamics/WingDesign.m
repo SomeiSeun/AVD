@@ -67,7 +67,7 @@ i_w=2.28;
 CLmax_required=2.2;
 CLmax_clean=1.283;
 Delta_CLmax=0.9170;
-
+%% everything below this TO CHANGE
 Sflapped_over_Sref=0.9; %HLD to cover 90% of LE
 Sweep_hingeline_LE= Sweep_LE;
 
