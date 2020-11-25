@@ -21,7 +21,7 @@ AR_HT = 4;    % Horizontal tailplane Aspect Ratio
 % C_avg_HT is average chord of Horizontal tail
 % C_avg_VT is average chord of Vertical tail
 
-S_HT_exposed = S_HT - (1.5 * 6);    % Very rough estimation for Exposed horizontal tail plane area
+S_HT_exposed = S_HT - 10.30103326;         % Exposed area of the horizontal tail plane
 
 TaperRatioTailplane = 0.4;                 % Taper Ratio is chosen to be 0.4 for both vertical and horizontal tail plane
 Horizontal_tailplane_sweep = Sweep_LE + 5; % Horizontal tail plane sweep in degrees
