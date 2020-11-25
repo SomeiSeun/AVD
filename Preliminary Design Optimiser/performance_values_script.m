@@ -6,7 +6,7 @@ clc
 % Loading in the relevant .mat files
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat');
-load('../Static Stability/tailplane_Sizing_variable_values.mat'); 
+load('tailplane_Sizing_variable_values.mat'); 
 load('../Aerodynamics/AerodynamicsMain.mat');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

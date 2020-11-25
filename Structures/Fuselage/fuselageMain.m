@@ -15,6 +15,22 @@ fusDiamInner = fusDiamOuter-wallThickness;
 
 % Front
 frontFR = 1.4;
+
+frontLength = 5.839;
+%{
+noseLength = 1.35;
+noseRadius = 0.816;
+
+
+cockpitLength = 2.58;
+
+entranceLength = 1.92;
+
+frontLength2 = noseLength + cockpitLength + entranceLength;
+%}
+cockpitArea = 48.777;
+noseArea = 5.046;
+
 frontLength = 1.4*fusDiamOuter;
 
 noseLength = 1.35;
@@ -26,12 +42,14 @@ cockpitArea = 48.777;
 entranceLength = 1.92;
 
 %frontLength2 = noseLength + cockpitLength + entranceLength;
+
 frontArea = noseArea + cockpitArea;
 
 
 
 % Main
-mainLength = 35.538; 
+
+mainLength = 36.538; 
 mainArea = 479.325;
 
 % Aft
@@ -41,6 +59,7 @@ aftArea = 0.589 + 81.371;
 
 % Total
 totalLength = frontLength + aftLength + mainLength;
-totalArea = noseArea + mainArea + aftArea;
+totalArea = frontArea + mainArea + aftArea;
+
 
 save fuselageOutputs
