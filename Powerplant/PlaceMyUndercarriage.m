@@ -1,4 +1,4 @@
-function[x_NoseGear, x_MainGear] = PlaceMyUndercarriage(x_cg_max, x_cg_min, z_cg_max, Length_ac, W_NoseGear_Ratio_Max, W_NoseGear_Ratio_Min, x_ng_min, x_fuse_tapers, AoA_liftoff, AoA_landing, ground_clearance, overturn_angle, y_mg_max)
+function[x_NoseGear, x_MainGear] = PlaceMyUndercarriage(x_cg_max, x_cg_min, z_cg_max, Length_ac, W_NoseGear_Ratio_Max, W_NoseGear_Ratio_Min, x_ng_min, x_fuse_tapers, AoA_liftoff, AoA_landing, ground_clearance, overturn_angle, y_mg_max, x_mgjoint_min, x_mgjoint_max)
 % This function is created in order to clean up the "main" undercarriage
 % script. It takes in the assumed inputs and calculates the appropriate
 % locations of the nose and main gears.
@@ -9,6 +9,8 @@ x_ng = 0:0.001:Length_ac;
 
 % Calculate constraining arrays using the formulae available
 x_ng_min = zeros(1, length(x_mg)) + x_ng_min;                                                                                   % For foremost nose gear position
+x_mgjoint_min = x_mgjoint_min + zeros(1, length(x_mg));                                                                         % For ensuring main gear is placed on spar
+x_mgjoint_max = x_mgjoint_max + zeros(1, length(x_mg));                                                                         % For ensuring main gear is placed on spar
 Const_Max_NoseGearRatio = (x_cg_min - x_mg + W_NoseGear_Ratio_Max .* x_mg)./W_NoseGear_Ratio_Max;                               % For the maximum possible nose gear load, consider the foremost cg position
 Const_Min_NoseGearRatio = (x_cg_max - x_mg + W_NoseGear_Ratio_Min .* x_mg)./W_NoseGear_Ratio_Min;                               % For the minimum possible nose gear load, consider the aftmost cg position
 x_mg_min = zeros(1, length(x_mg)) + x_fuse_tapers - ground_clearance/(tand(max([AoA_liftoff, AoA_landing])));                   % For preventing tailstrike due to liftoff or landing angles
@@ -29,6 +31,8 @@ Const_OptimumNoseGearRatio = (x_cg_max - x_mg + 0.08 .* x_mg)./0.08;            
 figure(1)
 plot(x_mg, x_ng, '--r', 'LineWidth', 1.5)                                                                                       % For ensuring tricycle configuration
 hold on
+plot(x_mgjoint_min, x_ng, '--k', 'LineWidth', 1.5)
+plot(x_mgjoint_max, x_ng, '--k', 'LineWidth', 1.5)
 plot(x_mg, x_ng_min, '--g', 'LineWidth', 1.5)
 plot(x_mg, Const_Min_NoseGearRatio, '--b', 'LineWidth', 1.5)
 plot(x_mg, Const_Max_NoseGearRatio, '--c', 'LineWidth', 1.5)
@@ -47,7 +51,7 @@ plot(x_mg, Const_OptimumNoseGearRatio, ':', 'LineWidth', 2)
 % plot(x_mg, x_ng_WWMGequalsWDNG_maxCG, ':', 'LineWidth', 1)
 
 % Graph settings
-legend('Tricycle arrangement (stay below)', 'Foremost nose gear placement (stay above)', 'Minimum nose gear load (stay right)', ...
+legend('Tricycle arrangement (stay below)', 'Spar', 'Spar', 'Foremost nose gear placement (stay above)', 'Minimum nose gear load (stay right)', ...
      'Maximum nose gear load (stay left)', 'Tailstrike prevention (stay right)', 'CG tipback prevention (stay right)', ...
      'Overturn prevention (stay within cone)', 'Overturn prevention (stay within cone)', 'Common (8%) load on nose gear')
 xlim([0 Length_ac])
