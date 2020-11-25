@@ -2,7 +2,7 @@
 % Enter values in the order: Main Wing, Fuselage, Nacelle, Horizontal Tail, Vertical Tail : 
 
 
-function [CD_Parasitic,CD_Parasitic_Total,CD_LandP,Re,Cfc]=Parasitic(rho,v,l,nu,M,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,SWET,Sref)
+function [CD_Parasitic,CD_Parasitic_Total,CD_LandP,Re,Cfc,FF]=Parasitic(rho,v,l,nu,M,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,SWET,Sref)
 %% Determine the Skin Friction Coefficient for Each Component
 Re=(rho.*v.*l)./nu;
 % %Define the skin roughness value for each component-depends of polish on
@@ -28,7 +28,7 @@ i=((0.6./xtocmax).*(ttoc));
 j=100.*(ttoc).^4;
 FF=(1+i+j).*(1.34.*((M).^0.18).*(cosd(theta_max)).^0.28);
 %For fuselage
-fd=fuselage_length/fuselage_diameter;
+fd=totalLength/fusDiamOuter;
 FF(2)=(1+(60/fd^3)+(fd/400));
 %For nacelle and smooth external store
 fn=nacelle_length/nacelle_diameter;
@@ -37,7 +37,7 @@ FF(3)=1+(0.35/fn);
 %% Component Interference Factors
 % Estimates have been made below: 
 
-Q=[1,1,1.3,1.045,1.045]; 
+Q=[1,1,1.2,1.035,1.035]; 
 
 %(fuselage has negligible interference)
 %Q_mainwing=1 (for a well filletted low wing)
