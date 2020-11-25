@@ -20,11 +20,13 @@
 %LCS with HLD
 
 
-function [CL_a,CL_max_clean,CL_a_flaps,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,sweepanglemax,Cl_am,chord_ratio,Cl_max,flapped_ratio,sweep_quarterchord,sweep_HLD)
+function [CL_a,CL_max_clean,CL_a_flaps,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,sweepanglemax,Cl_am,chord_ratio,Cl_max,flapped_ratio,sweep_quarterchord,sweep_HLD)
 beta=sqrt(1-(M).^2);% to account for compressibility effects;
 F=1.07*(1+(d/b))^2;
 % fuselage spillover lift factor
 eta=0.95;
+
+5.2087
 %eta=(beta*Cl_am)/2*pi; %airfoil efficiency factor
 a=2*pi*AspectRatio*1;
 B=((AspectRatio.*beta)/eta).^2;
