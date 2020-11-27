@@ -1,5 +1,5 @@
 function CMalphaf = fuselagePitchingMoment(lf, wf, cBarWing, Swing, xWing)
-%this function uses an imperical method to estimate the pitching moment
+%this function uses an emperical method to estimate the pitching moment
 %contribution by the fuselage - CMalphaf (1/rad)
 
 % INPUTS

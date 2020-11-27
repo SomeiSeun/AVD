@@ -74,23 +74,19 @@ vertRootLE = [0.8*totalLength, 0, fusDiamOuter/2];
 %aerodynamic centre positions of wing and tailplane
 wingAC = wingRootLE + aerodynamicCentre(cBarWing, wingSpan, taperWing, sweepWingLE, dihedralWing);
 horizAC = horizRootLE + aerodynamicCentre(cBarHoriz, spanHoriz, taperHoriz, sweepHorizLE, dihedralHoriz);
-
-temp = aerodynamicCentre(cBarVert, 2*heightVert, taperVert, sweepVertLE, dihedralVert);
-temp([2 3]) = temp([3 2]); %switching y and z coordinate because vertical tailplane is... vertical
-vertAC = vertRootLE + temp;
+vertAC = vertRootLE + aerodynamicCentre(cBarVert, 2*heightVert, taperVert, sweepVertLE, dihedralVert);
 
 %tailplane moment arms
-lHoriz = horizAC(1) - wingAC(1);
-lVert = vertAC(1) - wingAC(1);
-hHoriz = horizRootLE(3) - wingRootLE(3);
+lVert = 0.55*totalLength;
+lHoriz = 0.5*totalLength;
 
 
-%aircraft fuselage pitching moment contribution
-CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingAC(1));
+% %calculating aircraft fuselage pitching moment contribution
+% CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, xWing);
 
-%wing downwash on tailplane d(e)/d(alpha) 
-% downwash = downwash(lHoriz, hHoriz, wingSpan, sweepWingQC, ARwing, taperWing, CLalphaW, CLalphaW_M0);
-
+%calculating wing downwash on tailplane d(e)/d(alpha) 
+% downwash = downwash(lHoriz, hHoriz, wingSpan, quarterSweepWing, ARwing, taperWing, CLalphaW, CLalphaW_M0);
+% 
 % %power-off neutral point and static margin
 % xNPOff = neutralPoint(SWing, SHoriz, xWing, cBarWing, CLalphaH, CLalphaW, CMalphaF, VbarH, downwash, etaH);
 % KnOff = (xNPOff - xCG)/cBarWing;
@@ -99,4 +95,7 @@ CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wi
 % KnOn = KnOff - 0.02;
 % xNPPOn = KnOn*cBarW + xCG;
 
-save('tailplaneSizing.mat');
+% save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'dihedralHoriz', 'dihedralVert',...
+%     'sweepHorizLE', 'sweepHorizQC', 'sweepHorizTE', 'sweepVertLE', 'sweepVertQC', 'sweepVertTE',...
+%     'taperHoriz', 'taperVert', 'thicknessRatioHoriz', 'thicknessRatioVert', 'twistHoriz', 'twistVert',...
+%     'VbarH', 'VbarV', 'maxThicknessLocationHoriz', 'maxThicknessLocationVert');
