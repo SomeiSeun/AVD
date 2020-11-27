@@ -42,7 +42,7 @@ tip_chord=root_chord*TaperRatio;
 
 MAC= (2/3)*root_chord*(1+TaperRatio+TaperRatio^2)/(1+TaperRatio);
 y_MAC=(b/6)*(1+2*TaperRatio)/(1+TaperRatio);
-x_AC=y_MAC*tan(Sweep_quarterchord)+0.25*MAC;
+x_AC=y_MAC*tand(Sweep_quarterchord)+0.25*MAC;
 
 
 %various wing areas
@@ -51,8 +51,7 @@ fuselage_diameter= 4.175556; %from Structures
 c_fuselage = root_chord - fuselage_diameter*( tand(Sweep_LE) - tand(Sweep_TE) );
 WingArea_fuselage=0.5*fuselage_diameter*(root_chord+c_fuselage);
 S_exposed= Sref-WingArea_fuselage;
-S_wetted= S_exposed*(1.997+0.52*Airfoil_ThicknessRatio_used);            %check--> depends on t/c of airfoil
-
+S_wetted= S_exposed*(1.997+0.52*Airfoil_ThicknessRatio_used);            
 
 %% wing incidence
 i_w_approx=2.28;
