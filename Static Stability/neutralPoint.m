@@ -15,8 +15,8 @@ function xNP = neutralPoint(SWing, SHoriz, xWing, cBarW, CLalphaH, CLalphaW, CMa
 % lf - fuselage length (m)
 % wf - fuselage max width (m)
 
-CLalpha = CLalphaW + etaH*SHoriz/SWing*(1 - downwash)*CLalphaH;
+CLalpha = CLalphaW + etaH.*SHoriz./SWing.*(1 - downwash).*CLalphaH;
 
-xNP = xWing + etaH*VbarH*cBarW*CLalphaH/CLalpha*(1 - downwash) - CMalphaF/CLalpha;
+xNP = xWing + etaH.*VbarH.*cBarW.*CLalphaH./CLalpha.*(1 - downwash) - CMalphaF./CLalpha;
 end
 
