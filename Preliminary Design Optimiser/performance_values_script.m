@@ -109,8 +109,9 @@ ylabel('Altitude (feet)');
 
 % The equation below gives the Maximum aileron deflection and the time 
 % taken by the aircraft to achieve the max bank angle
-[t, Max_ail_def] = aileron_sizing_new(b, Sref, AspectRatio, TaperRatio, C_L_aw, VS0, Ixx, S_w, S_ht, S_vt)
-% ^ Values still needed: C_L_aw, Ixx, S_w, S_ht, S_vt
+[t, Max_ail_def] = aileron_sizing_new(b, Sref, AspectRatio,...
+    TaperRatio, CL_a_landing, VS0, Ixx, Sref, S_HT, S_VT)
+% ^ Values still needed: Ixx
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

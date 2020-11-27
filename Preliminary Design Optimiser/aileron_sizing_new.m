@@ -22,7 +22,7 @@ function [t, Max_ail_def] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx,
 
 rho = 1.225;         % Density of air at sea level in kg/m^3
 tau = 0.4;           % Aileron effectiveness parameter (Depends on the chord ratio of aileron to wing. In Control surface word document)
-y1 = 0.5 * b / 2;    % Setting the starting position for the aileron
+y1 = 0.6 * b / 2;    % Setting the starting position for the aileron
 y2 = 0.9 * b / 2;    % Setting the ending position for the aileron
 C_bar = b / AR;      % Finding out the variable to be used in line below
 
