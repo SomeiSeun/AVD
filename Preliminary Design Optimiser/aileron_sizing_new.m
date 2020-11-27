@@ -1,4 +1,4 @@
-function [t, Max_ail_def] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx, S_w, S_ht, S_vt)
+function [t, Max_ail_def, y1, y2] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx, S_w, S_ht, S_vt)
 
 % This function is used to size the aileron. 
 
@@ -17,6 +17,8 @@ function [t, Max_ail_def] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx,
 % The OUTPUTS are: (ALL SI UNITS)
 % t is the time taken by the aircraft to achieve bank angle in seconds
 % Max_ail_def is the maximum aileron deflection in degrees
+% y1 is the starting position of the aileron
+% y2 is the ending position of the aileron
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
