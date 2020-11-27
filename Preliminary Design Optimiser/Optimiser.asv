@@ -20,7 +20,7 @@ load('../Aerodynamics/wingDesign.mat')
 load('tailplane_Sizing_Variable_Values.mat')
 %=======
 load('../Static Stability/tailplaneSizing.mat')
-%>>>>>>> main
+>>>>>>> main
 load('../Aerodynamics/Unknowns.mat')                                        % This is just a bunch of values I am still waiting on...
 load('../Structures/Fuselage/fuselageOutputs.mat')      
 
