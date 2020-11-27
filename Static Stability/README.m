@@ -6,10 +6,10 @@ clc
 %% LOADING PARAMETERS
 
 %loading parameters from other scripts
-addpath('../Initial Sizing/', '../Xfoil/', '../Aerodynamics', '../Structures/Fuselage')
+addpath('../Initial Sizing/', '../Xfoil/', '../Structures/Fuselage/', '../Aerodynamics/', '../Preliminary Design Optimiser/')
 load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio')
 load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength')
-load('Aerodynamics.mat', 'CL_a', 'CL_ah', 'CL_av')
+load('../Preliminary Design Optimiser/Aerodynamics.mat', 'CL_a', 'CL_ah', 'CL_a_M0')
 
 %renaming wing parameters to avoid confusion with tailplane parameters
 SWing = Sref;
@@ -80,7 +80,7 @@ sweepVertTE = sweepConverter(sweepVertLE, 0, 1, ARvert, taperVert);
 %% WING AND TAIL PLACEMENT
 
 %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
-wingRootLE = [0.3*totalLength, 0, -0.8*fusDiamOuter/2];
+wingRootLE = [29 - 0.25*cBarWing, 0, -2];
 horizRootLE = [0.9*totalLength, 0, 0.6*fusDiamOuter/2];
 vertRootLE = [0.8*totalLength, 0, fusDiamOuter/2];
 
@@ -108,10 +108,10 @@ VbarV = lVert*SVert/(wingSpan*SWing);
 CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingAC(1));
 
 %wing downwash on tailplane d(e)/d(alpha) 
-% downwash = downwash(lHoriz, hHoriz, wingSpan, sweepWingQC, ARwing, taperWing, CL_a, CLalphaW_M0);
+downwash = downwash(lHoriz, hHoriz, wingSpan, sweepWingQC, ARwing, taperWing, CL_a, CL_a_M0);
 
-% %power-off neutral point and static margin
-% xNPOff = neutralPoint(SWing, SHoriz, wingAC(1), cBarWing, CL_ah, CL_a, CMalphaF, VbarH, downwash, etaH);
+%power-off neutral point and static margin
+xNPOff = neutralPoint(SWing, SHoriz, wingAC(1), cBarWing, CL_ah, CL_a, CMalphaF, VbarH, downwash, etaH);
 % KnOff = (xNPOff - xCG)/cBarWing;
 % 
 % %power-on static margin and neutral point
