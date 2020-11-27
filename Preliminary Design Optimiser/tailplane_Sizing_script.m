@@ -27,7 +27,7 @@ S_HT_exposed = S_HT - 10.30103326;         % Exposed area of the horizontal tail
 
 TaperRatioTailplane = 0.4;                   % Taper Ratio is chosen to be 0.4 for both vertical and horizontal tail plane
 Horizontal_tailplane_sweep = Sweep_LE + 5;   % Horizontal tail plane sweep in degrees
-Vertical_tailplane_sweep = Sweep_LE + 5;     % Vertical tail plane sweep in degrees
+Vertical_tailplane_sweep = Sweep_LE + 8;     % Vertical tail plane sweep in degrees
 twist_tailplane = 0;                         % 0 deg twist for both Horizontal and Vertical tail planes
 Dihedral_tailplane = 0;                      % 0 dihedral for both Horizontal and Vertical tail plane
 Vertical_tailplane_thickness_ratio = 0.12;   % Max thickness of NACA 0012 aerofoil
