@@ -5,8 +5,7 @@ clc
 
 %loading parameters from other scripts
 addpath('../Initial Sizing/', '../Xfoil/', '../Aerodynamics', '../Structures/Fuselage')
-load('InitialSizing.mat', 'W0', 'WingLoading', 'AspectRatio')
-load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral')
+load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio')
 load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength')
 
 %renaming wing parameters to avoid confusion with tailplane parameters
@@ -83,7 +82,6 @@ vertAC = vertRootLE + temp;
 lHoriz = horizAC(1) - wingAC(1);
 lVert = vertAC(1) - wingAC(1);
 hHoriz = horizRootLE(3) - wingRootLE(3);
-
 
 %aircraft fuselage pitching moment contribution
 CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingAC(1));
