@@ -16,7 +16,7 @@ close all
 %load('../Initial Sizing/InitialSizing.mat')
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat')
-load('../Static Stability/tailplane_Sizing_Variable_Values.mat')
+load('../Static Stability/tailplaneSizing.mat')
 load('../Aerodynamics/Unknowns.mat')                                        % This is just a bunch of values I am still waiting on...
 
 

@@ -1,12 +1,4 @@
 function [span, cRoot, cTip, cBar] = tailplaneSizing(Sref, AR, taper)
-% this function calculates the span and root, tip, and mean aerodynamic
-% chords for a given lifting surface with the following parameters
-%
-% INPUTS
-% Sref = reference planform area (m^2)
-% AR = wing aspect ratio b^2/Sref
-% taper = taper ratio cTip/cRoot
-
 
 %determining planform span
 span = sqrt(Sref*AR);
@@ -15,6 +7,8 @@ span = sqrt(Sref*AR);
 cRoot = 2*Sref/(span*(1+taper));
 cTip = cRoot*taper;
 cBar = 2/3*cRoot*(1+taper+taper^2)/(1+taper);
+
+
 end
 
 

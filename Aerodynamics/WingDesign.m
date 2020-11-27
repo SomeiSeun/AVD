@@ -42,7 +42,7 @@ tip_chord=root_chord*TaperRatio;
 
 MAC= (2/3)*root_chord*(1+TaperRatio+TaperRatio^2)/(1+TaperRatio);
 y_MAC=(b/6)*(1+2*TaperRatio)/(1+TaperRatio);
-x_AC=y_MAC*tan(Sweep_quarterchord)+0.25*MAC;
+x_AC=y_MAC*tand(Sweep_quarterchord)+0.25*MAC;
 
 
 %various wing areas
