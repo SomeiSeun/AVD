@@ -143,12 +143,29 @@ for i = 4000:length(y_mgjoint)
                 disp(['Overturn angle is ', num2str(atand( (h_cg*sqrt(y_mgjoint(i)^2+(x_mgjoint-x_ng(ii))^2))/(y_mgjoint(i)*(x_cgmin-x_ng(ii))))) ])
                 
                 % Calculate wheel loads
+                % Functions
+                [W_WheelMainGear, W_WheelNoseGear, W_DynamNoseGear, LbsReqMainGear, ...
+                    LbsReqNoseGearStatic, LbsReqNoseGearDynamic] = WheelLoads(W0, x_ng(ii), ...
+                    x_mgjoint, x_cgmin, x_cgmax, z_cg);
                 
+                % Outputs
+                disp(['Static load on nose gear is approx ', num2str(round(LbsReqNoseGearStatic)), ' lbs'])
+                disp(['Dynamic load on nose gear is approx ', num2str(round(LbsReqNoseGearDynamic)), ' lbs'])
+                disp(['Total load on nose gear is approx ', num2str(round(LbsReqNoseGearStatic + LbsReqNoseGearDynamic)), ' lbs'])
+                disp(['Static load on main gear is approx ', num2str(round(LbsReqMainGear)), ' lbs'])
                 
+                % Pick tires
+                [NoseWheel] = GimmeTiresRaymerForReal(LbsReqNoseGearStatic + LbsReqNoseGearDynamic, 3);
+                [MainWheel] = GimmeTiresRaymerForReal(LbsReqMainGear, 1);
+                disp(' ')
+                disp('Nose wheel selected: ')
+                disp(NoseWheel)
+                disp('Main wheel selected: ')
+                disp(MainWheel)
                 
-                
-                
-                
+                % Calculate maximum width of main u/c (aka height in fus)
+                % If max width too big, warn u/c failed due to engine
+                % clearance. If not too big, carry on with ACN PCN. 
                 
                 % Finalise the undercarriage
                 % To break out of outer nested loop

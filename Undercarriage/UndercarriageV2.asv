@@ -53,7 +53,7 @@ y_mgjoint = 0:0.001:10;
 
 error = 1;
 
-% Pick a y_mg (start lowest)
+% Pick a y_mg and proceed
 for i = 4000:length(y_mgjoint)
     
     % Specify details
@@ -123,32 +123,36 @@ for i = 4000:length(y_mgjoint)
             
             x_ng = x_ng_least:0.001:x_ng_most;
             
-            % Pick an x_ng
+            % Pick an x_ng and proceed
             for ii = 1:length(x_ng)
                 
                 % Calculate actual ground clearance achieved
                 h_cg = (y_mgjoint(i)*(x_cgmin-x_ng(ii))*tand(63)) / (sqrt(y_mgjoint(i)^2 + (x_mgjoint-x_ng(ii))^2));
                 grc_actual = h_cg-radius_fuselage-z_cg;
+                                
+                % Verification checks for constraints (just in case)
                 disp(' ')
-                disp(['Landing gear placement successful'])
+                disp('Landing gear placement successful')
                 disp(['Nose gear placed at ', num2str(x_ng(ii))])
                 disp(['Main gear placed at ', num2str(x_mgjoint)])
-                
-                % Verification checks for constraints (just in case)
-                disp(['Verifying placement selection'])
+                disp('Verifying placement selection')
                 disp(['Nose gear load ratio is ', num2str( (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint) )])
                 disp(['Tailstrike angle is ', num2str(atand( (grc_actual + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint) ))])
                 disp(['Tipback angle is ', num2str(atand( (x_mgjoint-x_cgmax)/h_cg ))])
                 disp(['Ground clearance is ', num2str(grc_actual)])
                 disp(['Overturn angle is ', num2str(atand( (h_cg*sqrt(y_mgjoint(i)^2+(x_mgjoint-x_ng(ii))^2))/(y_mgjoint(i)*(x_cgmin-x_ng(ii))))) ])
                 
-                % Finalise this undercarriage
+                % Calculate wheel loads
+                % Pick tires
+                % Calculate maximum width of main u/c (aka height in fus)
+                % If max width too big, warn u/c failed due to engine
+                % clearance. If not too big, carry on with ACN PCN. 
+                
+                % Finalise the undercarriage
+                % To break out of outer nested loop
                 error = 0;
-                % Break out of thi
-                
-                
+                % Break out of this loop
                 break
-                
             end
         end
     
