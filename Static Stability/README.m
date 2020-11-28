@@ -8,9 +8,9 @@ clf
 
 %loading parameters from other scripts
 addpath('../Initial Sizing/', '../Xfoil/', '../Structures/Fuselage/', '../Aerodynamics/', '../Preliminary Design Optimiser/')
-load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio')
-load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength')
-load('../Preliminary Design Optimiser/AerodynamicsFINAL.mat', 'CL_a', 'CL_ah', 'CL_a_M0')
+load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio', 'root_chord', 'tip_chord')
+load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength', 'aftLength', 'frontLength', 'mainLength')
+load('../Preliminary Design Optimiser/AerodynamicsFINAL.mat', 'CL_a_Total', 'CL_ah', 'CL_a_M0')
 
 %renaming wing parameters to avoid confusion with tailplane parameters
 SWing = Sref;
@@ -21,7 +21,9 @@ sweepWingQC = Sweep_quarterchord;
 taperWing = TaperRatio;
 sweepWingLE = Sweep_LE;
 dihedralWing = Dihedral;
-clear AspectRatio MAC b Sweep_quarterchord TaperRatio Sweep_LE Sref Dihedral
+cRootWing = root_chord;
+cTipWing = tip_chord;
+clear AspectRatio MAC b Sweep_quarterchord TaperRatio Sweep_LE Sref Dihedral root_chord tip_chord
 
 %% DEFINING TAILPLANE PARAMETERS
 
@@ -41,14 +43,14 @@ maxThicknessLocationHoriz = 0.3;
 maxThicknessLocationVert = 0.3;
 
 %tailplane parameters to optimse
-ARhoriz = 4; %typically 3-5 where AR = b^2/Sh and b is the tail span
+ARhoriz = 5; %typically 3-5 where AR = b^2/Sh and b is the tail span
 ARvert = 2; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
 taperHoriz = 0.4; %typically 0.3 - 0.5
 taperVert = 0.4; %typically 0.3 - 0.5
 % VbarH = 1; %horizontal volume coefficient estimates based off Raymer's historical data
 % VbarV = 0.09; %vertical volume coefficient estimates based off Raymer's historical data
-SHoriz = 60;
-SVert = 48;
+SHoriz = 70;
+SVert = 40;
 
 %% CALCULATING TAILPLANE GEOMETRY BASED ON PARAMETERS ABOVE
 
@@ -80,7 +82,6 @@ save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRoot
     'sweepVertQC', 'sweepVertTE', 'taperHoriz', 'taperVert', 'thicknessRatioHoriz', 'thicknessRatioVert',...
     'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert');
 
-tailplanePlot(spanHoriz, heightVert, sweepHorizLE, sweepVertLE, cRootHoriz, cRootVert, cTipHoriz, cTipVert)
 
 %% WING AND TAIL PLACEMENT
 
@@ -90,9 +91,9 @@ tailplanePlot(spanHoriz, heightVert, sweepHorizLE, sweepVertLE, cRootHoriz, cRoo
 % z-coordinate - measured from the fuselage centreline, +ve above the centreline
 
 %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
-wingRootLE = [0.3*totalLength, 0, -0.8*fusDiamOuter/2];
-horizRootLE = [0.9*totalLength, 0, 0.6*fusDiamOuter/2];
-vertRootLE = [0.8*totalLength, 0, fusDiamOuter/2];
+wingRootLE = [0.4*totalLength; 0; -0.8*fusDiamOuter/2];
+horizRootLE = [0.9*totalLength; 0; 0.6*fusDiamOuter/2];
+vertRootLE = [0.8*totalLength; 0; fusDiamOuter/2];
 
 %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
 wingAC = wingRootLE + aerodynamicCentre(cBarWing, wingSpan, taperWing, sweepWingLE, dihedralWing);
@@ -102,6 +103,13 @@ temp = aerodynamicCentre(cBarVert, 2*heightVert, taperVert, sweepVertLE, dihedra
 temp([2 3]) = temp([3 2]); %switching y and z coordinate for vertical tailplane
 vertAC = vertRootLE + temp;
 clear temp
+
+%% PLOTTING TAILPLANE AND WING GEOMETRY AND PLACEMENT
+wingPlanform = wingRootLE + tailplanePlanform(wingSpan, sweepWingLE, cRootWing, cTipWing, dihedralWing, false);
+horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHoriz, cTipHoriz, dihedralHoriz, false);
+vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
+
+tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter)
 
 %% STABILITY ANALYSIS
 
@@ -115,13 +123,13 @@ VbarH = lHoriz*SHoriz/(cBarWing*SWing);
 VbarV = lVert*SVert/(wingSpan*SWing);
 
 %aircraft fuselage pitching moment contribution
-CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingAC(1));
+CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cBarWing);
 
 %wing downwash on tailplane d(e)/d(alpha) 
-downwash = downwash(lHoriz, hHoriz, wingSpan, sweepWingQC, ARwing, taperWing, CL_a, CL_a_M0);
+downwash = downwash(lHoriz, hHoriz, wingSpan, sweepWingQC, ARwing, taperWing, CL_a_Total, CL_a_M0);
 
 %power-off neutral point and static margin
-xNPOff = neutralPoint(SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a, CMalphaF, downwash, etaH);
+xNPOff = neutralPoint(SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH)
 % KnOff = (xNPOff - xCG)/cBarWing;
 % 
 % %power-on static margin and neutral point
@@ -129,5 +137,9 @@ xNPOff = neutralPoint(SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_
 % xNPPOn = KnOn*cBarW + xCG;
 
 %% TRIM ANALYSIS
+
+
+
+
 
 
