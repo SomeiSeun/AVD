@@ -2,7 +2,7 @@
 %static stability analysis and then trim analysis
 clear
 clc
-clf
+close all
 
 %% LOADING PARAMETERS
 
@@ -10,7 +10,7 @@ clf
 addpath('../Initial Sizing/', '../Xfoil/', '../Structures/Fuselage/', '../Aerodynamics/', '../Preliminary Design Optimiser/')
 load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio', 'root_chord', 'tip_chord')
 load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength', 'aftLength', 'frontLength', 'mainLength')
-load('../Preliminary Design Optimiser/AerodynamicsFINAL.mat', 'CL_a_Total', 'CL_ah', 'CL_a_M0')
+load('AerodynamicsFINAL.mat', 'CL_a_Total', 'CL_ah', 'CL_a_M0')
 
 %renaming wing parameters to avoid confusion with tailplane parameters
 SWing = Sref;
@@ -44,13 +44,13 @@ maxThicknessLocationVert = 0.3;
 
 %tailplane parameters to optimse
 ARhoriz = 5; %typically 3-5 where AR = b^2/Sh and b is the tail span
-ARvert = 2; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
-taperHoriz = 0.4; %typically 0.3 - 0.5
-taperVert = 0.4; %typically 0.3 - 0.5
+ARvert = 1.8; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
+taperHoriz = 0.3; %typically 0.3 - 0.5
+taperVert = 0.3; %typically 0.3 - 0.5
 % VbarH = 1; %horizontal volume coefficient estimates based off Raymer's historical data
 % VbarV = 0.09; %vertical volume coefficient estimates based off Raymer's historical data
 SHoriz = 70;
-SVert = 40;
+SVert = 35;
 
 %% CALCULATING TAILPLANE GEOMETRY BASED ON PARAMETERS ABOVE
 
@@ -68,11 +68,13 @@ SVertWetted = SVertExposed*(1.977 + 0.52*thicknessRatioVert);
 %...for horizongtal tailplane
 sweepHorizLE = sweepWingLE + 5;
 sweepHorizQC = sweepConverter(sweepHorizLE, 0, 0.25, ARhoriz, taperHoriz);
+sweepHorizMT = sweepConverter(sweepHorizLE, 0, maxThicknessLocationHoriz, ARhoriz, taperHoriz);
 sweepHorizTE = sweepConverter(sweepHorizLE, 0, 1, ARhoriz, taperHoriz);
 
 %...for vertical tailplane
-sweepVertLE = sweepWingLE + 8;
+sweepVertLE = sweepWingLE + 12;
 sweepVertQC = sweepConverter(sweepVertLE, 0, 0.25, 2*ARvert, taperVert);
+sweepVertMT = sweepConverter(sweepVertLE, 0, maxThicknessLocationVert, 2*ARhoriz, taperVert);
 sweepVertTE = sweepConverter(sweepVertLE, 0, 1, 2*ARvert, taperVert);
 
 save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRootHoriz', 'cBarVert',...
@@ -80,7 +82,7 @@ save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRoot
     'NACAhoriz', 'NACAvert', 'SHoriz', 'SHorizExposed', 'SHorizWetted', 'spanHoriz', 'SVert',...
     'SVertExposed', 'SVertWetted', 'sweepHorizLE', 'sweepHorizQC', 'sweepHorizTE', 'sweepVertLE',...
     'sweepVertQC', 'sweepVertTE', 'taperHoriz', 'taperVert', 'thicknessRatioHoriz', 'thicknessRatioVert',...
-    'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert');
+    'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert', 'sweepHorizMT', 'sweepVertMT');
 
 
 %% WING AND TAIL PLACEMENT
@@ -91,8 +93,8 @@ save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRoot
 % z-coordinate - measured from the fuselage centreline, +ve above the centreline
 
 %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
-wingRootLE = [0.4*totalLength; 0; -0.8*fusDiamOuter/2];
-horizRootLE = [0.9*totalLength; 0; 0.6*fusDiamOuter/2];
+wingRootLE = [0.35*totalLength; 0; -0.8*fusDiamOuter/2];
+horizRootLE = [0.88*totalLength; 0; 0.6*fusDiamOuter/2];
 vertRootLE = [0.8*totalLength; 0; fusDiamOuter/2];
 
 %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
@@ -119,8 +121,8 @@ lVert = vertAC(1) - wingAC(1);
 hHoriz = horizRootLE(3) - wingRootLE(3);
 
 %tailplane volume coefficients
-VbarH = lHoriz*SHoriz/(cBarWing*SWing);
-VbarV = lVert*SVert/(wingSpan*SWing);
+VbarH = lHoriz*SHoriz/(cBarWing*SWing)
+VbarV = lVert*SVert/(wingSpan*SWing)
 
 %aircraft fuselage pitching moment contribution
 CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cBarWing);

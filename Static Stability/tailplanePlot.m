@@ -25,8 +25,9 @@ title('Reference Lifting Surfaces - Top View')
 xlabel('x-direction (m)')
 ylabel('y-direction (m)')
 fig1.Units = 'normalized';
-fig1.Position = [0.1 0.5 0.3 0.4];
+fig1.Position = [0 0.05 0.5 0.85];
 axis equal
+hold off
 
 %plotting side view
 fig2 = figure(2);
@@ -39,13 +40,16 @@ plot(frontLength - frontCoords(1,:), frontCoords(2,:), 'k-') %fuselage front
 plot(horizPlanform(1,:), horizPlanform(3,:), 'bo-') %wing
 plot(wingPlanform(1,:), wingPlanform(3,:), 'ko-') %horizontal stabiliser
 plot(vertPlanform(1,:), vertPlanform(3,:), 'r-') %vertical tail
+plot([horizPlanform(1,1), horizPlanform(1,1)+10*cosd(60)], [horizPlanform(3,1), horizPlanform(3,1)+10*sind(60)], 'm:') %60 degree line
+%plot([horizPlanform(1,4), horizPlanform(1,4)+10*cosd(30)], [horizPlanform(3,4), horizPlanform(3,4)+10*sind(30)], 'm:') %30 degree line
 grid minor
 title('Reference Lifting Surfaces - Side View')
 xlabel('x-direction (m)')
 ylabel('z-direction (m)')
 fig2.Units = 'normalized';
-fig2.Position = [0.4 0.5 0.3 0.4];
+fig2.Position = [0.5 0.5 0.5 0.4];
 axis equal
+hold off
 
 %plotting front view
 fig3 = figure(3);
@@ -61,7 +65,8 @@ title('Reference Lifting Surfaces - Front View')
 xlabel('y-direction (m)')
 ylabel('z-direction (m)')
 fig3.Units = 'normalized';
-fig3.Position = [0.7 0.5 0.3 0.4];
+fig3.Position = [0.5 0.05 0.5 0.4];
 axis equal
+hold off
 end
 
