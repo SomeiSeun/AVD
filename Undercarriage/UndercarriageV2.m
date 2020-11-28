@@ -54,17 +54,18 @@ y_mgjoint = 0:0.001:10;
 error = 1;
 
 % Pick a y_mg and proceed
-for i = 4000:length(y_mgjoint)
+for i = 1:length(y_mgjoint)
     
     % Specify details
-    disp(['Trying y_mg = ', num2str(y_mgjoint(i))])
+    disp(['Trying y_mg = ', num2str(y_mgjoint(i)), ':'])
     
     % Calculate x_mgjoint and z_mgjoint
     x_rearspar = x_wingroot + length_rootchord*(chord_rearspar - 0.25)*cosd(theta_setting);
     z_rearspar = z_wingroot - length_rootchord*(chord_rearspar - 0.25)*sind(theta_setting);
     x_mgjoint = x_rearspar + y_mgjoint(i)*( tand(theta_sweeprearspar)*cosd(theta_setting) + tand(theta_dihedral)*sind(theta_setting) );
     z_mgjoint = z_rearspar + y_mgjoint(i)*( -tand(theta_sweeprearspar)*sind(theta_setting) + tand(theta_dihedral)*cosd(theta_setting) );
-    disp(['Main gear joint xpos is ', num2str(x_mgjoint)])
+    disp(['Main gear joint xpos is therefore ', num2str(x_mgjoint)])
+    disp(' ')
     
     % Find tricycle constraint
     x_ng_tricycle_less = x_mgjoint;
@@ -94,6 +95,7 @@ for i = 4000:length(y_mgjoint)
     if grc_min > min(grc_max, y_mgjoint(i) + z_mgjoint)
         
         disp('Gear will be too large to fit in fuselage')
+        pause(0.0001)
         clc
         
     else
@@ -117,6 +119,7 @@ for i = 4000:length(y_mgjoint)
         if x_ng_least > x_ng_most
             
             disp('Nose gear cannot be placed')
+            pause(0.001)
             clc
             
         else
@@ -132,15 +135,17 @@ for i = 4000:length(y_mgjoint)
                                 
                 % Verification checks for constraints (just in case)
                 disp(' ')
-                disp('Landing gear placement successful')
+                disp('Landing gear potential placement found:')
                 disp(['Nose gear placed at ', num2str(x_ng(ii))])
                 disp(['Main gear placed at ', num2str(x_mgjoint)])
-                disp('Verifying placement selection')
+                disp(' ')
+                disp('Verifying placement selection:')
                 disp(['Nose gear load ratio is ', num2str( (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint) )])
                 disp(['Tailstrike angle is ', num2str(atand( (grc_actual + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint) ))])
                 disp(['Tipback angle is ', num2str(atand( (x_mgjoint-x_cgmax)/h_cg ))])
                 disp(['Ground clearance is ', num2str(grc_actual)])
                 disp(['Overturn angle is ', num2str(atand( (h_cg*sqrt(y_mgjoint(i)^2+(x_mgjoint-x_ng(ii))^2))/(y_mgjoint(i)*(x_cgmin-x_ng(ii))))) ])
+                disp(' ')
                 
                 % Calculate wheel loads
                 % Functions
@@ -149,6 +154,7 @@ for i = 4000:length(y_mgjoint)
                     x_mgjoint, x_cgmin, x_cgmax, z_cg);
                 
                 % Outputs
+                disp('Loads required to carry by landing gears:')
                 disp(['Static load on nose gear is approx ', num2str(round(LbsReqNoseGearStatic)), ' lbs'])
                 disp(['Dynamic load on nose gear is approx ', num2str(round(LbsReqNoseGearDynamic)), ' lbs'])
                 disp(['Total load on nose gear is approx ', num2str(round(LbsReqNoseGearStatic + LbsReqNoseGearDynamic)), ' lbs'])
