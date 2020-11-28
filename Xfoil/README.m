@@ -2,7 +2,7 @@ clear
 clc
 clf
 
-NACA = 2412;
+NACA = '2412';
 numNodes = 300;
 Mach = 0.6;
 RE = 1e6;

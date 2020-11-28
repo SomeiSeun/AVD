@@ -14,9 +14,9 @@ fusDiamOuter = fusDiamOuterfeet*12*2.54/100; % in m
 fusDiamInner = fusDiamOuter-wallThickness;
 
 % Front
-frontFR = 1.4;
+frontFR = 1.3;
 
-frontLength = 5.839;
+frontLength = frontFR*fusDiamOuter;
 %{
 noseLength = 1.35;
 noseRadius = 0.816;
@@ -31,9 +31,9 @@ frontLength2 = noseLength + cockpitLength + entranceLength;
 cockpitArea = 48.777;
 noseArea = 5.046;
 
-frontLength = 1.4*fusDiamOuter;
+%frontLength = 1.4*fusDiamOuter;
 
-noseLength = 1.35;
+noseLength = 0.93;
 noseRadius = 0.816;
 noseArea = 5.046;
 

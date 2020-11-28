@@ -1,4 +1,4 @@
-function [t, Max_ail_def] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx, S_w, S_ht, S_vt)
+function [t, Max_ail_def, y1, y2] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx, S_w, S_ht, S_vt)
 
 % This function is used to size the aileron. 
 
@@ -17,12 +17,14 @@ function [t, Max_ail_def] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx,
 % The OUTPUTS are: (ALL SI UNITS)
 % t is the time taken by the aircraft to achieve bank angle in seconds
 % Max_ail_def is the maximum aileron deflection in degrees
+% y1 is the starting position of the aileron
+% y2 is the ending position of the aileron
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 rho = 1.225;         % Density of air at sea level in kg/m^3
 tau = 0.4;           % Aileron effectiveness parameter (Depends on the chord ratio of aileron to wing. In Control surface word document)
-y1 = 0.5 * b / 2;    % Setting the starting position for the aileron
+y1 = 0.6 * b / 2;    % Setting the starting position for the aileron
 y2 = 0.9 * b / 2;    % Setting the ending position for the aileron
 C_bar = b / AR;      % Finding out the variable to be used in line below
 
