@@ -41,8 +41,8 @@ upsweep_angle=15*(pi/180);
 % Aerodynamic Lift- lift curve slope and clmax for clean config determined. HLD effects remain
 % but as values are updated/changed, outputs below should change :)
                                                                     
-[CL_a,CL_max_clean,CL_aflaps,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,Sweep_maxt,Cl_am,chord_ratio,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
-% [CL_ah,CL_max_h]=WingLift(AR_HT,S_HT_exposed,S_HT,d,b_HT,M,Sweep_maxth,10.5214,0,Cl_tail_airfoil,0,Sweep_quarterchord_HT,0);
+[CL_a,CL_max_clean,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,Sweep_maxt,Cl_am,chord_ratio,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
+CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CL_ah,CL_max_h]=TailLift(AR_HT,d,b_HT,M,Sweep_maxth,10.5214,Cl_tail_airfoil,Sweep_quarterchord_HT);
 [CL_a_M0]=WingLift(AspectRatio,S_exposed,Sref,d,b,0,Sweep_maxt,Cl_am,chord_ratio,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
 %Aerodynamic Drag (Cruise Conditions)
@@ -55,7 +55,7 @@ upsweep_angle=15*(pi/180);
 %[] = undercarriage()
 
 %% Once everything converges, populate the csv
-save('AerodynamicsFINAL.mat','CL_a','CL_ah','CL_a_M0','CL_max_clean','CL_aflaps','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h')
+save('AerodynamicsFINAL.mat','CL_a_Total','CL_ah','CL_a_M0','CL_max_clean','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h')
 % write values to csv
 % for fusion
 
