@@ -42,7 +42,7 @@ upsweep_angle=15*(pi/180);
 % but as values are updated/changed, outputs below should change :)
                                                                     
 [CL_a,CL_max_clean,CL_aflaps,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,Sweep_maxt,Cl_am,chord_ratio,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
-[CL_ah,CL_max_cleanh,CL_aflapsh,delta_alpha_takeoffh,delta_alpha_landingh,delta_CL_maxh,CL_max_takeoffh,CL_max_landingh]=WingLift(AR_HT,S_HT_exposed,S_HT,d,b_HT,M,Sweep_maxth,Cl_am,0,Cl_tail_airfoil,0,Sweep_quarterchord_HT,0);
+[CL_ah,CL_max_h]=WingLift(AR_HT,S_HT_exposed,S_HT,d,b_HT,M,Sweep_maxth,Cl_am,0,Cl_tail_airfoil,0,Sweep_quarterchord_HT,0);
 [CL_a_M0]=WingLift(AspectRatio,S_exposed,Sref,d,b,0,Sweep_maxt,Cl_am,chord_ratio,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
 %Aerodynamic Drag (Cruise Conditions)
 [C_Duc_cruise,C_Dflaps_takeoff,C_Dflaps_landing,C_Dwe_cruise,C_Dfu_cruise]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,d,upsweep_angle);
