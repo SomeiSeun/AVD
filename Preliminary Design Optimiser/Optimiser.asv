@@ -16,7 +16,11 @@ close all
 %load('../Initial Sizing/InitialSizing.mat')
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat')
+%<<<<<<< HEAD
+% load('tailplane_Sizing_Variable_Values.mat')
+%=======
 load('../Static Stability/tailplaneSizing.mat')
+%>>>>>>> main
 load('../Aerodynamics/Unknowns.mat')                                        % This is just a bunch of values I am waiting on
 load('../Structures/Fuselage/fuselageOutputs.mat')      
 
