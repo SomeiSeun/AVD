@@ -10,7 +10,7 @@ clf
 addpath('../Initial Sizing/', '../Xfoil/', '../Structures/Fuselage/', '../Aerodynamics/', '../Preliminary Design Optimiser/')
 load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio')
 load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength')
-load('../Preliminary Design Optimiser/Aerodynamics.mat', 'CL_a', 'CL_ah', 'CL_a_M0')
+load('../Preliminary Design Optimiser/AerodynamicsFINAL.mat', 'CL_a', 'CL_ah', 'CL_a_M0')
 
 %renaming wing parameters to avoid confusion with tailplane parameters
 SWing = Sref;
