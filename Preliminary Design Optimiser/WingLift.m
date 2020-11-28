@@ -25,7 +25,7 @@ beta=sqrt(1-(M).^2);% to account for compressibility effects;
 F=1.07*(1+(d/b))^2;
 % fuselage spillover lift factor
 eta=0.95;
-%eta=(beta*Cl_am)/2*pi; %airfoil efficiency factor
+etah=(beta*Cl_am)/2*pi; %airfoil efficiency factor
 a=2*pi*AspectRatio*1;
 B=((AspectRatio.*beta)/eta).^2;
 c=(1+(tand(sweepanglemax)./beta).^2);
