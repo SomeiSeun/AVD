@@ -1,0 +1,99 @@
+ %% PLEASE DO NOT MODIFY OR DELETE THIS FILE! %% 
+ %% This file contains information about the installation of an application. %% 
+ %% It will be used to automatically remove all application components from your computer if you choose to do so. %% 
+
+
+NOTE: Beginning of the bootstrapper section
+
+CONFIG: Title: "COMFAA 30"
+
+ACTION: RegKey: "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "SharedDLLs"
+
+ACTION: SystemFile: "C:\Windows\System32\VB6STKIT.DLL"
+(File was not found or was an older version -- new file copied)
+
+ACTION: SystemFile: "C:\WINDOWS\SYSTEM32\COMCAT.DLL"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\WINDOWS\SYSTEM32\STDOLE2.TLB"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\WINDOWS\SYSTEM32\ASYCFILT.DLL"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\WINDOWS\SYSTEM32\OLEPRO32.DLL"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\WINDOWS\SYSTEM32\OLEAUT32.DLL"
+(File currently on disk was already up to date)
+
+ACTION: SystemFile: "C:\WINDOWS\SYSTEM32\msvbvm60.dll"
+(File currently on disk was already up to date)
+
+ACTION: DllSelfRegister: "C:\WINDOWS\SYSTEM32\COMCAT.DLL"
+
+ACTION: TLBRegister: "C:\WINDOWS\SYSTEM32\STDOLE2.TLB"
+
+ACTION: DllSelfRegister: "C:\WINDOWS\SYSTEM32\OLEPRO32.DLL"
+
+ACTION: DllSelfRegister: "C:\WINDOWS\SYSTEM32\OLEAUT32.DLL"
+
+ACTION: DllSelfRegister: "C:\WINDOWS\SYSTEM32\msvbvm60.dll"
+
+NOTE: End of the bootstrapper section
+
+NOTE: Now spawning the main Setup program 'Setup1.exe'....
+
+ACTION: CreateDir: "C:\Program Files (x86)\COMFAA 30"
+
+ACTION: PrivateFile: "C:\Program Files (x86)\COMFAA 30\Readme.txt"
+(File was not found or was an older version -- new file copied)
+
+ACTION: PrivateFile: "C:\Program Files (x86)\COMFAA 30\COMFAAaircraft.Ext"
+(File was not found or was an older version -- new file copied)
+
+ACTION: SharedFile: "C:\Windows\System32\hh.exe"
+(File currently on disk was already up to date)
+
+ACTION: SharedFile: "C:\Windows\System32\itircl.dll"
+(File currently on disk was already up to date)
+
+ACTION: SharedFile: "C:\Windows\System32\itss.dll"
+(File currently on disk was already up to date)
+
+ACTION: SharedFile: "C:\Windows\System32\hhctrl.ocx"
+(File currently on disk was already up to date)
+
+ACTION: PrivateFile: "C:\Program Files (x86)\COMFAA 30\COMFAA.chm"
+(File was not found or was an older version -- new file copied)
+
+ACTION: SharedFile: "C:\Windows\System32\Comdlg32.ocx"
+(File was not found or was an older version -- new file copied)
+
+ACTION: SharedFile: "C:\Windows\System32\MSCOMCTL.OCX"
+(File was not found or was an older version -- new file copied)
+
+ACTION: SharedFile: "C:\Windows\System32\Msflxgrd.ocx"
+(File was not found or was an older version -- new file copied)
+
+ACTION: PrivateFile: "C:\Program Files (x86)\COMFAA 30\COMFAA 30.exe"
+(File was not found or was an older version -- new file copied)
+
+ACTION: DllSelfRegister: "C:\Windows\System32\itircl.dll"
+
+ACTION: DllSelfRegister: "C:\Windows\System32\itss.dll"
+
+ACTION: DllSelfRegister: "C:\Windows\System32\hhctrl.ocx"
+
+ACTION: DllSelfRegister: "C:\Windows\System32\Comdlg32.ocx"
+
+ACTION: DllSelfRegister: "C:\Windows\System32\MSCOMCTL.OCX"
+
+ACTION: DllSelfRegister: "C:\Windows\System32\Msflxgrd.ocx"
+
+ACTION: ShellLink: "$(Programs)", "COMFAA 30"
+
+ACTION: RegKey: "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion", "App Paths\COMFAA 30.exe"
+
+ACTION: RegValue: "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\COMFAA 30.exe", ""
+

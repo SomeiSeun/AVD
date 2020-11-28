@@ -119,7 +119,7 @@ for i = 1:length(y_mgjoint)
         if x_ng_least > x_ng_most
             
             disp('Nose gear cannot be placed')
-            pause(0.001)
+            pause(0.00001)
             clc
             
         else
@@ -193,4 +193,9 @@ for i = 1:length(y_mgjoint)
     clc
     
 end
-    
+
+%% Shenanigans
+%COMFAAInput = 'COMFAAaircraft.Ext'
+%cmd = ['COMFAA.exe < ' COMFAAInput]
+%!COMFAA.exe
+%unix command check it out
