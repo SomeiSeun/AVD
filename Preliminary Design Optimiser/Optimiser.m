@@ -57,7 +57,7 @@ C_D0=CD_Parasitic_Total+CD_misc+CD_LandP_Total;
 %[] = undercarriage()
 
 %% Once everything converges, populate the csv
-save('AerodynamicsFINAL.mat','CL_a_Total','CL_ah','CL_a_M0','CL_max_clean','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h')
+save('AerodynamicsFINAL.mat','CL_a_Total','CL_ah','CL_a_M0','CL_max_clean','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h','CD_Total')
 % write values to csv
 % for fusion
 
