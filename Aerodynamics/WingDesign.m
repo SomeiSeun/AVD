@@ -1,7 +1,7 @@
 %code for wing design and parameters 
+%Anudi Bandara - Nov 2020
 clear 
 clc
-
 %% load values from Palash's script
 load('../Initial Sizing/InitialSizing.mat', 'AspectRatio', 'W0', 'WingLoading', 'ThrustToWeight', 'V_Cruise')
 %variables loaded include the design point, aspect ratio, takeoff weight,
@@ -13,8 +13,7 @@ q_cruise=0.5*rho_cruise*V_Cruise^2;
 Cl_design_sectional = WingLoading/q_cruise;
 
 %% airfoil
-Airfoil_ThicknessRatio_Required=0.138; %from historical trend line in Raymer (this is the value
-% for the airfoil and not planform)
+Airfoil_ThicknessRatio_Required=0.138; %from historical trend line in Raymer- initial approximation to shortlist airfoils
 
 Airfoil_ThicknessRatio_used =0.15; %depends on the airfoil selected. For NACA 64215 t/c=0.15
 
@@ -54,9 +53,8 @@ S_exposed= Sref-WingArea_fuselage;
 S_wetted= S_exposed*(1.997+0.52*Airfoil_ThicknessRatio_used);            
 
 %% wing incidence
-i_w_approx=2.28;
-
-
+i_w_root=2.3;
+i_w_tip=i_w_root-Twist;
 %% HLDs
 CLmax_required=2.2;
 CLmax_clean=1.283;
