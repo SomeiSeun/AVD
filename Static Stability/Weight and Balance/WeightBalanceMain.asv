@@ -1,0 +1,41 @@
+%% Chai-liner W&B Code
+% Written by Tanmay Ubgade 201122
+%% Housekeeping
+clear
+clc
+close all
+
+% loading parameters from other analyses
+addpath('../../Initial Sizing/', '../../Structures/Fuselage/', '../../Aerodynamics/', '../../Static Stability')
+load('InitialSizing.mat', 'W0')
+load('wingDesign.mat', 'Sref', 'AspectRatio', 'Sweep_quarterchord', 'Airfoil_ThicknessRatio_used', )
+% load('fuselageOutputs.mat')
+load('tailplaneSizing.mat')
+
+%renaming wing parameters to avoid confusion with tailplane parameters
+SWing = Sref;
+ARwing = AspectRatio;
+sweepWingQC = Sweep_quarterchord; %degrees
+thicknessRatioWing = Airfoil_ThicknessRatio_used;
+taperWing = TaperRatio;
+clear Sref ASpectRatio Sweep_quarterchord Aerfoi_ThicknessRatio_used TaperRatio
+
+%converting from SI to Imperial units
+SWing = SWing*10.7639; %m2 to ft2
+W0 = W0*0.224809; %N to lbf
+
+
+%% Weight breakdown by component
+
+W_wings = W_wings(W0, Nz, SWing, ARwing, taperWing, SWingCS, sweepWingQC, thicknessRatioWing);
+W_horizTail = W_horizTail(W_maxTO, Nz, SHoriz, ARhoriz, S_elevator, lHoriz, Fw, spanHoriz, sweepHorizQC);
+W_
+
+%% Weight
+
+
+%% Balance
+
+
+%% Outputs
+

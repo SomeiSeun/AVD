@@ -10,7 +10,7 @@ function nSweep = sweepConverter(mSweep, mChord, nChord, AR, taperRatio)
 % taperRatio = wing taper ratio cTip/cRoot
 
 % Example: to convert a sweep angle of 20 degrees at the leading edge to
-% the sweep angle at the 14-chord length:
+% the sweep angle at the 1/4-chord length:
 % mSweep = 20;
 % mChord = 0;
 % nChord = 0.25;

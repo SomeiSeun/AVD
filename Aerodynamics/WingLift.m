@@ -42,4 +42,5 @@ delta_alpha_zero=delta_alpha_zeroairfoil.*(S_flapped/Sref).*cos(sweep_HLD);
 
 %Determining CL_max for clean configuration: 
 CL_max_clean=0.9.*Cl_max.*cosd(sweep_quarterchord);
+
 end 

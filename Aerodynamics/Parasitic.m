@@ -29,7 +29,7 @@ j=100.*(ttoc).^4;
 FF=(1+i+j).*(1.34.*((M).^0.18).*(cosd(theta_max)).^0.28);
 %For fuselage
 fd=fuselage_length/fuselage_diameter;
-FF(2)=(1+(60/fd^3)+(fd/400));
+FF(2)=(1+(60/(fd)^3)+(fd/400));
 %For nacelle and smooth external store
 fn=nacelle_length/nacelle_diameter;
 FF(3)=1+(0.35/fn);
