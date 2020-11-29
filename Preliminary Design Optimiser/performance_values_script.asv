@@ -24,7 +24,7 @@ S_to = Take_off_distance(V_stall_takeoff, V_S1, T, W0,...
     Cd0_takeoff, AspectRatio, e, Cl0, L_over_D, Sref)    
 % ^ Values still needed: Cd0_takeoff, e, Cl0, T
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+3
 W_L = W0 * WF8 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF9 * WF10;
 % ^ Weight of the flight at start of landing phase
 
