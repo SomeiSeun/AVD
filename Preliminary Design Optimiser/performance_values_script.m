@@ -7,40 +7,39 @@ clc
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat');
 load('tailplane_Sizing_variable_values.mat'); 
-load('../Aerodynamics/AerodynamicsMain.mat');
+load('AerodynamicsFINAL.mat');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-V_S1 = sqrt((2 * W0) / (1.225 * Sref * CL_max_clean_wing));   % Finding out the stall speed in clean config
-V_stall_takeoff = sqrt((2 * W0) / (1.225 * Sref* CL_max_takeoffconfig)); % Stall speed in take off config
+V_S1 = sqrt((2 * W0) / (1.225 * Sref * CL_max_clean_wing));        % Finding out the stall speed in clean config
+V_stall_takeoff = sqrt((2 * W0) / (1.225 * Sref* CL_max_takeoff)); % Stall speed in take off config
 
-C_L_climb = L / (0.5 * 1.225 * (1.15 * V_S1)^2 * Sref);  % Lift Coefficient at Transition phase
-C_D_climb = D / (0.5 * 1.225 * (1.15 * V_S1)^2 * Sref);  % Drag Coefficient at Transition phase
-L_over_D = C_L_climb / C_D_climb;                        % Lift to drag ratio at Transition phase
-% ^ NEED LIFT AND DRAG VALUES AT TRANSITION PHASE
+C_L_climb = maxLiftTakeoff / (0.5 * 1.225 * (1.15 * V_S1)^2 * Sref);  % Lift Coefficient at Transition phase
+C_D_climb = D / (0.5 * 1.225 * (1.15 * V_S1)^2 * Sref);               % Drag Coefficient at Transition phase
+L_over_D = C_L_climb / C_D_climb;                                     % Lift to drag ratio at Transition phase
+% ^ NEED DRAG VALUES AT TRANSITION PHASE
 
 % This equation gives the Take off distance in metres
 S_to = Take_off_distance(V_stall_takeoff, V_S1, T, W0,...
-    Cd0_takeoff, AspectRatio, e, Cl0, L_over_D, Sref)    
-% ^ Values still needed: Cd0_takeoff, e, Cl0, T
+    Cd0_takeoff, AspectRatio, e_cruise, zeroAlphaLCT, L_over_D, Sref)    
+% ^ Values still needed: Cd0_takeoff, T (MIGHT STILL NEED A VALUE FOR OSWALD EFFICIENCY IN TAKE OFF CONFIG)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 W_L = W0 * WF8 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF9 * WF10;
 % ^ Weight of the flight at start of landing phase
 
-VS0 = sqrt((2 * W_L) / (1.225 * Sref * CL_max_landing));         % Stall speed in Landing config
-% ^ NEED THE CL_MAX_LANDING VALUE
-
+VS0 = sqrt((2 * W_L) / (1.225 * Sref * CL_max_landing)); % Stall speed in Landing config
+% L_over_D_landing = maxLiftLanding/maxDragLanding; <(NEED THE DRAG VALUE)
 % This equation gives the Landing distance in metres
-S_L = Landing_distance(Cl0, V_S1, W_L, VS0,...
-    T_L, L_over_D_landing, Sref, AspectRatio, e) 
-% ^ Values still needed: Cl0, T_L, L_over_D_landing, e
+S_L = Landing_distance(zeroAlphaLCT, V_S1, W_L, VS0,...
+    T_L, L_over_D_landing, Sref, AspectRatio, e_cruise) 
+% ^ Values still needed: T_L
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+D2 = 0.5 * 1.225 * Sref * 1.44 * V_stall_takeoff^2 * CD_takeoff; % < Need CD_takeoff value
 % This equation gives the Balanced Field Length in metres
 BFL = Balanced_Field_Length(W0, Sref, Cl_TakeOff,...
-    T_oei, D2, BPR, Cl_climb, T_takeoff_static)
-% ^ Values still needed: T_oei, D2, BPR, Cl_climb, T_takeoff_static
+    T_oei, D2, BPR, CL_max_landing, T_takeoff_static)
+% ^ Values still needed: T_oei, BPR, T_takeoff_static
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % This section gives the Range, Endurance and Fuel Consumption for the 2 cruise phases
@@ -88,8 +87,8 @@ fprintf('The fuel consumption of the aircraft during Loiter is %f.\n',FC3);
 W = W_ini_1;  % Weight of the aircraft at start of cruise 1
 
 [L_over_D_max, Vs_Cruise, V_LDmax, V_max, V_min] = Cruise_leg_calculations(C_Dmin,...
-    C_LminD, AspectRatio, e_Cruise, rho_cruise, W, Sref, C_Lmax, 1, T_cruise)
-% ^ Values still needed: C_Dmin, C_LminD, C_Lmax, T_cruise
+    C_LminD, AspectRatio, e_Cruise, rho_cruise, W, Sref, CL_max_clean, 1, T_cruise)
+% ^ Values still needed: C_Dmin, C_LminD, T_cruise
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -97,7 +96,7 @@ W = W_ini_1;  % Weight of the aircraft at start of cruise 1
 % then used to find the Absolute and Service ceilings
 
 W_cruise = W_ini_1;  % Weight of aircraft at start of cruise 1
-[ROC_max, altitude] = climb(W_ini_1, C_Dmin, L_DMax, Sref);  
+[ROC_max, altitude] = climb(W_ini_1, C_Dmin, L_over_D_max, Sref);  
 % ^ Values still needed: C_Dmin, Thrust (Equation needed inside the function)
 
 figure 1
@@ -110,7 +109,7 @@ ylabel('Altitude (feet)');
 % The equation below gives the Maximum aileron deflection and the time 
 % taken by the aircraft to achieve the max bank angle
 [t, Max_ail_def, y1, y2] = aileron_sizing_new(b, Sref, AspectRatio,...
-    TaperRatio, CL_a_landing, VS0, Ixx, Sref, S_HT, S_VT)
+    TaperRatio, CL_a_Total(1), VS0, Ixx, Sref, S_HT, S_VT)
 % ^ Values still needed: Ixx
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
