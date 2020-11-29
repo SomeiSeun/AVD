@@ -44,6 +44,7 @@ W_noseLG = W_noseLG(W_Landing, Ngear, lengthNoseLG, NumNoseWheels, Knp);
 
 %engine and fuel system
 W_engine = W_engine; %REMEMBER TO INCLUDE ACTUAL ENGINE WEIGHT
+W_fuel = W_fuel; %REMEMBER TO INCLUDE FUEL WEIGHT
 W_nacelle = W_nacelle(W_engine, lengthNacelle, widthNacelle, Nz, NumEngines, SnacelleWetted);
 W_engineControls(NumEngines, lengthEngineControl);
 W_engineStarter(NumEngines, W_engine);
