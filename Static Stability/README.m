@@ -10,7 +10,7 @@ close all
 addpath('../Initial Sizing/', '../Xfoil/', '../Structures/Fuselage/', '../Aerodynamics/', '../Preliminary Design Optimiser/')
 load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio', 'root_chord', 'tip_chord', 'Twist')
 load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength', 'aftLength', 'frontLength', 'mainLength')
-load('AerodynamicsFINAL.mat', 'CL_a_Total', 'CL_ah', 'CL_a_M0')
+load('AerodynamicsFINAL.mat', 'CL_a_Total', 'CL_ah', 'CL_a_M0', 'CD_Total')
 load('InitialSizing.mat', 'WingLoading', 'V_Cruise')
 
 %renaming wing parameters to avoid confusion with tailplane parameters
@@ -80,13 +80,6 @@ sweepVertQC = sweepConverter(sweepVertLE, 0, 0.25, 2*ARvert, taperVert);
 sweepVertMT = sweepConverter(sweepVertLE, 0, maxThicknessLocationVert, 2*ARhoriz, taperVert);
 sweepVertTE = sweepConverter(sweepVertLE, 0, 1, 2*ARvert, taperVert);
 
-save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRootHoriz', 'cBarVert',...
-    'dihedralHoriz', 'dihedralVert', 'maxThicknessLocationHoriz', 'maxThicknessLocationVert',...
-    'NACAhoriz', 'NACAvert', 'SHoriz', 'SHorizExposed', 'SHorizWetted', 'spanHoriz', 'SVert',...
-    'SVertExposed', 'SVertWetted', 'sweepHorizLE', 'sweepHorizQC', 'sweepHorizTE', 'sweepVertLE',...
-    'sweepVertQC', 'sweepVertTE', 'taperHoriz', 'taperVert', 'thicknessRatioHoriz', 'thicknessRatioVert',...
-    'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert', 'sweepHorizMT', 'sweepVertMT');
-
 
 %% WING AND TAIL PLACEMENT
 
@@ -109,12 +102,14 @@ temp([2 3]) = temp([3 2]); %switching y and z coordinate for vertical tailplane
 vertAC = vertRootLE + temp;
 clear temp
 
-% %% PLOTTING TAILPLANE AND WING GEOMETRY AND PLACEMENT
-% wingPlanform = wingRootLE + tailplanePlanform(wingSpan, sweepWingLE, cRootWing, cTipWing, dihedralWing, false);
-% horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHoriz, cTipHoriz, dihedralHoriz, false);
-% vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
-% 
-% tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter)
+%% PLOTTING TAILPLANE AND WING GEOMETRY AND PLACEMENT
+wingPlanform = wingRootLE + tailplanePlanform(wingSpan, sweepWingLE, cRootWing, cTipWing, dihedralWing, false);
+horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHoriz, cTipHoriz, dihedralHoriz, false);
+vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
+
+tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter)
+
+
 
 %% STABILITY ANALYSIS
 
@@ -156,8 +151,15 @@ CMoW = zeroLiftPitchingMoment(CMoAerofoilW, ARwing, sweepWingQC, twistWing, CL_a
 %required lift coefficient and drag at cruise 
 [~,~,~,rhoCruise]= atmosisa(distdim(35000,'ft','m'));
 CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC WEIGHT, RHO, AND VELOCITY AT EACH SEGMENT
-CDtotal = [0.0, 0.06, 0.04]; %guess to make the code work for now
 
 %determine iH and AoA for trimmed flight
 [iH_trim, AoA_trim] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing,...
-    SWing, SHoriz, CMoW, CMalphaF, CLtarget, CDtotal, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH)
+    SWing, SHoriz, CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH)
+
+save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRootHoriz', 'cBarVert',...
+    'dihedralHoriz', 'dihedralVert', 'maxThicknessLocationHoriz', 'maxThicknessLocationVert',...
+    'NACAhoriz', 'NACAvert', 'SHoriz', 'SHorizExposed', 'SHorizWetted', 'spanHoriz', 'SVert',...
+    'SVertExposed', 'SVertWetted', 'sweepHorizLE', 'sweepHorizQC', 'sweepHorizTE', 'sweepVertLE',...
+    'sweepVertQC', 'sweepVertTE', 'taperHoriz', 'taperVert', 'thicknessRatioHoriz', 'thicknessRatioVert',...
+    'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert', 'sweepHorizMT', 'sweepVertMT',...
+    'lHoriz', 'lVert');
