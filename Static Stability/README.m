@@ -119,7 +119,7 @@ clear temp
 %% STABILITY ANALYSIS
 
 CG = [28,29,30; 0,0,0; 0,0,0]; %guesses to make the code work for now
-enginePosition = wingRootLE + [0; 4; -1]; %guesses to make the code work for now
+enginePosition = wingRootLE + [0; 8; -0.4]; %guesses to make the code work for now
 
 %tailplane moment arms
 lHoriz = horizAC(1) - wingAC(1);
