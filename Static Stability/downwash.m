@@ -1,5 +1,6 @@
 function downwash = downwash(lHoriz, hHoriz, wingSpan, quarterSweepWing, ARwing, taperWing, CLalphaW, CLalphaW_M0)
-%this function evaluates the downwash effect d(e)/d(alpha) of the wing on the tailplane 
+%this function evaluates the downwash effect d(e)/d(alpha) of the wing on
+%the tailplane
 
 % INPUTS
 % lHoriz = longitudinal distance between quarter-chord positions of wing and horizontal stabiliser (m)
