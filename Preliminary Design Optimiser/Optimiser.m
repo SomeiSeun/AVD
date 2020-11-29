@@ -16,12 +16,8 @@ close all
 %load('../Initial Sizing/InitialSizing.mat')
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat')
-%<<<<<<< HEAD
-load('tailplane_Sizing_Variable_Values.mat')
-%=======
 load('../Static Stability/tailplaneSizing.mat')
-%>>>>>>> main
-load('../Aerodynamics/Unknowns.mat')                                        % This is just a bunch of values I am still waiting on...
+load('../Aerodynamics/Unknowns.mat')                                        % This is just a bunch of values I am waiting on
 load('../Structures/Fuselage/fuselageOutputs.mat')      
 
 %% Assumed values for now
@@ -36,17 +32,24 @@ flapped_ratio=0.487;
 chord_ratio=1.26;
 Sweep_TE=20.9647;
 upsweep_angle=15*(pi/180);
-
+Cl_tail_airfoil=1.4;
 %% Optimiser loop
 % Aerodynamic Lift- lift curve slope and clmax for clean config determined. HLD effects remain
-% but as values are updated/changed, outputs below should change :)
-                                                                    
-[CL_a,CL_max_clean,CL_aflaps,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,Sweep_maxt,Cl_am,chord_ratio,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
-[CL_ah,CL_max_cleanh,CL_aflapsh,delta_alpha_takeoffh,delta_alpha_landingh,delta_CL_maxh,CL_max_takeoffh,CL_max_landingh]=WingLift(AR_HT,S_HT_exposed,S_HT,d,b_HT,M,Sweep_maxth,Cl_am,0,Cl_tail_airfoil,0,Sweep_quarterchord_HT,0);
+% but as values are updated/changed, outputs below should change :)                                                    
+[CL_a,CL_max_clean,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,Sweep_maxt,Cl_am,chord_ratio,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
+CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
+[CL_ah,CL_max_h]=TailLift(ARhoriz,d,spanHoriz,M,sweepHorizMT,10.5214,Cl_tail_airfoil,sweepHorizQC);
+[maxLiftLanding,maxLiftTakeoff]=TotalLift(CL_max_landing,CL_max_takeoff,CL_max_h,SHoriz,Sref,rho_landing,V_landing,rho_takeoff,V_takeoff);
 [CL_a_M0]=WingLift(AspectRatio,S_exposed,Sref,d,b,0,Sweep_maxt,Cl_am,chord_ratio,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
 %Aerodynamic Drag (Cruise Conditions)
-[C_Duc_cruise,C_Dflaps_takeoff,C_Dflaps_landing,C_Dwe_cruise,C_Dfu_cruise]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,d,upsweep_angle);
-[CD_Parasitic,CD_Parasitic_Total,CD_LandP,Re,Cfc,FF]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
+[C_Duc_cruise,C_Dflaps,C_Dwe_cruise,C_Dfu_cruise,CD_misc]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,d,upsweep_angle);
+[CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
+[CD_Parasitic_Takeoff,CD_Parasitic_Total_Takeoff,CD_LandP_Takeoff]=Parasitic(rho_takeoff,V_takeoff,l,nu_takeoff,M_takeoff,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
+[CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
+CD_Parasitic_Total=[CD_Parasitic_Total_Takeoff,CD_Parasitic_Total_Cruise,CD_Parasitic_Total_Landing];
+CD_LandP_Total=[CD_LandP_Takeoff,CD_LandP_Cruise,CD_LandP_Landing];
+C_D0=CD_Parasitic_Total+CD_misc+CD_LandP_Total;
+[CD_i,CD_Total]=TotalDrag(AspectRatio,ARhoriz,CL_a,i_w_approx,SHoriz,Sref,C_D0);
 % Wing Design
 % Fuselage
 % Engine
@@ -54,7 +57,7 @@ upsweep_angle=15*(pi/180);
 %[] = undercarriage()
 
 %% Once everything converges, populate the csv
-save('Aerodynamics.mat','CL_a','CL_ah','CL_a_M0')
+save('AerodynamicsFINAL.mat','CL_a_Total','CL_ah','CL_a_M0','CL_max_clean','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h','CD_Total','zeroAlphaLCT','maxLiftLanding','maxLiftTakeoff')
 % write values to csv
 % for fusion
 

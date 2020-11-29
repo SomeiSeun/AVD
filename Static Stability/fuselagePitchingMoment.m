@@ -7,9 +7,9 @@ function CMalphaf = fuselagePitchingMoment(lf, wf, cBarWing, Swing, xWing)
 % wf = fuselage max width (m)
 % MAC = wing mean aerodynamic chord (m)
 % Swing = wing reference area (m2)
-% xWing = longitudinal wing quarter-chord position wrt nose (m)
+% xWing = longitudinal wing root quarter-chord position wrt nose (m)
 
-%wing 1/4-chord position as fraction of body length
+%wing root 1/4-chord position as fraction of body length
 xFract = xWing/lf;
 
 %constant of proportionality based on graph from errikos' slides
