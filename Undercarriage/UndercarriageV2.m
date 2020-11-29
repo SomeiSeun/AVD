@@ -37,7 +37,7 @@ length_mgmax = 4;
 
 % Weight and balance
 x_cgmin = 28;
-x_cgmax = 29;
+x_cgmax = 32;
 z_cg = 0.1;
 
 % Undercarriage assumptions
@@ -48,10 +48,9 @@ WNGRmax = 0.20;
 x_ng = 0:0.001:length_aircraft;
 x_mg = 0:0.001:length_aircraft;
 y_mgjoint = 0:0.001:10;
+haveUndercarriage = 0;
 
-%% Loop
-
-error = 1;
+%% Loop 1: Picking lateral positions of landing gears
 
 % Pick a y_mg and proceed
 for i = 1:length(y_mgjoint)
@@ -91,19 +90,32 @@ for i = 1:length(y_mgjoint)
     grc_max = ((x_mgjoint - x_cgmax)/(tand(theta_maxground))) - radius_fuselage - z_cg;
     disp(['Tipback constraint: max ground clearance ', num2str(grc_max)])
     
+    %% Condition 1: Check if ground clearance is possible
+    
     % Check if ground clearance is possible
     if grc_min > min(grc_max, y_mgjoint(i) + z_mgjoint)
         
+        % BAD
         disp('Gear will be too large to fit in fuselage')
-        pause(0.0001)
-        clc
+        haveUndercarriage = 0;
+        % Exits into y_mg selection loop
         
     else
-        % Define ground clearance limits
-        grc = grc_min:0.001:min(grc_max, y_mgjoint(i)+z_mgjoint);
         
-        % Find most constraining nose gear overturn due to max ground clearance
-        h_cg = max(grc) + radius_fuselage + z_cg;
+        % Define ground clearance limits
+        grc = grc_min:0.00001:min(grc_max, y_mgjoint(i)+z_mgjoint);
+        
+        % Find most constraining nose gear overturn due to max ground
+        % clearance. This is the ground clearance we will choose for
+        % further calculations. Make note that this value is almost exactly
+        % equal to the minimum ground clearance available because the code
+        % reached here from a direction where grcmin was larger than
+        % grcmax. This means that if you've reached here, you've barely
+        % just opened a margin for ground clearance to exist. Also we want
+        % to pick maximum ground clearance possible in order to have the
+        % best chance of fitting the engines in place.
+        grc_chosen = max(grc);
+        h_cg = grc_chosen + radius_fuselage + z_cg;
         a = (y_mgjoint(i)^2 * tand(63)^2) - (h_cg^2);
         b = (-2*x_cgmin*(y_mgjoint(i)^2)*(tand(63)^2)) - (-2*x_mgjoint*h_cg^2);
         c = (x_cgmin^2*y_mgjoint(i)^2*tand(63)^2) - (h_cg^2*(y_mgjoint(i)^2+x_mgjoint^2));
@@ -111,27 +123,42 @@ for i = 1:length(y_mgjoint)
         x_ng2 = (-b-sqrt(b^2-4*a*c))/(2*a);
         x_ng_overturn_less = min(x_ng1, x_ng2);
         disp(['Overturn constraint: nose gear xpos less than ', num2str(x_ng_overturn_less)])
+        %h_cgalso = min(grc) + radius_fuselage + z_cg;
+        %aa = (y_mgjoint(i)^2 * tand(63)^2) - (h_cgalso^2);
+        %bb = (-2*x_cgmin*(y_mgjoint(i)^2)*(tand(63)^2)) - (-2*x_mgjoint*h_cgalso^2);
+        %cc = (x_cgmin^2*y_mgjoint(i)^2*tand(63)^2) - (h_cgalso^2*(y_mgjoint(i)^2+x_mgjoint^2));
+        %x_ng3 = (-b+sqrt(b^2-4*a*c))/(2*a);
+        %x_ng4 = (-b-sqrt(b^2-4*a*c))/(2*a);
         
         % Check if nose gear positioning is possible
         x_ng_least = max(x_ng_minload_more, x_ng_place_more);
         x_ng_most = min([x_ng_tricycle_less, x_ng_maxload_less, x_ng_overturn_less]);
         
+        %% Condition 2: Check if nose gear placement is possible
+        
         if x_ng_least > x_ng_most
             
+            % BAD
             disp('Nose gear cannot be placed')
-            pause(0.00001)
-            clc
+            haveUndercarriage = 0;
+            % Exits into remainder of ground clearance available
             
         else
             
             x_ng = x_ng_least:0.001:x_ng_most;
             
+            %% Loop 2: Picking nose gear longitudinal positions
+            
             % Pick an x_ng and proceed
             for ii = 1:length(x_ng)
                 
-                % Calculate actual ground clearance achieved
-                h_cg = (y_mgjoint(i)*(x_cgmin-x_ng(ii))*tand(63)) / (sqrt(y_mgjoint(i)^2 + (x_mgjoint-x_ng(ii))^2));
-                grc_actual = h_cg-radius_fuselage-z_cg;
+                % Calculate actual ground clearance achieved. This was the
+                % source of the error. We didn't need to recalculate ground
+                % clearance because it was set in place. The effect of this
+                % is that we get a lower overturn angle instead which is
+                % nice.
+                %h_cg_actual = (y_mgjoint(i)*(x_cgmin-x_ng(ii))*tand(63)) / (sqrt(y_mgjoint(i)^2 + (x_mgjoint-x_ng(ii))^2));
+                %grc_actual = h_cg-radius_fuselage-z_cg;
                                 
                 % Verification checks for constraints (just in case)
                 disp(' ')
@@ -141,9 +168,9 @@ for i = 1:length(y_mgjoint)
                 disp(' ')
                 disp('Verifying placement selection:')
                 disp(['Nose gear load ratio is ', num2str( (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint) )])
-                disp(['Tailstrike angle is ', num2str(atand( (grc_actual + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint) ))])
+                disp(['Tailstrike angle is ', num2str(atand( (grc_chosen + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint) ))])
                 disp(['Tipback angle is ', num2str(atand( (x_mgjoint-x_cgmax)/h_cg ))])
-                disp(['Ground clearance is ', num2str(grc_actual)])
+                disp(['Ground clearance is ', num2str(grc_chosen)])
                 disp(['Overturn angle is ', num2str(atand( (h_cg*sqrt(y_mgjoint(i)^2+(x_mgjoint-x_ng(ii))^2))/(y_mgjoint(i)*(x_cgmin-x_ng(ii))))) ])
                 disp(' ')
                 
@@ -151,7 +178,7 @@ for i = 1:length(y_mgjoint)
                 % Functions
                 [W_WheelMainGear, W_WheelNoseGear, W_DynamNoseGear, LbsReqMainGear, ...
                     LbsReqNoseGearStatic, LbsReqNoseGearDynamic] = WheelLoads(W0, x_ng(ii), ...
-                    x_mgjoint, x_cgmin, x_cgmax, z_cg);
+                    x_mgjoint, x_cgmin, x_cgmax, h_cg);
                 
                 % Outputs
                 disp('Loads required to carry by landing gears:')
@@ -161,13 +188,28 @@ for i = 1:length(y_mgjoint)
                 disp(['Static load on main gear is approx ', num2str(round(LbsReqMainGear)), ' lbs'])
                 
                 % Pick tires
-                [NoseWheel] = GimmeTiresRaymerForReal(LbsReqNoseGearStatic + LbsReqNoseGearDynamic, 3);
+                % Currently the tire selection function rejects only the
+                % tires that do not meet the loading criteria. It then
+                % optimises the remaining tires for:
+                    % 1: Minimum diameter
+                    % 2: Minimum width
+                    % 3: Minimum PSI
+                    % 4: Minimum PSI*diameter
+                % It may be worth adding further filters for rejection of
+                % tires with too large a PSI or diameter etc based on more
+                % inputs to the function. Optimisation can then be done
+                % after that extra step. Making this new function may
+                % require remaking the .mat file itself to better
+                % accommodate such a request. I should probably do that.
+                [NoseWheel] = GimmeTiresRaymerForReal(LbsReqNoseGearStatic + LbsReqNoseGearDynamic, 1);
                 [MainWheel] = GimmeTiresRaymerForReal(LbsReqMainGear, 1);
                 disp(' ')
                 disp('Nose wheel selected: ')
                 disp(NoseWheel)
                 disp('Main wheel selected: ')
                 disp(MainWheel)
+                % For now assume that the tires provided work with PSI and
+                % diameter limits. Still need to check width requirements.
                 
                 % Calculate maximum width of main u/c (aka height in fus)
                 % If max width too big, warn u/c failed due to engine
@@ -175,23 +217,68 @@ for i = 1:length(y_mgjoint)
                 
                 % Finalise the undercarriage
                 % To break out of outer nested loop
-                error = 0;
+                haveUndercarriage = 1;
                 % Break out of this loop
                 break
+                
+            end
+            %% \Loop 2: Picking nose gear longitudinal positions
+            % You will enter this region of code if:
+                % a) You picked a y_mg and also a x_ng which passed all
+                % required conditions. This led you to recieve a working
+                % undercarriage, with your haveUndercarriage boolean set to
+                % "1". You're all set to start producing final outputs.
+                % b) You exhausted all x_ng positions without success for
+                % this particular y_mg. 
+            % Lets add a quick checkpoint here
+            if haveUndercarriage == 0
+                clc
+                disp('Your search for a working x_ng for this value of y_mg failed')
+            else haveUndercarriage == 1
+                disp('Final undercarriage placement successful 1')
             end
         end
-    
+        %% \Condition 2: Check if nose gear placement is possible
+        % You will enter this region of code if:
+            % a) Successful (haveUndercarriage = 1)
+            % b) Nose gear placement was not possible (haveUndercarriage =
+            % 0)
+        % Lets add another quick checkpoint here
+        if haveUndercarriage == 0
+            clc
+            disp('You were not able to place a nose gear')
+        else haveUndercarriage == 1
+            disp('Final undercarriage placement successful 2')
+        end
     end
-    
-    if error == 0
+    %% \Condition 1: Check if ground clearance is possible
+    % You will enter this region of code if:
+        % a) Successful (haveUndercarriage = 1)
+        % b) Ground clearance limits were not possible (haveUndercarriage =
+        % 0)
+    % Lets add yet another quick checkpoint here
+    if haveUndercarriage == 0
+        clc
+        disp('Your ground clearances were not possible')
+        disp(' ')
+    else haveUndercarriage == 1
+        disp('Final undercarriage placement successful 3')  
         break
-    else
-        continue
-    end
-    % For testing purposes
-    pause(0.01)
+    end    
+end
+%% \Loop 1: Picking lateral positions of landing gears
+% You will enter this region of code if:
+    % a) Successful (haveUndercarriage = 1)
+    % b) You exhausted all y_mg positions for these inputs
+    % (haveUndercarriage = 0). In this case we need to throw an error as an
+    % output requesting a revisit for the inputs themselves.
+% Lets add one final checkpoint
+if haveUndercarriage == 0
     clc
-    
+    disp('Inputs prevent an undercarriage from being physically possible')
+else haveUndercarriage == 1
+    disp('Final undercarriage placement successful 4')
+    disp('Now proceeding towards making a good usable set of outputs')
 end
 
 %% Shenanigans
@@ -199,3 +286,4 @@ end
 %cmd = ['COMFAA.exe < ' COMFAAInput]
 %!COMFAA.exe
 %unix command check it out
+

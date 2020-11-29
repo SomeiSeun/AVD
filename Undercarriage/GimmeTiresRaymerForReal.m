@@ -13,7 +13,9 @@ function[Wheel] = GimmeTiresRaymerForReal(LoadReq, OptimiseFor)
 load('Wheels_All.mat')
 
 %% Find the wheels that fit load requirements
-Index1 = find(RatedLoadLBS > LoadReq);
+Index1 = find(RatedLoadLBS > LoadReq)
+Index1 = find(RatedInflationPSI(Index1) < 200)
+plot(RatedInflationPSI(Index1))
 
 %% Based on optimising requirement, find wheel with smallest width or diam
 if OptimiseFor == 1
@@ -27,6 +29,10 @@ elseif OptimiseFor == 2
 elseif OptimiseFor == 3
     MinPSI = min(RatedInflationPSI(Index1));
     Index2 = find(RatedInflationPSI(Index1) == MinPSI);
+    A = Index1(Index2);
+elseif OptimiseFor == 4
+    MinFactor = min(RatedInflationPSI(Index1).*InflatedOuterDiamMaxINCH(Index1));
+    Index2 = find(RatedInflationPSI(Index1).*InflatedOuterDiamMaxINCH(Index1) == MinFactor);
     A = Index1(Index2);
 end
 A = A(1);
