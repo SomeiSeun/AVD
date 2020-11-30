@@ -27,8 +27,9 @@ SWing = SWing*10.7639; %m2 to ft2
 spanWing = spanWing*3.28084; %m to ft
 W_maxTO = W0*0.224809; %N to lbs
 
-%limit load factor according to FAR-25.337
-Nz = 2.5;
+% minimum limit load factor = 2.5 according to FAR-25.337
+% ultimate load factor = 1.5 x limit load factor;
+Nz = 1.5*2.5;
 
 %% Weight breakdown by component (all in lbs)
 
