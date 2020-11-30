@@ -1,7 +1,7 @@
 function tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter)
 
 totalLength = aftLength + mainLength + frontLength;
-aftDiameter = 1.946209;
+aftDiameter = 0.8;
 
 theta = linspace(0, pi, 100);
 frontCoords(2,:) = 0.5*fusDiamOuter*cos(theta);

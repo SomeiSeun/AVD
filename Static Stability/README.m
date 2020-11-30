@@ -109,8 +109,6 @@ vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVe
 
 tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter)
 
-
-
 %% STABILITY ANALYSIS
 
 CG = [28,29,30; 0,0,0; 0,0,0]; %guesses to make the code work for now
@@ -153,8 +151,9 @@ CMoW = zeroLiftPitchingMoment(CMoAerofoilW, ARwing, sweepWingQC, twistWing, CL_a
 CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC WEIGHT, RHO, AND VELOCITY AT EACH SEGMENT
 
 %determine iH and AoA for trimmed flight
-[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing,...
-    SWing, SHoriz, CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH);
+[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] = ...
+    trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, ...
+    CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH);
 
 save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRootHoriz', 'cBarVert',...
     'dihedralHoriz', 'dihedralVert', 'maxThicknessLocationHoriz', 'maxThicknessLocationVert',...
@@ -164,4 +163,4 @@ save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRoot
     'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert', 'sweepHorizMT', 'sweepVertMT');
 
 save('stabilityAndTrim.mat', 'lHoriz', 'lVert', 'VbarH', 'VbarV', 'xNPOff', 'xNPOn', 'KnOn', 'KnOff',...
-    'iH_trim', 'AoA_trim', 'AoA_trimWings', 'AoA_trimHoriz');
+    'iH_trim', 'AoA_trim', 'AoA_trimWings', 'AoA_trimHoriz', 'CL_trimWings', 'CL_trimHoriz');

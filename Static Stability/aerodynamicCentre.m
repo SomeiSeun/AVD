@@ -19,6 +19,6 @@ yAC = cosd(dihedral)*span/6*(1 + 2*taper)/(1 + taper);
 xAC = yAC*tand(sweepLE) + 0.25*cBar;
 zAC = yAC*sind(dihedral);
 
-AC = [xAC, yAC, zAC];
+AC = [xAC; yAC; zAC];
 end
 

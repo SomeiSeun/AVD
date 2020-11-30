@@ -8,7 +8,7 @@ close all
 addpath('../../Initial Sizing/', '../../Structures/Fuselage/', '../../Aerodynamics/', '../../Static Stability')
 load('InitialSizing.mat', 'W0')
 load('wingDesign.mat', 'Sref', 'AspectRatio', 'Sweep_quarterchord', 'Airfoil_ThicknessRatio_used', 'TaperRatio', 'b')
-load('fuselageOutputs.mat', 'totalLength', )
+load('fuselageOutputs.mat')
 load('tailplaneSizing.mat', 'SHoriz', 'ARhoriz', 'spanHoriz', 'sweepHorizQC',...
     'SVert', 'ARvert', 'sweepVertQC', 'thicknessRatioVert')
 load('stabilityAndTrim.mat', 'lVert', 'lHoriz')

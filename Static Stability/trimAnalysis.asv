@@ -17,18 +17,12 @@ CMtotal = -CLwing.*(wingAC(1) - CG(1,:))/cBarWing + CMoW + CMalphaF*AoA ...
 for i = 1:length(CLtotal)
     eqns = [CLtotal(i) == CLtarget(i); CMtotal(i) == 0];
     vars = [iH, AoA];
-    [iH_trim(i), AoA_trim(i)] = solve(eqns, vars);
-    
-    CL_trimWings(i) = subs(CLwing(i), AoA, AoA_trim(i));
-    CL_trimHoriz(i) = subs(CLhoriz(i), {iH, AoA}, {iH_trim(i), AoA_trim(i)});
+    [iH_trim(i), AoA_trim(i)] = double(solve(eqns, vars));
 end
-
-iH_trim = double(iH_trim);
-AoA_trim = double(AoA_trim);
-
-CL_trimWings = double(CL_trimWings);
-CL_trimHoriz = double(CL_trimHoriz);
 
 AoA_trimWings = AoA_trim + iW;
 AoA_trimHoriz = (AoA_trim + iW - alpha0W).*(1-downwash) + (iH_trim-iW) + alpha0W;
+
+CL_trimWings = subs(CLwing, vars, [iH_trim, AoA_trim]);
+
 end
