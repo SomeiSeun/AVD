@@ -35,7 +35,7 @@ noseArea = 5.046;
 
 noseLength = 0.93;
 noseRadius = 0.816;
-noseArea = 5.046;
+noseArea = 3.823;
 
 cockpitLength = 2.58;
 cockpitArea = 48.777;
@@ -49,12 +49,12 @@ frontArea = noseArea + cockpitArea;
 
 % Main
 
-mainLength = 36.538; 
+mainLength = 36.506; 
 mainArea = 479.325;
 
 % Aft
-aftFR = 2;
-aftLength = aftFR*fusDiamOuter;
+aftLength = 12.60;
+aftFR = aftLength/fusDiamOuter;
 aftArea = 0.589 + 81.371;
 
 % Total

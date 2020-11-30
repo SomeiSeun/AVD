@@ -12,7 +12,7 @@ fusDiamInner,in,156.4 in,outer - 2*wall thickness
 wallThickness,in,4 in,historical
 floorThickness,in,8.22 in,0.05*fusdiameter
 frontFR,,1.3,Multiply with diameter for front size
-aftFR,,2,Multiply with diameter for aft size
+aftFR,,aftLength / fusDiamOuter,Multiply with diameter for aft size
 upsweepAngle,,15,calculated for Clmax angle
 topWidthULD,in,96 in,documentation
 baseWidthULD,in,61.5 in,documentation
@@ -32,6 +32,7 @@ type2Door,in,20 in,requirements
 type3Door,in,20 in,requirements
 type4Door,in,19 in,requirements
 seatWidth,in,17.5 in,Roskam
+aftLength,m,12.6 m,For ~0.8m aft diam
 d17,m,frontFR * fusDiamOuter,
 d34,m,systemsSpaceTop,
 d35,m,aisleHeight,
