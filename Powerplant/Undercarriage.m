@@ -6,6 +6,10 @@
 % This script is going to be used to follow the suggested process in slides
 % for sizing the undercarriage.
 
+%% Old
+% This script is now not going to be used unless we hit a very bad worst
+% case scenario.
+
 %% Housekeeping
 %clear
 %clc
