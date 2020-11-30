@@ -1,4 +1,5 @@
-function [t, Max_ail_def, y1, y2] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, Vs, Ixx, S_w, S_ht, S_vt)
+function [t, Max_ail_def, y1, y2, aileron_area] = aileron_sizing_new(b, S, AR, lamda,...
+    C_L_aw, Vs, Ixx, S_w, S_ht, S_vt, starting_position, ending_position, root_chord)
 
 % This function is used to size the aileron. 
 
@@ -13,20 +14,34 @@ function [t, Max_ail_def, y1, y2] = aileron_sizing_new(b, S, AR, lamda, C_L_aw, 
 % S_w is the wing planform area in m^2
 % S_ht is the horizontal tail planform area in m^2
 % S_vt is the vertical tail planform area in m^2 
+% starting_position is the point at which the aileron starts (Must be in decimal)
+% ending_position is the point at which the aileron ends (Must be in decimal)
+% root_chord is the root chord of the main wing
 
 % The OUTPUTS are: (ALL SI UNITS)
 % t is the time taken by the aircraft to achieve bank angle in seconds
 % Max_ail_def is the maximum aileron deflection in degrees
 % y1 is the starting position of the aileron
 % y2 is the ending position of the aileron
+% aileron_area gives the total area of the aileron in m^2
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-rho = 1.225;         % Density of air at sea level in kg/m^3
-tau = 0.4;           % Aileron effectiveness parameter (Depends on the chord ratio of aileron to wing. In Control surface word document)
-y1 = 0.6 * b / 2;    % Setting the starting position for the aileron
-y2 = 0.9 * b / 2;    % Setting the ending position for the aileron
-C_bar = b / AR;      % Finding out the variable to be used in line below
+rho = 1.225;                       % Density of air at sea level in kg/m^3
+tau = 0.4;                         % Aileron effectiveness parameter 
+y1 = starting_position * b / 2;    % Setting the starting position for the aileron
+y2 = ending_position * b / 2;      % Setting the ending position for the aileron
+C_bar = b / AR;                    % Finding out the variable to be used in line below
+
+chord_distribution = linspace(starting_position,ending_position,201); % Chord distribution
+
+area = zeros(1,size(chord_distribution));
+
+for i = 1 : size(chord_distribution)
+    area(i) = ((ending_position - starting_position) * b * 0.5 *...
+        0.2 * chord_distribution(i) * 0.38 * root_chord) / 201;    
+end
+aileron_area = sum(area) * 2;     % Finding the total area for the 2 ailerons
 
 C_r = 1.5 * C_bar * ((1 + lamda) / (1 + lamda + lamda^2));    % Finding out variable Cr to be used in equation below
 
