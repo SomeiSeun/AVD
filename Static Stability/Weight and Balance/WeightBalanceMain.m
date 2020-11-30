@@ -57,7 +57,7 @@ components(21).name = 'Anti-Icing';
 components(22).name = 'Handling Gear';
 
 %lifting surfaces
-
+components(1).weight = W_wings(W_maxTO, Nz, SWing, ARwing, taperWing, SWingCS, sweepWingQC, thicknessRatioWing);
 components(2).weight = W_horizTail(W_maxTO, Nz, SHoriz, ARhoriz, S_elevator, lHoriz, Fw, spanHoriz, sweepHorizQC);
 components(3).weight = W_vertTail(W_maxTO, Nz, SVert, lVert, ARvert, sweepVertQC, thicknessRatioVert);
 
