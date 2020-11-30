@@ -137,7 +137,7 @@ KnOff = (xNPOff - CG(1,:))/cBarWing; %typically 0.04 - 0.07 (never > 0.2)
 
 %power-on static margin and neutral point
 KnOn = KnOff - 0.02;
-xNPOn = KnOn*cBarWing + CG(1,:);
+xNPPOn = KnOn*cBarWing + CG(1,:);
 
 %% TRIM ANALYSIS
 
@@ -163,5 +163,4 @@ save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRoot
     'sweepVertQC', 'sweepVertTE', 'taperHoriz', 'taperVert', 'thicknessRatioHoriz', 'thicknessRatioVert',...
     'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert', 'sweepHorizMT', 'sweepVertMT');
 
-save('stabilityAndTrim.mat', 'lHoriz', 'lVert', 'VbarH', 'VbarV', 'xNPOff', 'xNPOn', 'KnOn', 'KnOff',...
-    'iH_trim', 'AoA_trim', 'AoA_trimWings', 'AoA_trimHoriz');
+save('stabilityAndTrim.mat', 'lHoriz', 'lVert', 'VbarH', 'VbarV', 'xNPOff', 'xNPOn', 'KnOn', 'KnOff',)
