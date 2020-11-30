@@ -1,4 +1,5 @@
-function [BFL] = Balanced_Field_Length(W_to, S, Cl_max_takeoff, T_oei, D2, BPR, Cl_climb, T_takeoff_static)
+function [BFL] = Balanced_Field_Length(W_to, S, Cl_max_takeoff,...
+    T_oei, D2, BPR, CL_max_landing, T_takeoff_static)
 
 % This function is used to find the Balanced Field Length of the aircraft.
 
@@ -9,7 +10,7 @@ function [BFL] = Balanced_Field_Length(W_to, S, Cl_max_takeoff, T_oei, D2, BPR, 
 % T_oei is the thrust at OEI in Newtons
 % D2 is the drag (Newtons) at V2 (m/s) which is the velocity at obstacle height 
 % BPR is the bypass ratio of the turbofan engine
-% Cl_climb is the lift coefficient at V2
+% CL_max_landing is the max lift coefficient in landing configuration
 % T_takeoff_static is the maximum static thrust in Newtons 
 
 % The outputs are: (ALL SI UNITS)
@@ -40,7 +41,7 @@ G = gamma_2 - gamma_2min;                          % Another constant
 
 T_bar = (0.75 * T_takeoff_static_lbf) * ((5+BPR) / (4+BPR)); % Another constant
 
-BFL_feet = (0.863 / (1 + (2.3 * G))) * (((W_to_lbs / S_ft) / (rho * g * Cl_climb))...
+BFL_feet = (0.863 / (1 + (2.3 * G))) * (((W_to_lbs / S_ft) / (rho * g * 0.694 * CL_max_landing))...
     + h_obs) * ((1 / ((T_bar / W_to_lbs) - U)) + 2.7) + (655 / sqrt_sigma);
 
 % The above equation gives the Balanced Field Length in feet. So need to

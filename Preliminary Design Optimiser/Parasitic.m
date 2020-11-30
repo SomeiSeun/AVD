@@ -37,7 +37,7 @@ FF(3)=1+(0.35/fn);
 %% Component Interference Factors
 % Estimates have been made below: 
 
-Q=[1,1,1.2,1.035,1.035]; 
+Q=[1,1,1.2,1.045,1.045]; 
 
 %(fuselage has negligible interference)
 %Q_mainwing=1 (for a well filletted low wing)
@@ -45,12 +45,6 @@ Q=[1,1,1.2,1.035,1.035];
 %than one diameter it can be reduced to near 1)
 %Q_conv=1.045 (average between 4 and 5 %)
 
-%% Areas of component 
-%Swet- obtained from design groups
-%For Wing and Tail
-%S_wet=S_exposed*(1.997+0.52*(ttoc));
-%For Fuselage
-%For Nacelle
 %% Calculation of Parasitic Drag 
 CD_Parasitic=(Cfc.*FF.*Q.*SWET)/Sref;
 CD_Parasitic_Total=sum(CD_Parasitic);

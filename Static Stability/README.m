@@ -90,7 +90,7 @@ sweepVertTE = sweepConverter(sweepVertLE, 0, 1, 2*ARvert, taperVert);
 
 %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
 wingRootLE = [0.35*totalLength; 0; -0.8*fusDiamOuter/2];
-horizRootLE = [0.88*totalLength; 0; 0.6*fusDiamOuter/2];
+horizRootLE = [0.885*totalLength; 0; 0.8*fusDiamOuter/2];
 vertRootLE = [0.8*totalLength; 0; fusDiamOuter/2];
 
 %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
@@ -108,8 +108,6 @@ horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHo
 vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
 
 tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter)
-
-
 
 %% STABILITY ANALYSIS
 
@@ -137,7 +135,7 @@ KnOff = (xNPOff - CG(1,:))/cBarWing; %typically 0.04 - 0.07 (never > 0.2)
 
 %power-on static margin and neutral point
 KnOn = KnOff - 0.02;
-xNPPOn = KnOn*cBarWing + CG(1,:);
+xNPOn = KnOn*cBarWing + CG(1,:);
 
 %% TRIM ANALYSIS
 
@@ -153,13 +151,17 @@ CMoW = zeroLiftPitchingMoment(CMoAerofoilW, ARwing, sweepWingQC, twistWing, CL_a
 CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC WEIGHT, RHO, AND VELOCITY AT EACH SEGMENT
 
 %determine iH and AoA for trimmed flight
-[iH_trim, AoA_trim] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing,...
-    SWing, SHoriz, CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH)
+[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] = ...
+    trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, ...
+    CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH);
 
 save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRootHoriz', 'cBarVert',...
     'dihedralHoriz', 'dihedralVert', 'maxThicknessLocationHoriz', 'maxThicknessLocationVert',...
     'NACAhoriz', 'NACAvert', 'SHoriz', 'SHorizExposed', 'SHorizWetted', 'spanHoriz', 'SVert',...
     'SVertExposed', 'SVertWetted', 'sweepHorizLE', 'sweepHorizQC', 'sweepHorizTE', 'sweepVertLE',...
     'sweepVertQC', 'sweepVertTE', 'taperHoriz', 'taperVert', 'thicknessRatioHoriz', 'thicknessRatioVert',...
-    'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert', 'sweepHorizMT', 'sweepVertMT',...
-    'lHoriz', 'lVert');
+    'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert', 'sweepHorizMT', 'sweepVertMT');
+
+save('stabilityAndTrim.mat', 'lHoriz', 'lVert', 'VbarH', 'VbarV', 'xNPOff', 'xNPOn', 'KnOn', 'KnOff',...
+    'iH_trim', 'AoA_trim', 'AoA_trimWings', 'AoA_trimHoriz', 'CL_trimWings', 'CL_trimHoriz', ...
+    'wingRootLE', 'horizRootLE', 'vertRootLE', 'wingAC', 'horizAC', 'vertAC');
