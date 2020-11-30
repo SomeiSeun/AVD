@@ -90,7 +90,7 @@ sweepVertTE = sweepConverter(sweepVertLE, 0, 1, 2*ARvert, taperVert);
 
 %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
 wingRootLE = [0.35*totalLength; 0; -0.8*fusDiamOuter/2];
-horizRootLE = [0.88*totalLength; 0; 0.6*fusDiamOuter/2];
+horizRootLE = [0.885*totalLength; 0; 0.8*fusDiamOuter/2];
 vertRootLE = [0.8*totalLength; 0; fusDiamOuter/2];
 
 %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
@@ -163,4 +163,5 @@ save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRoot
     'twistHoriz', 'twistVert', 'heightVert', 'cTipHoriz', 'cTipVert', 'sweepHorizMT', 'sweepVertMT');
 
 save('stabilityAndTrim.mat', 'lHoriz', 'lVert', 'VbarH', 'VbarV', 'xNPOff', 'xNPOn', 'KnOn', 'KnOff',...
-    'iH_trim', 'AoA_trim', 'AoA_trimWings', 'AoA_trimHoriz', 'CL_trimWings', 'CL_trimHoriz');
+    'iH_trim', 'AoA_trim', 'AoA_trimWings', 'AoA_trimHoriz', 'CL_trimWings', 'CL_trimHoriz', ...
+    'wingRootLE', 'horizRootLE', 'vertRootLE', 'wingAC', 'horizAC', 'vertAC');
