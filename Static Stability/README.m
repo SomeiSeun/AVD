@@ -154,7 +154,10 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
 
 %determine iH and AoA for trimmed flight
 [iH_trim, AoA_trim] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing,...
-    SWing, SHoriz, CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH)
+    SWing, SHoriz, CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH);
+
+AoA_trimWings = AoA_trim + iW;
+AoA_trimHoriz = (AoA_trim + iW - alpha0W).*(1-downwash) + (iH_trim-iW) + alpha0W;
 
 save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRootHoriz', 'cBarVert',...
     'dihedralHoriz', 'dihedralVert', 'maxThicknessLocationHoriz', 'maxThicknessLocationVert',...
