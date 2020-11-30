@@ -49,7 +49,7 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,d,upsweep_angle);
 [CD_0_Total]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
 
-% [CD_i,CD_Total]=TotalDrag(AspectRatio,ARhoriz,CL_a,i_w_root,SHoriz,Sref,C_D0);
+[CD_i,CD_Total]=TotalDrag(AspectRatio,ARhoriz,CL_a,i_w_root,SHoriz,Sref,CD_0_Total);
 % Wing Design
 % Fuselage
 % Engine
@@ -57,7 +57,7 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 %[] = undercarriage()
 
 %% Once everything converges, populate the csv
-save('AerodynamicsFINAL.mat','CL_a_Total','CL_ah','CL_a_M0','CL_max_clean','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h','zeroAlphaLCT','maxLiftLanding','maxLiftTakeoff','CD_0_Total')
+save('AerodynamicsFINAL.mat','CL_a_Total','CL_ah','CL_a_M0','CL_max_clean','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h','zeroAlphaLCT','maxLiftLanding','maxLiftTakeoff','CD_0_Total','CD_Total')
 % write values to csv
 % for fusion
 
