@@ -7,14 +7,14 @@ close all
 
 addpath('../../Initial Sizing/', '../../Structures/Fuselage/', '../../Aerodynamics/', '../../Static Stability')
 load('InitialSizing.mat', 'W0', 'NumberOfEngines', 'N_Crew', 'N_Pax', 'N_Pilots', 'Mass_Person',...
-    'Mass_Luggage')
+    'Mass_Luggage', 'WF1', 'WF2', 'WF3', 'WF4', 'WF5', 'WF6')
 load('wingDesign.mat', 'Sref', 'AspectRatio', 'Sweep_quarterchord', 'Airfoil_ThicknessRatio_used',...
     'TaperRatio', 'b', 'Dihedral', 'Sweep_LE', 'root_chord')
 load('fuselageOutputs.mat', 'totalLength', 'totalArea', 'fusDiamOuterfeet')
 load('tailplaneSizing.mat', 'SHoriz', 'ARhoriz', 'spanHoriz', 'sweepHorizQC',...
     'SVert', 'ARvert', 'sweepVertQC', 'thicknessRatioVert', 'heightVert', ...
     'cRootHoriz', 'cRootVert')
-load('stabilityAndTrim.mat', 'lVert', 'lHoriz', 'wingRootLE', 'horizRootLE', 'vertRootLE')
+load('stabilityAndTrim.mat', 'lVert', 'lHoriz', 'wingRootLE', 'horizRootLE', 'vertRootLE', 'fuseWidthHoriz')
 load('rudder_and_elevator_values.mat', 'aileron_area', 'elevator_area', 'rudder_area')
 
 %renaming wing parameters to avoid confusion with tailplane parameters
@@ -49,9 +49,9 @@ cRootVert = cRootVert*unitsratio('ft', 'm');
 lHoriz = lHoriz*unitsratio('ft', 'm');
 lVert = lVert*unitsratio('ft', 'm');
 
-%N to lbs
+%N to lb
 W_maxTO = convforce(W0, 'N', 'lbf');
-
+W_Landing = W_maxTO * WF1 * WF2 * WF3 * WF4 * WF5 * WF6;
 
 % minimum limit load factor = 2.5 according to FAR-25.337
 % ultimate load factor = 1.5 x limit load factor;
@@ -84,7 +84,7 @@ components(22).name = 'Handling Gear';
 
 %lifting surfaces
 components(1).weight = W_wings(W_maxTO, Nz, SWing, ARwing, taperWing, aileron_area, sweepWingQC, thicknessRatioWing);
-components(2).weight = W_horizTail(W_maxTO, Nz, SHoriz, ARhoriz, elevator_area, lHoriz, Fw, spanHoriz, sweepHorizQC);
+components(2).weight = W_horizTail(W_maxTO, Nz, SHoriz, ARhoriz, elevator_area, lHoriz, fuseWidthHoriz, spanHoriz, sweepHorizQC);
 components(3).weight = W_vertTail(W_maxTO, Nz, SVert, lVert, ARvert, sweepVertQC, thicknessRatioVert);
 
 %fuselage and undercarriage
@@ -102,7 +102,7 @@ components(12).weight = W_fuelSystem(numTanks, volumeTankTotal, volumeSelfSealin
 
 %subsystems
 components(13).weight = W_flightControls(W_maxTO, numControlFunctions, numMechanicalFunctions, rudder_area + elevator_area + aileron_area, lHoriz);
-components(14).weight = 2.22*W_APU_uninstalled; %installed APU weight
+components(14).weight = 2.2*W_APU_uninstalled; %installed APU weight
 components(15).weight = W_instruments(N_crew, NumberOfEngines, totalLength, spanWing);
 components(16).weight = W_hydraulics(numControlFunctions, totalLength, spanWing);
 components(17).weight = W_electrical(electricRating, lengthElectrical, NumberOfEngines);
@@ -112,10 +112,38 @@ components(20).weight = W_aircon(N_Crew + N_Pilots + N_Pax, volumePressurised, W
 components(21).weight = 0.002*W_maxTO;
 components(22).weight = 3e-4*W_maxTO;
 
-%% Balance
 
 %converting back from Imperial to SI units
 
+%ft2 to m2
+SWing = SWing/unitsratio('ft', 'm')^2;
+SHoriz = SHoriz/unitsratio('ft', 'm')^2;
+SVert = SVert/unitsratio('ft', 'm')^2;
+aileron_area = aileron_area/unitsratio('ft', 'm')^2;
+elevator_area = elevator_area/unitsratio('ft', 'm')^2;
+rudder_area = rudder_area/unitsratio('ft', 'm')^2;
+
+%ft to m
+spanWing = spanWing/unitsratio('ft', 'm');
+spanHoriz = spanHoriz/unitsratio('ft', 'm');
+heightVert = heightVert/unitsratio('ft', 'm');
+cRootWing = cRootWing/unitsratio('ft', 'm');
+cRootHoriz = cRootHoriz/unitsratio('ft', 'm');
+cRootVert = cRootVert/unitsratio('ft', 'm');
+lHoriz = lHoriz/unitsratio('ft', 'm');
+lVert = lVert/unitsratio('ft', 'm');
+
+%lb to N
+W_maxTO = convforce(W_maxTO, 'lbf', 'N');
+W_Landing = convforce(W_Landing, 'lbf', 'N');
+
+for i = 1:length(components)
+    components(i).weight = convforce(components(i).weight, 'lbf', 'N');
+    components(i).mass = components(i).weight/9.80665; %N to kg
+end
+
+
+%% CG of each component (in meters [x; y; z])
 
 %lifting surfaces
 components(1).cog = wingRootLE + liftingSurfraceCG(0.6, 0.35, spanWing, taperWing, cRootWing, dihedralWing, sweepWingLE, false);
@@ -148,9 +176,17 @@ components(21).cog = 0.002*W_maxTO;
 components(22).cog = 3e-4*W_maxTO;
 
 %calculating CG
+sumBalance = [0; 0; 0];
+sumMass = 0;
+for i = 1:length(components)
+    sumBalance = sumBalance + components(i).mass * components(i).cog;
+    sumMass = sumMass + components(i).mass;
+end
 
-CG = sum(components.weight * components.cog)/sum(components.weight);
+CG = sumBalance/sumMass;
 
-%
+
+
+
 %% Outputs
 
