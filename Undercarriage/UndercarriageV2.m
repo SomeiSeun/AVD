@@ -15,7 +15,7 @@ close all
 %% Request inputs
 
 % Initial sizing code
-load('../Initial Sizing/InitialSizing.mat', 'W0', 'WF6')
+load('../Initial Sizing/InitialSizing.mat', 'W0', 'WF1', 'WF2', 'WF3', 'WF4', 'WF5', 'WF6')
 
 % Wing design / aerodynamics
 x_wingroot = 29;
@@ -175,12 +175,10 @@ for i = 1:length(y_mgjoint)
                 disp(' ')
                 
                 % Calculate wheel loads
-                % Functions
                 [W_WheelMainGear, W_WheelNoseGear, W_DynamNoseGear, LbsReqMainGear, ...
                     LbsReqNoseGearStatic, LbsReqNoseGearDynamic] = WheelLoads(W0, x_ng(ii), ...
                     x_mgjoint, x_cgmin, x_cgmax, h_cg);
                 
-                % Outputs
                 disp('Loads required to carry by landing gears:')
                 disp(['Static load on nose gear is approx ', num2str(round(LbsReqNoseGearStatic)), ' lbs'])
                 disp(['Dynamic load on nose gear is approx ', num2str(round(LbsReqNoseGearDynamic)), ' lbs'])
@@ -188,30 +186,16 @@ for i = 1:length(y_mgjoint)
                 disp(['Static load on main gear is approx ', num2str(round(LbsReqMainGear)), ' lbs'])
                 
                 % Pick tires
-                % Currently the tire selection function rejects only the
-                % tires that do not meet the loading criteria. It then
-                % optimises the remaining tires for:
-                    % 1: Minimum diameter
-                    % 2: Minimum width
-                    % 3: Minimum PSI
-                    % 4: Minimum PSI*diameter
-                % It may be worth adding further filters for rejection of
-                % tires with too large a PSI or diameter etc based on more
-                % inputs to the function. Optimisation can then be done
-                % after that extra step. Making this new function may
-                % require remaking the .mat file itself to better
-                % accommodate such a request. I should probably do that.
-                [NoseWheel] = GimmeTiresRaymerForReal(LbsReqNoseGearStatic + LbsReqNoseGearDynamic, 1);
-                [MainWheel] = GimmeTiresRaymerForReal(LbsReqMainGear, 1);
+                [NoseWheel] = GimmeTires(LbsReqNoseGearStatic+LbsReqNoseGearDynamic, 200, 40);
+                [MainWheel] = GimmeTires(LbsReqMainGear, 200, length_mgmax*39.3700787/2);
                 disp(' ')
                 disp('Nose wheel selected: ')
                 disp(NoseWheel)
                 disp('Main wheel selected: ')
                 disp(MainWheel)
-                % For now assume that the tires provided work with PSI and
-                % diameter limits. Still need to check width requirements.
                 
                 % Calculate maximum width of main u/c (aka height in fus)
+                %mgmaxwidth
                 % If max width too big, warn u/c failed due to engine
                 % clearance. If not too big, carry on with ACN PCN. 
                 
@@ -231,10 +215,10 @@ for i = 1:length(y_mgjoint)
                 % b) You exhausted all x_ng positions without success for
                 % this particular y_mg. 
             % Lets add a quick checkpoint here
-            if haveUndercarriage == 0
+            if haveUndercarriage == 0;
                 clc
                 disp('Your search for a working x_ng for this value of y_mg failed')
-            else haveUndercarriage == 1
+            else haveUndercarriage == 1;
                 disp('Final undercarriage placement successful 1')
             end
         end
@@ -244,10 +228,10 @@ for i = 1:length(y_mgjoint)
             % b) Nose gear placement was not possible (haveUndercarriage =
             % 0)
         % Lets add another quick checkpoint here
-        if haveUndercarriage == 0
+        if haveUndercarriage == 0;
             clc
             disp('You were not able to place a nose gear')
-        else haveUndercarriage == 1
+        else haveUndercarriage == 1;
             disp('Final undercarriage placement successful 2')
         end
     end
@@ -257,11 +241,11 @@ for i = 1:length(y_mgjoint)
         % b) Ground clearance limits were not possible (haveUndercarriage =
         % 0)
     % Lets add yet another quick checkpoint here
-    if haveUndercarriage == 0
+    if haveUndercarriage == 0;
         clc
         disp('Your ground clearances were not possible')
         disp(' ')
-    else haveUndercarriage == 1
+    else haveUndercarriage == 1;
         disp('Final undercarriage placement successful 3')  
         break
     end    
@@ -273,10 +257,10 @@ end
     % (haveUndercarriage = 0). In this case we need to throw an error as an
     % output requesting a revisit for the inputs themselves.
 % Lets add one final checkpoint
-if haveUndercarriage == 0
+if haveUndercarriage == 0;
     clc
     disp('Inputs prevent an undercarriage from being physically possible')
-else haveUndercarriage == 1
+else haveUndercarriage == 1;
     disp('Final undercarriage placement successful 4')
     disp('Now proceeding towards making a good usable set of outputs')
 end
