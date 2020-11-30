@@ -17,6 +17,7 @@ close all
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat')
 load('../Static Stability/tailplaneSizing.mat')
+load('../Static Stability/stabilityAndTrim.mat')
 load('../Aerodynamics/Unknowns.mat')                                        % This is just a bunch of values I am waiting on
 load('../Structures/Fuselage/fuselageOutputs.mat')      
 
@@ -48,8 +49,7 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
 [CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,d,upsweep_angle);
 [CD_0_Total]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
-
-[CD_i,CD_Total]=TotalDrag(AspectRatio,ARhoriz,CL_a,i_w_root,SHoriz,Sref,CD_0_Total);
+[CD_iw,CD_ih,CD_Total]=TotalDragFinal(CL_trimWings,CL_trimHoriz,SHoriz,Sref,CD_0_Total);
 % Wing Design
 % Fuselage
 % Engine
