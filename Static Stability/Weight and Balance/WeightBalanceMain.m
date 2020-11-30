@@ -35,7 +35,6 @@ clear Sref ASpectRatio Sweep_quarterchord Aerfoi_ThicknessRatio_used TaperRatio 
 Nz = 1.5*2.5;% minimum limit load factor = 2.5 according to FAR-25.337 (ultimate load factor = 1.5 x limit load factor)
 Ngear = 3; %typically 2.7-3
 W_avionics_uninstalled = 1000; %typically 800-1400 lb
-APU_CG = [frontLength + mainLength + 0.65*aftLength; 0; 1.2]; %in meters
 electricRating = 60; %typically 40 − 60 for transports (kVA)
 W_APU_uninstalled = 8*(1.1*N_Pax)^0.75; %(lb) Pasquale Sforza, in Commercial Airplane Design Principles, 2014
 lengthEngineControl = (wingRootLE(1) + 0.2*spanWing)*unitsratio('ft', 'm'); %initial assumption
@@ -48,6 +47,7 @@ numPeopleOnBoard = N_Crew + N_Pax + N_Pilots;
 totalCSarea = rudder_area + elevator_area + aileron_area;
 W_seats = 60*N_Pilots + 32*N_Pax + 11*N_Crew; %typical 60lbs per flight deck seats, 32lbs for passenger seats
 W_maxCargo = Mass_Luggage*numPeopleOnBoard*9.80665; %31kg per luggage for all people on board
+
 
 %% converting from SI to Imperial units
 
@@ -193,12 +193,12 @@ components(12).cog = W_fuelSystem(numTanks, volumeTankTotal, volumeSelfSealingTa
 
 %subsystems
 components(13).cog = W_flightControls(W_maxTO, numControlFunctions, numMechanicalFunctions, StotalCS, lHoriz);
-components(14).cog = APU_CG;
+components(14).cog = [frontLength + mainLength + 0.65*aftLength; 0; 1.2];
 components(15).cog = W_instruments(N_crew, NumberOfEngines, totalLength, spanWing);
 components(16).cog = W_hydraulics(numControlFunctions, totalLength, spanWing);
 components(17).cog = W_electrical(electricRating, lengthElectrical, NumberOfEngines);
 components(18).cog = 1.73 * W_avionics_uninstalled^0.983;
-components(19).cog = W_furnish(numCrew, W_maxCargo, totalArea, W_seats, numPeopleOnBoard);
+components(19).cog = [frontLength + 0.5*mainLength; 0; 0];
 components(20).cog = W_aircon(numPeopleOnBoard, volumePressurised, W_avionics_uninstalled);
 components(21).cog = 0.002*W_maxTO;
 components(22).cog = 3e-4*W_maxTO;
