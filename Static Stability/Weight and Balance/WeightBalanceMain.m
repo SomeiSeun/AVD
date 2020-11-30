@@ -6,11 +6,12 @@ close all
 %% LOADING PARAMETERS
 
 addpath('../../Initial Sizing/', '../../Structures/Fuselage/', '../../Aerodynamics/', '../../Static Stability')
-load('InitialSizing.mat', 'W0', 'NumberOfEngines', 'N_Crew', 'N_Pax', 'N_Pilots', 'Mass_Person',...
-    'Mass_Luggage', 'WF1', 'WF2', 'WF3', 'WF4', 'WF5', 'WF6')
+load('InitialSizing.mat', 'W0', 'NumberOfEngines', 'N_Crew', 'N_Pax', 'N_Pilots',...
+    'WF1', 'WF2', 'WF3', 'WF4', 'WF5', 'WF6', 'Mass_Luggage')
 load('wingDesign.mat', 'Sref', 'AspectRatio', 'Sweep_quarterchord', 'Airfoil_ThicknessRatio_used',...
     'TaperRatio', 'b', 'Dihedral', 'Sweep_LE', 'root_chord')
-load('fuselageOutputs.mat', 'totalLength', 'totalArea', 'fusDiamOuterfeet')
+load('fuselageOutputs.mat', 'totalLength', 'totalArea', 'fusDiamOuter', 'frontLength',...
+    'mainLength', 'aftLength')
 load('tailplaneSizing.mat', 'SHoriz', 'ARhoriz', 'spanHoriz', 'sweepHorizQC',...
     'SVert', 'ARvert', 'sweepVertQC', 'thicknessRatioVert', 'heightVert', ...
     'cRootHoriz', 'cRootVert')
@@ -29,7 +30,26 @@ dihedralWing = Dihedral;
 spanWing = b;
 clear Sref ASpectRatio Sweep_quarterchord Aerfoi_ThicknessRatio_used TaperRatio b Dihedral root_chord
 
-%converting from SI to Imperial units
+
+%% Decisions
+Nz = 1.5*2.5;% minimum limit load factor = 2.5 according to FAR-25.337 (ultimate load factor = 1.5 x limit load factor)
+Ngear = 3; %typically 2.7-3
+W_avionics_uninstalled = 1000; %typically 800-1400 lb
+APU_CG = [frontLength + mainLength + 0.65*aftLength; 0; 1.2]; %in meters
+electricRating = 60; %typically 40 − 60 for transports (kVA)
+W_APU_uninstalled = 8*(1.1*N_Pax)^0.75; %(lb) Pasquale Sforza, in Commercial Airplane Design Principles, 2014
+lengthEngineControl = (wingRootLE(1) + 0.2*spanWing)*unitsratio('ft', 'm'); %initial assumption
+lengthElectrical = totalLength*unitsratio('ft', 'm');
+
+
+
+%% Calculations
+numPeopleOnBoard = N_Crew + N_Pax + N_Pilots;
+totalCSarea = rudder_area + elevator_area + aileron_area;
+W_seats = 60*N_Pilots + 32*N_Pax + 11*N_Crew; %typical 60lbs per flight deck seats, 32lbs for passenger seats
+W_maxCargo = Mass_Luggage*numPeopleOnBoard*9.80665; %31kg per luggage for all people on board
+
+%% converting from SI to Imperial units
 
 %m2 to ft2
 SWing = SWing*unitsratio('ft', 'm')^2;
@@ -38,6 +58,8 @@ SVert = SVert*unitsratio('ft', 'm')^2;
 aileron_area = aileron_area*unitsratio('ft', 'm')^2;
 elevator_area = elevator_area*unitsratio('ft', 'm')^2;
 rudder_area = rudder_area*unitsratio('ft', 'm')^2;
+totalArea = totalArea*unitsratio('ft', 'm')^2;
+totalCSarea = totalCSarea*unitsratio('ft', 'm')^2;
 
 %m to ft
 spanWing = spanWing*unitsratio('ft', 'm');
@@ -48,14 +70,14 @@ cRootHoriz = cRootHoriz*unitsratio('ft', 'm');
 cRootVert = cRootVert*unitsratio('ft', 'm');
 lHoriz = lHoriz*unitsratio('ft', 'm');
 lVert = lVert*unitsratio('ft', 'm');
+fusDiamOuter = fusDiamOuter*unitsratio('ft', 'm');
+totalLength = totalLength*unitsratio('ft', 'm');
 
 %N to lb
 W_maxTO = convforce(W0, 'N', 'lbf');
+W_maxCargo = convforce(W_maxCargo, 'N', 'lbf');
 W_Landing = W_maxTO * WF1 * WF2 * WF3 * WF4 * WF5 * WF6;
 
-% minimum limit load factor = 2.5 according to FAR-25.337
-% ultimate load factor = 1.5 x limit load factor;
-Nz = 1.5*2.5;
 
 %% Weight breakdown by component (all in lbs)
 
@@ -88,32 +110,32 @@ components(2).weight = W_horizTail(W_maxTO, Nz, SHoriz, ARhoriz, elevator_area, 
 components(3).weight = W_vertTail(W_maxTO, Nz, SVert, lVert, ARvert, sweepVertQC, thicknessRatioVert);
 
 %fuselage and undercarriage
-components(4).weight = W_fuse(W_maxTO, Nz, taperWing, spanWing, sweepWingQC, totalLength, totalArea, fusDiamOuterfeet);
+components(4).weight = W_fuse(W_maxTO, Nz, taperWing, spanWing, sweepWingQC, totalLength, totalArea, fusDiamOuter);
 components(5).weight = W_mainLG(W_Landing, Ngear, lengthMainLG, NmainWheels, Vstall_Landing, NmainShockStruts);
 components(6).weight = W_noseLG(W_Landing, Ngear, lengthNoseLG, NumNoseWheels);
 
 %engine and fuel system
 components(7).weight = W_engine; %REMEMBER TO INCLUDE ACTUAL ENGINE WEIGHT
 components(8).weight = W_nacelle(W_engine, lengthNacelle, widthNacelle, Nz, NumberOfEngines, SnacelleWetted);
-components(9).weight = 5*NumEngines + 0.8*lengthEngineControl; %lengthEngineControl = engine to cockpit total length (ft)
+components(9).weight = 5*NumberOfEngines + 0.8*lengthEngineControl; %lengthEngineControl = engine to cockpit total length (ft)
 components(10).weight = W_engineStarter(NumberOfEngines, W_engine);
 components(11).weight = W_fuel; %REMEMBER TO INCLUDE FUEL WEIGHT
 components(12).weight = W_fuelSystem(numTanks, volumeTankTotal, volumeSelfSealingTank, volumeIntegralTank);
 
 %subsystems
-components(13).weight = W_flightControls(W_maxTO, numControlFunctions, numMechanicalFunctions, rudder_area + elevator_area + aileron_area, lHoriz);
+components(13).weight = W_flightControls(W_maxTO, numControlFunctions, numMechanicalFunctions, totalCSarea, lHoriz);
 components(14).weight = 2.2*W_APU_uninstalled; %installed APU weight
 components(15).weight = W_instruments(N_crew, NumberOfEngines, totalLength, spanWing);
 components(16).weight = W_hydraulics(numControlFunctions, totalLength, spanWing);
 components(17).weight = W_electrical(electricRating, lengthElectrical, NumberOfEngines);
 components(18).weight = 1.73 * W_avionics_uninstalled^0.983; %installed avionics weight (uninstalled typically 800-1400lbs)
-components(19).weight = W_furnish(N_crew, W_maxCargo, fuseWetted, W_seats, numPeopleOnboard);
-components(20).weight = W_aircon(N_Crew + N_Pilots + N_Pax, volumePressurised, W_avionics_uninstalled);
+components(19).weight = W_furnish(N_crew, W_maxCargo, totalArea, W_seats, numPeopleOnBoard);
+components(20).weight = W_aircon(numPeopleOnBoard, volumePressurised, W_avionics_uninstalled);
 components(21).weight = 0.002*W_maxTO;
 components(22).weight = 3e-4*W_maxTO;
 
 
-%converting back from Imperial to SI units
+%% Converting back from Imperial to SI units
 
 %ft2 to m2
 SWing = SWing/unitsratio('ft', 'm')^2;
@@ -122,6 +144,8 @@ SVert = SVert/unitsratio('ft', 'm')^2;
 aileron_area = aileron_area/unitsratio('ft', 'm')^2;
 elevator_area = elevator_area/unitsratio('ft', 'm')^2;
 rudder_area = rudder_area/unitsratio('ft', 'm')^2;
+totalArea = totalArea/unitsratio('ft', 'm')^2;
+totalCSarea = totalCSarea/unitsratio('ft', 'm')^2;
 
 %ft to m
 spanWing = spanWing/unitsratio('ft', 'm');
@@ -132,11 +156,15 @@ cRootHoriz = cRootHoriz/unitsratio('ft', 'm');
 cRootVert = cRootVert/unitsratio('ft', 'm');
 lHoriz = lHoriz/unitsratio('ft', 'm');
 lVert = lVert/unitsratio('ft', 'm');
+fusDiamOuter = fusDiamOuter/unitsratio('ft', 'm');
+totalLength = totalLength/unitsratio('ft', 'm');
 
 %lb to N
 W_maxTO = convforce(W_maxTO, 'lbf', 'N');
+W_Crew = convforce(W_Crew, 'lbf', 'N');
+W_Payload = convforce(W_Payload, 'lbf', 'N');
 W_Landing = convforce(W_Landing, 'lbf', 'N');
-
+W_maxCargo = convforce(W_maxCargo, 'lbf', 'N');
 for i = 1:length(components)
     components(i).weight = convforce(components(i).weight, 'lbf', 'N');
     components(i).mass = components(i).weight/9.80665; %N to kg
@@ -156,26 +184,26 @@ components(5).cog = W_mainLG(W_Landing, Ngear, lengthMainLG, NmainWheels, Vstall
 components(6).cog = W_noseLG(W_Landing, Ngear, lengthNoseLG, NumNoseWheels);
 
 %engine and fuel system
-components(7).cog = W_engine; %REMEMBER TO INCLUDE ACTUAL ENGINE WEIGHT
+components(7).cog = W_engine;
 components(8).cog = W_nacelle(W_engine, lengthNacelle, widthNacelle, Nz, NumberOfEngines, SnacelleWetted);
 components(9).cog = 5*NumEngines + 0.8*lengthEngineControl; %lengthEngineControl = engine to cockpit total length (ft)
 components(10).cog = W_engineStarter(NumEngines, W_engine);
-components(11).cog = W_fuel; %REMEMBER TO INCLUDE FUEL WEIGHT
+components(11).cog = W_fuel;
 components(12).cog = W_fuelSystem(numTanks, volumeTankTotal, volumeSelfSealingTank, volumeIntegralTank);
 
 %subsystems
 components(13).cog = W_flightControls(W_maxTO, numControlFunctions, numMechanicalFunctions, StotalCS, lHoriz);
-components(14).cog = 2.22*W_APU_uninstalled; %installed APU weight
+components(14).cog = APU_CG;
 components(15).cog = W_instruments(N_crew, NumberOfEngines, totalLength, spanWing);
 components(16).cog = W_hydraulics(numControlFunctions, totalLength, spanWing);
 components(17).cog = W_electrical(electricRating, lengthElectrical, NumberOfEngines);
-components(18).cog = 1.73 * W_avionics_uninstalled^0.983; %installed avionics weight (uninstalled typically 800-1400lbs)
-components(19).cog = W_furnish(numCrew, W_maxCargo, fuseWetted, W_seats, numPeopleOnboard);
-components(20).cog = W_aircon(N_Crew + N_Pilots + N_Pax, volumePressurised, W_avionics_uninstalled);
+components(18).cog = 1.73 * W_avionics_uninstalled^0.983;
+components(19).cog = W_furnish(numCrew, W_maxCargo, totalArea, W_seats, numPeopleOnBoard);
+components(20).cog = W_aircon(numPeopleOnBoard, volumePressurised, W_avionics_uninstalled);
 components(21).cog = 0.002*W_maxTO;
 components(22).cog = 3e-4*W_maxTO;
 
-%calculating CG
+%% Calculating CG
 sumBalance = [0; 0; 0];
 sumMass = 0;
 for i = 1:length(components)
