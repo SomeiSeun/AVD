@@ -54,6 +54,7 @@ mainArea = 479.325;
 aftLength = 12.60;
 aftFR = aftLength/fusDiamOuter;
 aftArea = 0.223 + 99.78;
+aftDiameter = 0.7996;
 
 % Total
 totalLength = frontLength + aftLength + mainLength;
