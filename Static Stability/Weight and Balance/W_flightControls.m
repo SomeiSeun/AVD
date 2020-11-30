@@ -4,9 +4,9 @@ function W_flightControls = W_flightControls(W_maxTO, numControlFunctions, numMe
 % INPUTS
 % W_maxTO = design gross weight aka maximum takeoff weight (lb)
 % numControlFunctions = number of functions performed by controls (typically 4-7)
-% numMechanicalFunctions = number of mechanical function performed by controls (typically 0-2)
+% numMechanicalFunctions = number of mechanical functions performed by controls (typically 0-2)
 % StotalCS = total control surface area (ft2)
-% lHoriz = lHoriz = lenth from wing AC to horizontal tail AC (ft)
+% lHoriz = lenth from wing AC to horizontal tail AC (ft)
 
 Iy = W_maxTO * (0.3*lHoriz)^2;
 

@@ -47,16 +47,16 @@ W_noseLG = W_noseLG(W_Landing, Ngear, lengthNoseLG, NumNoseWheels, Knp);
 W_engine = W_engine; %REMEMBER TO INCLUDE ACTUAL ENGINE WEIGHT
 W_fuel = W_fuel; %REMEMBER TO INCLUDE FUEL WEIGHT
 W_nacelle = W_nacelle(W_engine, lengthNacelle, widthNacelle, Nz, NumEngines, SnacelleWetted);
-W_engineControls(NumEngines, lengthEngineControl);
-W_engineStarter(NumEngines, W_engine);
+W_engineControls = 5*NumEngines + 0.8*lengthEngineControl; %lengthEngineControl = engine to cockpit total length (ft)
+W_engineStarter = W_engineStarter(NumEngines, W_engine);
 W_fuelSystem = W_fuelSystem(numTanks, volumeTankTotal, volumeSelfSealingTank, volumeIntegralTank);
 
 %subsystems
 W_flightControls = W_flightControls(W_maxTO, numControlFunctions, numMechanicalFunctions, StotalCS, lHoriz);
 W_APU = 2.22*W_APU_uninstalled; %installed APU weight
-W_instruments = W_instr(numCrew, numEngines, fuseLength, spanWing);
-W_hydraulics = W_hydr(numControlFunctions, fuseLength, spanWing);
-W_electrical = W_electrical(electricRating, lengthElectrical, numGenerators);
+W_instruments = W_instruments(numCrew, numEngines, fuseLength, spanWing);
+W_hydraulics = W_hydraulics(numControlFunctions, fuseLength, spanWing);
+W_electrical = W_electrical(electricRating, lengthElectrical, numEngines);
 W_avionics = 1.73 * W_avionics_uninstalled^0.983; %installed avionics weight (uninstalled typically 800-1400lbs)
 W_furnish = W_furnish(numCrew, W_maxCargo, fuseWetted, W_seats, numPeopleOnboard);
 W_aircon = W_aircon(numPeopleOnboard, volumePressurised, W_avionics_uninstalled);
