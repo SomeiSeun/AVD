@@ -15,5 +15,5 @@ function W_fuse = W_fuse(W_maxTO, Nz, taperWing, wingSpan, sweepWingQC, fuseLeng
 Kws = 0.75*(1+2*taperWing)/(1+taperWing)*wingSpan*tand(sweepWingQC)/fuseLength;
 
 W_fuse = 0.3280 * 1.12 * 1.12 * (W_maxTO * Nz)^0.5 * fuseLength^0.25 * fuseWetted^0.302 *...
-    (1+Kws)^0.04 * (fuselength/fuseDiamMax)^0.1;
+    (1+Kws)^0.04 * (fuseLength/fuseDiamMax)^0.1;
 end
