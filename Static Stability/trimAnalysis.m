@@ -1,4 +1,4 @@
-function [iH_trim, AoA_trim] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, CMoW, CMalphaF, CLtarget, CDtotal, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH)
+function [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, CMoW, CMalphaF, CLtarget, CDtotal, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH)
 
 %wing setting angle to ensure horizontal fuselage during cruise
 iW = 180/pi*CLtarget(2)/CL_a_Total(2) + alpha0W - 0.4*twistWing;
@@ -22,4 +22,7 @@ end
 
 iH_trim = double(iH_trim);
 AoA_trim = double(AoA_trim);
+
+AoA_trimWings = AoA_trim + iW;
+AoA_trimHoriz = (AoA_trim + iW - alpha0W).*(1-downwash) + (iH_trim-iW) + alpha0W;
 end
