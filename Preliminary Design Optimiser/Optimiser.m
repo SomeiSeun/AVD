@@ -43,17 +43,13 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [maxLiftLanding,maxLiftTakeoff]=TotalLift(CL_max_landing,CL_max_takeoff,CL_max_h,SHoriz,Sref,rho_landing,V_landing,rho_takeoff,V_takeoff);
 
 %Aerodynamics: Drag 
-[CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise,Re,Cfc,FF]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
+[CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
 [CD_Parasitic_Takeoff,CD_Parasitic_Total_Takeoff,CD_LandP_Takeoff]=Parasitic(rho_takeoff,V_takeoff,l,nu_takeoff,M_takeoff,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
 [CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
+[CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,d,upsweep_angle);
+[CD_0_Total]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
 
-
-[C_Duc_cruise,C_Dflaps,C_Dwe_cruise,C_Dfu_cruise,CD_misc]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,d,upsweep_angle);
-
-CD_Parasitic_Total=[CD_Parasitic_Total_Takeoff,CD_Parasitic_Total_Cruise,CD_Parasitic_Total_Landing];
-CD_LandP_Total=[CD_LandP_Takeoff,CD_LandP_Cruise,CD_LandP_Landing];
-C_D0=CD_Parasitic_Total+CD_misc+CD_LandP_Total;
-[CD_i,CD_Total]=TotalDrag(AspectRatio,ARhoriz,CL_a,i_w_root,SHoriz,Sref,C_D0);
+% [CD_i,CD_Total]=TotalDrag(AspectRatio,ARhoriz,CL_a,i_w_root,SHoriz,Sref,C_D0);
 % Wing Design
 % Fuselage
 % Engine
@@ -61,7 +57,7 @@ C_D0=CD_Parasitic_Total+CD_misc+CD_LandP_Total;
 %[] = undercarriage()
 
 %% Once everything converges, populate the csv
-save('AerodynamicsFINAL.mat','CL_a_Total','CL_ah','CL_a_M0','CL_max_clean','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h','CD_Total','zeroAlphaLCT','maxLiftLanding','maxLiftTakeoff')
+save('AerodynamicsFINAL.mat','CL_a_Total','CL_ah','CL_a_M0','CL_max_clean','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h','zeroAlphaLCT','maxLiftLanding','maxLiftTakeoff','CD_0_Total')
 % write values to csv
 % for fusion
 
