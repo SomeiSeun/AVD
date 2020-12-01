@@ -47,25 +47,9 @@ alpha0H = 0;
 
 %tailplane parameters to optimse
 ARhoriz = 5; %typically 3-5 where AR = b^2/Sh and b is the tail span
-ARvert = 1.8; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
+ARvert = 2; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
 taperHoriz = 0.3; %typically 0.3 - 0.5
 taperVert = 0.3; %typically 0.3 - 0.5
-% VbarH = 1; %horizontal volume coefficient estimates based off Raymer's historical data
-% VbarV = 0.09; %vertical volume coefficient estimates based off Raymer's historical data
-SHoriz = 70;
-SVert = 35;
-
-%% CALCULATING TAILPLANE GEOMETRY BASED ON PARAMETERS ABOVE
-
-%exposed and wetted areas
-SHorizExposed = SHoriz - 10; %approximation
-SHorizWetted = SHorizExposed*(1.977 + 0.52*thicknessRatioHoriz);
-SVertExposed = SVert;
-SVertWetted = SVertExposed*(1.977 + 0.52*thicknessRatioVert);
-
-%calculating tailplane span/height and chords
-[spanHoriz, cRootHoriz, cTipHoriz, cBarHoriz] = tailplaneSizing(SHoriz, ARhoriz, taperHoriz);
-[heightVert, cRootVert, cTipVert, cBarVert] = tailplaneSizing(SVert, ARvert, taperVert);
 
 %calculating tailplane sweep angles based on wing sweep...
 %...for horizongtal tailplane
@@ -80,29 +64,71 @@ sweepVertQC = sweepConverter(sweepVertLE, 0, 0.25, 2*ARvert, taperVert);
 sweepVertMT = sweepConverter(sweepVertLE, 0, maxThicknessLocationVert, 2*ARhoriz, taperVert);
 sweepVertTE = sweepConverter(sweepVertLE, 0, 1, 2*ARvert, taperVert);
 
+%target volume coefficients
+VbarH_target = 1; %horizontal volume coefficient estimates based off Raymer's historical data
+VbarV_target = 0.07; %vertical volume coefficient estimates based off Raymer's historical data
 
-%% WING AND TAIL PLACEMENT
+%initialising loop
+SHoriz = 1;
+SVert = 1;
+VbarH = 0.01;
+VbarV = 0.01;
+count = 0;
 
-% Note on coordinate values along the aircraft:
-% x-coordinate - measured from the nose along the fuselage centreline
-% y-coordinate - measured from the fuselage centreline, +ve along starboard
-% z-coordinate - measured from the fuselage centreline, +ve above the centreline
+while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
+    %% CALCULATING TAILPLANE GEOMETRY BASED ON PARAMETERS ABOVE
+    
+    SHoriz = SHoriz*VbarH_target/VbarH;
+    SVert = SVert*VbarV_target/VbarV;
+    
+    %calculating tailplane span/height and chords
+    [spanHoriz, cRootHoriz, cTipHoriz, cBarHoriz] = tailplaneSizing(SHoriz, ARhoriz, taperHoriz);
+    [heightVert, cRootVert, cTipVert, cBarVert] = tailplaneSizing(SVert, ARvert, taperVert);
 
-%root chord root chord leading edge positions [x-coord, y-coord, z-coord]
-wingRootLE = [0.35*totalLength; 0; -0.8*fusDiamOuter/2];
-horizRootLE = [0.885*totalLength; 0; 0.8*fusDiamOuter/2];
-vertRootLE = [0.8*totalLength; 0; fusDiamOuter/2];
+    %% WING AND TAIL PLACEMENT
 
-%aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
-wingAC = wingRootLE + aerodynamicCentre(cBarWing, wingSpan, taperWing, sweepWingLE, dihedralWing);
-horizAC = horizRootLE + aerodynamicCentre(cBarHoriz, spanHoriz, taperHoriz, sweepHorizLE, dihedralHoriz);
+    % Note on coordinate values along the aircraft:
+    % x-coordinate - measured from the nose along the fuselage centreline
+    % y-coordinate - measured from the fuselage centreline, +ve along starboard
+    % z-coordinate - measured from the fuselage centreline, +ve above the centreline
 
-temp = aerodynamicCentre(cBarVert, 2*heightVert, taperVert, sweepVertLE, dihedralVert);
-temp([2 3]) = temp([3 2]); %switching y and z coordinate for vertical tailplane
-vertAC = vertRootLE + temp;
-clear temp
+    %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
+    wingRootLE = [0.35*totalLength; 0; -0.8*fusDiamOuter/2];
+    horizRootLE = [totalLength - 1.1*cRootHoriz; 0; 0.8*fusDiamOuter/2];
+    vertRootLE = [horizRootLE(1) - 0.7*cRootVert; 0; fusDiamOuter/2];
 
-fuseWidthHoriz = 2; %fuselage width at horizontal tailplane intersection in m
+    %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
+    wingAC = wingRootLE + aerodynamicCentre(cBarWing, wingSpan, taperWing, sweepWingLE, dihedralWing);
+    horizAC = horizRootLE + aerodynamicCentre(cBarHoriz, spanHoriz, taperHoriz, sweepHorizLE, dihedralHoriz);
+
+    temp = aerodynamicCentre(cBarVert, 2*heightVert, taperVert, sweepVertLE, dihedralVert);
+    temp([2 3]) = temp([3 2]); %switching y and z coordinate for vertical tailplane
+    vertAC = vertRootLE + temp;
+    clear temp
+
+    %tailplane moment arms
+    lHoriz = horizAC(1) - wingAC(1);
+    lVert = vertAC(1) - wingAC(1);
+    hHoriz = horizRootLE(3) - wingRootLE(3);
+
+    %tailplane volume coefficients
+    VbarH = lHoriz*SHoriz/(cBarWing*SWing);
+    VbarV = lVert*SVert/(wingSpan*SWing);
+    
+    count = count + 1;
+end
+
+clear VbarH_target VbarV_target
+
+%exposed and wetted areas
+SHorizExposed = SHoriz - 10; %approximation
+SHorizWetted = SHorizExposed*(1.977 + 0.52*thicknessRatioHoriz);
+SVertExposed = SVert;
+SVertWetted = SVertExposed*(1.977 + 0.52*thicknessRatioVert);
+
+%fuselage width at horizontal tailplane intersection in m
+fuseWidthHoriz = 2;
+
 
 %% PLOTTING TAILPLANE AND WING GEOMETRY AND PLACEMENT
 wingPlanform = wingRootLE + tailplanePlanform(wingSpan, sweepWingLE, cRootWing, cTipWing, dihedralWing, false);
@@ -116,28 +142,14 @@ tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, 
 CG = [28,29,30; 0,0,0; 0,0,0]; %guesses to make the code work for now
 enginePosition = wingRootLE + [0; 8; -0.4]; %guesses to make the code work for now
 
-%tailplane moment arms
-lHoriz = horizAC(1) - wingAC(1);
-lVert = vertAC(1) - wingAC(1);
-hHoriz = horizRootLE(3) - wingRootLE(3);
-
-%tailplane volume coefficients
-VbarH = lHoriz*SHoriz/(cBarWing*SWing);
-VbarV = lVert*SVert/(wingSpan*SWing);
-
 %aircraft fuselage pitching moment contribution
 CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cBarWing);
 
 %wing downwash on tailplane d(e)/d(alpha) 
 downwash = downwash(lHoriz, hHoriz, wingSpan, sweepWingQC, ARwing, taperWing, CL_a_Total, CL_a_M0);
 
-%power-off neutral point and static margin
-xNPOff = neutralPoint(SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
-KnOff = (xNPOff - CG(1,:))/cBarWing; %typically 0.04 - 0.07 (never > 0.2)
-
-%power-on static margin and neutral point
-KnOn = KnOff - 0.02;
-xNPOn = KnOn*cBarWing + CG(1,:);
+%neutral point and static margin
+[xNPOff, KnOff, xNPOn, KnOn] = staticStability(CG, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
 
 %% TRIM ANALYSIS
 
