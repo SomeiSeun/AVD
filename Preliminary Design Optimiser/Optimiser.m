@@ -384,7 +384,8 @@ lengthNoseLG = 5*unitsratio('ft', 'm');
 NmainWheels = 8;
 NmainShockStruts = 2;
 NumNoseWheels = 2;
-
+numControlFunctions = 4;
+numMechanicalFunctions = 3;
 
 %Calculations
 fuelFraction = (1 + TrappedFuelFactor)*(1 - ProductWFs);
@@ -408,7 +409,6 @@ elevator_area = elevator_area*unitsratio('ft', 'm')^2;
 rudder_area = rudder_area*unitsratio('ft', 'm')^2;
 totalArea = totalArea*unitsratio('ft', 'm')^2;
 totalCSarea = totalCSarea*unitsratio('ft', 'm')^2;
-
 
 %m to ft
 spanWing = spanWing*unitsratio('ft', 'm');

@@ -1,6 +1,11 @@
-function [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, CMoW, CMalphaF, CLtarget, CDtotal, CL_a_Total, CL_ah, iW, alpha0W, alpha0H, downwash, etaH)
+function [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
+    trimAnalysis(CG, wingAC, horizAC, enginePosition, cRootWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+    CLtarget, CDtotal, CL_a_Total, CL_ah, twistWing, iW, alpha0W, alpha0H, downwash, etaH)
 
 %wing and horizontal stabiliser lift coefficients
+
+iW = iW + twistWing*cBarWing/cRootWing; %wing MAC setting angle
+
 syms iH AoA
 CLwing = CL_a_Total*(AoA + iW - alpha0W)*pi/180;
 CLhoriz = CL_ah.*((AoA + iW - alpha0W).*(1-downwash) + (iH-iW) - (alpha0H - alpha0W))*pi/180;
