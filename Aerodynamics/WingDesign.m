@@ -6,7 +6,7 @@ clc
 load('../Initial Sizing/InitialSizing.mat', 'AspectRatio', 'W0', 'WingLoading', 'ThrustToWeight', 'V_Cruise')
 %variables loaded include the design point, aspect ratio, takeoff weight,
 %cruise speed, 
-AspectRatio=9;
+AspectRatio=9.0;
 %% calculate design Cl (sectional)
 [~,~,~,rho_cruise]= atmosisa(distdim(35000,'ft','m'));
 q_cruise=0.5*rho_cruise*V_Cruise^2;
