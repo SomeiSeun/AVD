@@ -21,7 +21,7 @@ load('../Initial Sizing/InitialSizing.mat', 'W0', 'WF1', 'WF2', 'WF3', 'WF4', 'W
 x_wingroot = 29;
 z_wingroot = -2.1354937213;
 length_rootchord = 7.4505;
-theta_setting = 2.2;
+theta_setting = 2.28;
 theta_sweeprearspar = 24.3048;
 theta_dihedral = 5;
 theta_maxground = 15;
@@ -29,21 +29,22 @@ chord_rearspar = 0.60;
 
 % Fuselage
 length_aircraft = 60;
-radius_fuselage = 2.35;
+radius_fuselage = 2.0879;
 x_firsttailstrike = 42.38;
-z_firsttailstrike = -2.09;
+z_firsttailstrike = -2.0879;
 height_mgmax = 1.5;
 length_mgmax = 3;
 
 % Weight and balance
 x_cgmin = 28;
-x_cgmax = 32;
+x_cgmax = 29;
 z_cg = 0.1;
 
 % Engine
 y_enginestrike = 8.1824;
 z_enginestrike = -5.5591;
-grc_engine_min = 6*0.0254; % adding 6 inches of clearance
+grc_engine_min = 6*0.0254; % adding 6 inches of clearance. This should be the value that we have when standing still (loaded tire and oleo)
+
 % Undercarriage assumptions
 WNGRmin = 0.05;
 WNGRmax = 0.20;
@@ -98,11 +99,11 @@ for i = 1:length(y_mgjoint)
     disp(['Tipback constraint: max ground clearance ', num2str(grc_max_tipback)])
     
     % Find maximum ground clearance from undercarriage max length
-    grc_max_undercarriage_length = y_mgjoint(i) - z_mgjoint - radius_fuselage;
+    grc_max_undercarriage_length = y_mgjoint(i) - z_mgjoint - radius_fuselage - 6*0.02;
     disp(['Undercarriage fitting constraint: max ground clearance ', num2str(grc_max_undercarriage_length)])
     
     % Find the more constraining minima and maxima for ground clearance
-    grc_min_most_constraining = max(grc_min_tailstrike, grc_min_engine);
+    grc_min_most_constraining = max(grc_min_tailstrike, grc_min_engine); % was grc_min_engine
     grc_max_most_constraining = min(grc_max_tipback, grc_max_undercarriage_length);
     
     %% Condition 1: Check if ground clearance is possible
@@ -156,7 +157,7 @@ for i = 1:length(y_mgjoint)
             
         else
             
-            x_ng = x_ng_least:0.1:x_ng_least + 1; % technically goes to x_ng_most but not much point
+            x_ng = x_ng_least:0.1:x_ng_least+1; % technically goes to x_ng_most but not much point
             
             %% Loop 2: Picking nose gear longitudinal positions
             
@@ -183,7 +184,7 @@ for i = 1:length(y_mgjoint)
                 WNGR_actual = (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint); %OUTPUT
                 disp(['Nose gear load ratio is ', num2str(WNGR_actual)])
                 theta_tailstrike_actual = atand( (grc_chosen + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint) ); %OUTPUT
-                disp(['Tailstrike angle is ', num2str(atand(theta_tailstrike_actual)) ])
+                disp(['Tailstrike angle is ', num2str(theta_tailstrike_actual) ])
                 theta_tipback_actual = atand( (x_mgjoint-x_cgmax)/h_cg ); %OUTPUT
                 disp(['Tipback angle is ', num2str(theta_tipback_actual)])
                 disp(['Ground clearance is ', num2str(grc_chosen)])
@@ -268,12 +269,14 @@ for i = 1:length(y_mgjoint)
                         % Calculate strut length required, using static
                         % loaded tire and static loaded oleo. Still need to
                         % reach the joint height.
-                        
-                        
+                        mg_strut_length = grc_min_most_constraining + radius_fuselage + z_mgjoint - (MainWheel.StaticLoadedRadiusINCH*0.0254) - ( (MainOleo.TotalLength - 0 ) * 0.0254 ); %OUTPUT
+                        disp(['Main gear strut length required is ', num2str(mg_strut_length)])
+                        mg_deployed_total_length = mg_strut_length + (MainWheel.StaticLoadedRadiusINCH*0.0254) + ( (MainOleo.TotalLength - 0 ) * 0.0254 ); %OUTPUT % instead of zero this should really be (MainOleo.Stroke*(2/3))
+                        mg_retracted_total_length = mg_strut_length + (MainWheel.InflatedOuterDiamMaxINCH*0.0254) + (MainOleo.TotalLength*0.0254); %OUTPUT
                         
                         %% Condition 5: Can undercarriage fit into retraction bay
                         
-                        if ((MainOleo.TotalLength + MainWheel.StaticLoadedRadiusINCH) * 0.0254) > y_mgjoint(i)
+                        if mg_retracted_total_length > y_mgjoint(i)
                             
                             % BAD
                             disp('Undercarriage would not fit laterally into retraction bay')
@@ -396,17 +399,16 @@ MainGearJointPosition = [x_mgjoint, y_mgjoint(i), z_mgjoint]';
 
 
 %% Workspace cleanup
-clear a b c chord_rearspar eta_oleo eta_tire grc_engine_min grc_max_tipback
-clear grc_max_undercarriage_length grc_min_engine grc_min_tailstrike
-clear haveUndercarriage height_mgmax length_aircraft length_mgmax length_rootchord
-clear N_g Stroke_tire_main Stroke_tire_nose theta_dihedral theta_maxground 
-clear theta_setting theta_sweeprearspar V_Vertical W0 WF1 WF2 WF3 WF4 WF5 WF6
-clear WNGRmax WNGRmin x_cgmax x_cgmin x_firsttailstrike x_ng x_ng1 x_ng2
-clear x_ng_least x_ng_maxload_less x_ng_minload_more x_ng_most x_ng_overturn_less
-clear x_ng_place_more x_ng_tricycle_less x_rearspar x_wingroot y_enginestrike
-clear y_mgjoint y_outer y_tire_dist_max z_cg z_enginestrike 
-clear z_firsttailstrike z_rearspar z_wingroot grc_max_most_constraining grc_min_most_constraining
-
+% clear a b c chord_rearspar eta_oleo eta_tire grc_engine_min grc_max_tipback
+% clear grc_max_undercarriage_length grc_min_engine grc_min_tailstrike
+% clear haveUndercarriage height_mgmax length_aircraft length_mgmax length_rootchord
+% clear N_g Stroke_tire_main Stroke_tire_nose theta_dihedral theta_maxground 
+% clear theta_setting theta_sweeprearspar V_Vertical W0 WF1 WF2 WF3 WF4 WF5 WF6
+% clear WNGRmax WNGRmin x_cgmax x_cgmin x_firsttailstrike x_ng x_ng1 x_ng2
+% clear x_ng_least x_ng_maxload_less x_ng_minload_more x_ng_most x_ng_overturn_less
+% clear x_ng_place_more x_ng_tricycle_less x_rearspar x_wingroot y_enginestrike
+% clear y_mgjoint y_outer y_tire_dist_max z_cg z_enginestrike 
+% clear z_firsttailstrike z_rearspar z_wingroot grc_max_most_constraining grc_min_most_constraining
 
 
 

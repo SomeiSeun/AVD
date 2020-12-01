@@ -21,7 +21,7 @@ load('../Initial Sizing/InitialSizing.mat', 'W0', 'WF1', 'WF2', 'WF3', 'WF4', 'W
 x_wingroot = 29;
 z_wingroot = -2.1354937213;
 length_rootchord = 7.4505;
-theta_setting = 2.2;
+theta_setting = 2.28;
 theta_sweeprearspar = 24.3048;
 theta_dihedral = 5;
 theta_maxground = 15;
@@ -29,21 +29,22 @@ chord_rearspar = 0.60;
 
 % Fuselage
 length_aircraft = 60;
-radius_fuselage = 2.35;
+radius_fuselage = 2.0879;
 x_firsttailstrike = 42.38;
-z_firsttailstrike = -2.09;
+z_firsttailstrike = -2.0879;
 height_mgmax = 1.5;
 length_mgmax = 3;
 
 % Weight and balance
 x_cgmin = 28;
-x_cgmax = 32;
+x_cgmax = 29;
 z_cg = 0.1;
 
 % Engine
 y_enginestrike = 8.1824;
 z_enginestrike = -5.5591;
-grc_engine_min = 6*0.0254; % adding 6 inches of clearance
+grc_engine_min = 6*0.0254; % adding 6 inches of clearance. This should be the value that we have when standing still (loaded tire and oleo)
+
 % Undercarriage assumptions
 WNGRmin = 0.05;
 WNGRmax = 0.20;
@@ -98,7 +99,7 @@ for i = 1:length(y_mgjoint)
     disp(['Tipback constraint: max ground clearance ', num2str(grc_max_tipback)])
     
     % Find maximum ground clearance from undercarriage max length
-    grc_max_undercarriage_length = y_mgjoint(i) - z_mgjoint - radius_fuselage;
+    grc_max_undercarriage_length = y_mgjoint(i) - z_mgjoint - radius_fuselage; % Keep in mind that the undercarriage height from this is the squished height not the retracted height
     disp(['Undercarriage fitting constraint: max ground clearance ', num2str(grc_max_undercarriage_length)])
     
     % Find the more constraining minima and maxima for ground clearance
