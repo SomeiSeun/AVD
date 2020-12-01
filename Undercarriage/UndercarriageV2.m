@@ -183,7 +183,7 @@ for i = 1:length(y_mgjoint)
                 WNGR_actual = (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint); %OUTPUT
                 disp(['Nose gear load ratio is ', num2str(WNGR_actual)])
                 theta_tailstrike_actual = atand( (grc_chosen + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint) ); %OUTPUT
-                disp(['Tailstrike angle is ', num2str(atand(theta_tailstrike_actual)) ])
+                disp(['Tailstrike angle is ', num2str(theta_tailstrike_actual) ])
                 theta_tipback_actual = atand( (x_mgjoint-x_cgmax)/h_cg ); %OUTPUT
                 disp(['Tipback angle is ', num2str(theta_tipback_actual)])
                 disp(['Ground clearance is ', num2str(grc_chosen)])
@@ -268,9 +268,9 @@ for i = 1:length(y_mgjoint)
                         % Calculate strut length required, using static
                         % loaded tire and static loaded oleo. Still need to
                         % reach the joint height.
-                        mg_strut_length = grc_chosen + radius_fuselage + z_mgjoint - (MainWheel.StaticLoadedRadiusINCH*0.0254) - ( (MainOleo.TotalLength - (MainOleo.Stroke*(2/3)) ) * 0.0254 ); %OUTPUT
+                        mg_strut_length = grc_min_most_constraining + radius_fuselage + z_mgjoint - (MainWheel.StaticLoadedRadiusINCH*0.0254) - ( (MainOleo.TotalLength - 0 ) * 0.0254 ); %OUTPUT
                         disp(['Main gear strut length required is ', num2str(mg_strut_length)])
-                        mg_deployed_total_length = mg_strut_length + (MainWheel.StaticLoadedRadiusINCH*0.0254) + ( (MainOleo.TotalLength - (MainOleo.Stroke*(2/3)) ) * 0.0254 ); %OUTPUT
+                        mg_deployed_total_length = mg_strut_length + (MainWheel.StaticLoadedRadiusINCH*0.0254) + ( (MainOleo.TotalLength - 0 ) * 0.0254 ); %OUTPUT % instead of zero this should really be (MainOleo.Stroke*(2/3))
                         mg_retracted_total_length = mg_strut_length + (MainWheel.InflatedOuterDiamMaxINCH*0.0254) + (MainOleo.TotalLength*0.0254); %OUTPUT
                         
                         %% Condition 5: Can undercarriage fit into retraction bay
