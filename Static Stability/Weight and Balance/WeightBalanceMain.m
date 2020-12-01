@@ -223,8 +223,7 @@ components(23).cog = 'Luggage';
 components(24).cog = 'Fuel';
 
 %calculating CG
-CGempty = sum([components(1:21).mass].*[components(1:21).cog], 2)/sum([components(1:21).mass]);
-CGfull = sum([components.mass].*[components.cog], 2)/sum([components.mass]);
+
 
 
 %% Outputs

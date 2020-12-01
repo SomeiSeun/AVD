@@ -104,7 +104,6 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
     %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
     wingAC = wingRootLE + aerodynamicCentre(cBarWing, wingSpan, taperWing, sweepWingLE, dihedralWing);
     horizAC = horizRootLE + aerodynamicCentre(cBarHoriz, spanHoriz, taperHoriz, sweepHorizLE, dihedralHoriz);
-
     temp = aerodynamicCentre(cBarVert, 2*heightVert, taperVert, sweepVertLE, dihedralVert);
     temp([2 3]) = temp([3 2]); %switching y and z coordinate for vertical tailplane
     vertAC = vertRootLE + temp;
