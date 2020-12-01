@@ -37,7 +37,7 @@ FF(3)=1+(0.35/fn);
 %% Component Interference Factors
 % Estimates have been made below: 
 
-Q=[1,1,1.2,1.045,1.045]; 
+Q=[1,1,1.15,1.045,1.045]; 
 
 %(fuselage has negligible interference)
 %Q_mainwing=1 (for a well filletted low wing)
@@ -48,5 +48,5 @@ Q=[1,1,1.2,1.045,1.045];
 %% Calculation of Parasitic Drag 
 CD_Parasitic=(Cfc.*FF.*Q.*SWET)/Sref;
 CD_Parasitic_Total=sum(CD_Parasitic);
-CD_LandP=1.035*CD_Parasitic_Total;
+CD_LandP=0.02*CD_Parasitic_Total;
 end
