@@ -19,8 +19,8 @@
 %Vertical Tail LCS
 %LCS with HLD
 
-
-function [CL_a,CL_max_clean,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,sweepanglemax,Cl_am,chord_ratio,Cl_max,flapped_ratio,sweep_quarterchord,sweep_HLD)
+%%
+function [CL_a,CL_max_clean,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,sweepanglemax,Cl_am,chord_ratio,Cl_max,flapped_ratio,sweep_quarterchord,sweep_HLD)
 beta=sqrt(1-(M).^2);% to account for compressibility effects;
 F=1.07*(1+(d/b))^2;
 % fuselage spillover lift factor
@@ -35,10 +35,15 @@ CL_max_clean=0.9.*Cl_max.*cosd(sweep_quarterchord);                        % Det
 delta_CL_max=1.26*Cl_max.*(flapped_ratio)*cosd(sweep_HLD);                 % Determine additional CL_max due to HLD
 CL_max_landing=CL_max_clean+delta_CL_max;                                  % Calculate CL_max at take-off and landing
 CL_max_takeoff=CL_max_clean+0.7*(delta_CL_max);
-takeoff_factor=(1+(chord_ratio-1.09)*(flapped_ratio));
+
+takeoff_factor=(1+(chord_ratio-1.09)*(flapped_ratio));                     % Calculate the additional amount to add to LCS
 landing_factor=(1+(chord_ratio-1)*(flapped_ratio));
-%Change ndin zero-lift angle of attack when flaps and leading edge devices
+
+%Change in zero-lift angle of attack when flaps and leading edge devices
 %are considered.
 delta_alpha_takeoff=(-10)*(flapped_ratio)*cosd(20.9647);
 delta_alpha_landing=(-15)*(flapped_ratio)*cosd(20.9647);
+alpha_zero_takeoff=-6.349*pi/180;
+zeroAlphaLCT=CL_a(1)*(0-alpha_zero_takeoff);
+
 end 

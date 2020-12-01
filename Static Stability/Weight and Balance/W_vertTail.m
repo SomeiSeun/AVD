@@ -1,5 +1,5 @@
 function W_vertTail = W_vertTail(W_maxTO, Nz, SVert, lVert, ARvert, sweepVertQC, thicknessRatioVert)
-this function calculates the weight of the vertical tail in lbs
+% this function calculates the weight of the vertical tail in lbs
 
 % INPUTS
 % W_maxTO = design gross weight aka maximum takeoff weight (lbs)

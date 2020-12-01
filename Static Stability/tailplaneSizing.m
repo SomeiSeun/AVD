@@ -11,7 +11,7 @@ function [span, cRoot, cTip, cBar] = tailplaneSizing(Sref, AR, taper)
 %determining planform span
 span = sqrt(Sref*AR);
 
-%determining horizontal tailp[lane chord values 
+%determining horizontal tailplane chord values 
 cRoot = 2*Sref/(span*(1+taper));
 cTip = cRoot*taper;
 cBar = 2/3*cRoot*(1+taper+taper^2)/(1+taper);
