@@ -41,6 +41,7 @@ electricRating = 60; %typically 40 − 60 for transports (kVA)
 W_APU_uninstalled = 8*(1.1*N_Pax)^0.75; %(lb) Pasquale Sforza, in Commercial Airplane Design Principles, 2014
 lengthEngineControl = (wingRootLE(1) + 0.2*spanWing)*unitsratio('ft', 'm'); %initial assumption
 lengthElectrical = totalLength*unitsratio('ft', 'm');
+W_maxTO = W0;
 
 %% Calculations
 fuelFraction = (1 + TrappedFuelFactor)*(1 - ProductWFs);
@@ -78,7 +79,7 @@ totalLength = totalLength*unitsratio('ft', 'm');
 V_Stall_Landing = V_Stall_Landing*unitsratio('ft', 'm');
 
 %N to lb
-W_maxTO = convforce(W0, 'N', 'lbf');
+W_maxTO = convforce(W_maxTO, 'N', 'lbf');
 W_People = convforce(W_People, 'N', 'lbf');
 W_Luggage = convforce(W_Luggage, 'N', 'lbf');
 W_maxCargo = convforce(W_maxCargo, 'N', 'lbf');
