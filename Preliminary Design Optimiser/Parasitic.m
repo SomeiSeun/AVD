@@ -48,5 +48,5 @@ Q=[1,1,1.15,1.045,1.045];
 %% Calculation of Parasitic Drag 
 CD_Parasitic=(Cfc.*FF.*Q.*SWET)/Sref;
 CD_Parasitic_Total=sum(CD_Parasitic);
-CD_LandP=0.03*CD_Parasitic_Total;
+CD_LandP=0.02*CD_Parasitic_Total;
 end
