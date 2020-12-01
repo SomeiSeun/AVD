@@ -9,7 +9,7 @@ close all
 %loading parameters from other scripts
 addpath('../Initial Sizing/', '../Xfoil/', '../Structures/Fuselage/', '../Aerodynamics/', '../Preliminary Design Optimiser/')
 load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio', 'root_chord', 'tip_chord', 'Twist')
-load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength', 'aftLength', 'frontLength', 'mainLength')
+load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength', 'aftLength', 'frontLength', 'mainLength', 'aftDiameter')
 load('AerodynamicsFINAL.mat', 'CL_a_Total', 'CL_ah', 'CL_a_M0', 'CD_Total')
 load('InitialSizing.mat', 'WingLoading', 'V_Cruise')
 
@@ -102,12 +102,14 @@ temp([2 3]) = temp([3 2]); %switching y and z coordinate for vertical tailplane
 vertAC = vertRootLE + temp;
 clear temp
 
+fuseWidthHoriz = 2; %fuselage width at horizontal tailplane intersection in m
+
 %% PLOTTING TAILPLANE AND WING GEOMETRY AND PLACEMENT
 wingPlanform = wingRootLE + tailplanePlanform(wingSpan, sweepWingLE, cRootWing, cTipWing, dihedralWing, false);
 horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHoriz, cTipHoriz, dihedralHoriz, false);
 vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
 
-tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter)
+tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 %% STABILITY ANALYSIS
 
@@ -155,7 +157,7 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
     trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, ...
     CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH);
 
-save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRootHoriz', 'cBarVert',...
+save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRootHoriz', 'cRootVert',...
     'dihedralHoriz', 'dihedralVert', 'maxThicknessLocationHoriz', 'maxThicknessLocationVert',...
     'NACAhoriz', 'NACAvert', 'SHoriz', 'SHorizExposed', 'SHorizWetted', 'spanHoriz', 'SVert',...
     'SVertExposed', 'SVertWetted', 'sweepHorizLE', 'sweepHorizQC', 'sweepHorizTE', 'sweepVertLE',...
@@ -164,4 +166,4 @@ save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRoot
 
 save('stabilityAndTrim.mat', 'lHoriz', 'lVert', 'VbarH', 'VbarV', 'xNPOff', 'xNPOn', 'KnOn', 'KnOff',...
     'iH_trim', 'AoA_trim', 'AoA_trimWings', 'AoA_trimHoriz', 'CL_trimWings', 'CL_trimHoriz', ...
-    'wingRootLE', 'horizRootLE', 'vertRootLE', 'wingAC', 'horizAC', 'vertAC');
+    'wingRootLE', 'horizRootLE', 'vertRootLE', 'wingAC', 'horizAC', 'vertAC', 'fuseWidthHoriz');
