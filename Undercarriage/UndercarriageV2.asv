@@ -102,7 +102,7 @@ for i = 1:length(y_mgjoint)
     disp(['Undercarriage fitting constraint: max ground clearance ', num2str(grc_max_undercarriage_length)])
     
     % Find the more constraining minima and maxima for ground clearance
-    grc_min_most_constraining = max(grc_min_tailstrike, grc_min_engine); % was grc_min_engine
+    grc_min_most_constraining = max(grc_min_tailstrike, grc_min_engine);
     grc_max_most_constraining = min(grc_max_tipback, grc_max_undercarriage_length);
     
     %% Condition 1: Check if ground clearance is possible
@@ -156,7 +156,7 @@ for i = 1:length(y_mgjoint)
             
         else
             
-            x_ng = x_ng_least:0.1:x_ng_least+1; % technically goes to x_ng_most but not much point
+            x_ng = x_ng_least:0.1:x_ng_least + 1; % technically goes to x_ng_most but not much point
             
             %% Loop 2: Picking nose gear longitudinal positions
             
@@ -268,14 +268,12 @@ for i = 1:length(y_mgjoint)
                         % Calculate strut length required, using static
                         % loaded tire and static loaded oleo. Still need to
                         % reach the joint height.
-                        mg_strut_length = grc_chosen + radius_fuselage + z_mgjoint - (MainWheel.StaticLoadedRadiusINCH*0.0254) - ( (MainOleo.TotalLength - (MainOleo.Stroke*(2/3)) ) * 0.0254 ); %OUTPUT
-                        disp(['Main gear strut length required is ', num2str(mg_strut_length)])
-                        mg_deployed_total_length = mg_strut_length + (MainWheel.StaticLoadedRadiusINCH*0.0254) + ( (MainOleo.TotalLength - (MainOleo.Stroke*(2/3)) ) * 0.0254 ); %OUTPUT
-                        mg_retracted_total_length = mg_strut_length + (MainWheel.InflatedOuterDiamMaxINCH*0.0254) + (MainOleo.TotalLength*0.0254); %OUTPUT
+                        
+                        
                         
                         %% Condition 5: Can undercarriage fit into retraction bay
                         
-                        if mg_retracted_total_length > y_mgjoint(i)
+                        if ((MainOleo.TotalLength + MainWheel.StaticLoadedRadiusINCH) * 0.0254) > y_mgjoint(i)
                             
                             % BAD
                             disp('Undercarriage would not fit laterally into retraction bay')
@@ -398,16 +396,17 @@ MainGearJointPosition = [x_mgjoint, y_mgjoint(i), z_mgjoint]';
 
 
 %% Workspace cleanup
-% clear a b c chord_rearspar eta_oleo eta_tire grc_engine_min grc_max_tipback
-% clear grc_max_undercarriage_length grc_min_engine grc_min_tailstrike
-% clear haveUndercarriage height_mgmax length_aircraft length_mgmax length_rootchord
-% clear N_g Stroke_tire_main Stroke_tire_nose theta_dihedral theta_maxground 
-% clear theta_setting theta_sweeprearspar V_Vertical W0 WF1 WF2 WF3 WF4 WF5 WF6
-% clear WNGRmax WNGRmin x_cgmax x_cgmin x_firsttailstrike x_ng x_ng1 x_ng2
-% clear x_ng_least x_ng_maxload_less x_ng_minload_more x_ng_most x_ng_overturn_less
-% clear x_ng_place_more x_ng_tricycle_less x_rearspar x_wingroot y_enginestrike
-% clear y_mgjoint y_outer y_tire_dist_max z_cg z_enginestrike 
-% clear z_firsttailstrike z_rearspar z_wingroot grc_max_most_constraining grc_min_most_constraining
+clear a b c chord_rearspar eta_oleo eta_tire grc_engine_min grc_max_tipback
+clear grc_max_undercarriage_length grc_min_engine grc_min_tailstrike
+clear haveUndercarriage height_mgmax length_aircraft length_mgmax length_rootchord
+clear N_g Stroke_tire_main Stroke_tire_nose theta_dihedral theta_maxground 
+clear theta_setting theta_sweeprearspar V_Vertical W0 WF1 WF2 WF3 WF4 WF5 WF6
+clear WNGRmax WNGRmin x_cgmax x_cgmin x_firsttailstrike x_ng x_ng1 x_ng2
+clear x_ng_least x_ng_maxload_less x_ng_minload_more x_ng_most x_ng_overturn_less
+clear x_ng_place_more x_ng_tricycle_less x_rearspar x_wingroot y_enginestrike
+clear y_mgjoint y_outer y_tire_dist_max z_cg z_enginestrike 
+clear z_firsttailstrike z_rearspar z_wingroot grc_max_most_constraining grc_min_most_constraining
+
 
 
 

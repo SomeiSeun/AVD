@@ -239,5 +239,33 @@ Length_inlet = (Engine_radius - Capture_radius)/tand(10);
 
 disp(['Diffuser length from inlet to fan = ', num2str(Length_inlet), ' m'])
 
+%% Engine placement
+
+% Wing design / aerodynamics inputs
+x_wingroot = 29;
+z_wingroot = -2.1354937213;
+length_rootchord = 7.4505;
+theta_setting = 2.2;
+theta_sweepLE = 29;
+theta_dihedral = 5;
+theta_maxground = 15;
+
+% Calculate wing leading edge
+x_LE = x_wingroot + length_rootchord*(0-0.25)*cosd(theta_setting);
+z_LE = z_wingroot - length_rootchord*(0-0.25)*sind(theta_setting);
+
+% Calculate wing-engine interface point
+y_engine_ref = 8;
+x_engine_ref = x_LE + y_engine_ref * (tand(theta_sweepLE)*cosd(theta_setting) + tand(theta_dihedral)*sind(theta_setting));
+z_engine_ref = z_LE + y_engine_ref * (-tand(theta_sweepLE)*sind(theta_setting) + tand(theta_dihedral)*cosd(theta_setting));
+
+% Calculate engine front face centre point
+x_engine_front = x_engine_ref - 2*D_e;
+y_engine_front = y_engine_ref;
+z_engine_front = z_engine_ref - (D_e/2);
+
+% Calculate engine strike point
+y_engine_strike = y_engine_front + ((D_e + 0.3048)/2)*sind(5);
+z_engine_strike = z_engine_front - ((D_e + 0.3048)/2)*cosd(5);
 
 
