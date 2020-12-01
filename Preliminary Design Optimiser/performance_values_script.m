@@ -6,7 +6,7 @@ clc
 % Loading in the relevant .mat files
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat');
-%load('tailplane_Sizing_variable_values.mat'); 
+load('tailplane_Sizing_variable_values.mat'); 
 load('AerodynamicsFINAL.mat');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,14 +28,14 @@ W_L = W0 * WF8 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF9 * WF10;
 
 VS0 = sqrt((2 * W_L) / (1.225 * Sref * CL_max_landing)); % Stall speed in Landing config
 L_over_D_landing = CL_max_landing/CD_Total(3); 
-T_L = 0.5*T_Takeoff; 
+T_L = 0.5*T_Takeoff;
 % This equation gives the Landing distance in metres
 S_L = Landing_distance(zeroAlphaLCT, V_S1, W_L, VS0,...
-    T_L, L_over_D_landing, Sref, AspectRatio, e_Cruise, CD_0_Total(3), CD_Total(3)); 
+    T_L, L_over_D_landing, Sref, AspectRatio, e_Cruise, CD_0_Total(3), 0.01);
 % ^ Values still needed: T_L
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 D2 = 0.5 * 1.225 * Sref * 1.44 * V_stall_takeoff^2 * CD_Total(1);
-T_oei = 0.5 * T_Takeoff; 
+T_oei = 0.5 * T_Takeoff;
 
 % This equation gives the Balanced Field Length in metres
 BFL = Balanced_Field_Length(W0, Sref, Cl_TakeOff,...
