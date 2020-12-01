@@ -375,16 +375,15 @@ electricRating = 60; %typically 40 − 60 for transports (kVA)
 W_APU_uninstalled = 8*(1.1*N_Pax)^0.75; %(lb) Pasquale Sforza, in Commercial Airplane Design Principles, 2014
 lengthEngineControl = 2*(wingRootLE(1) + 0.2*spanWing)*unitsratio('ft', 'm'); %initial assumption
 lengthElectrical = totalLength*unitsratio('ft', 'm');
-lengthNacelle = 5.56*unitsratio('ft', 'm');
-widthNacelle = 4.5*unitsratio('ft', 'm');
+nacelleLength = 5.56*unitsratio('ft', 'm');
+nacelleWidth = 4.5*unitsratio('ft', 'm');
 engineDiam = 3.97*unitsratio('ft', 'm');
 SnacelleWetted = 70*unitsratio('ft', 'm')^2;
 lengthMainLG = 4.445*unitsratio('ft', 'm');
 lengthNoseLG = 5*unitsratio('ft', 'm');
 NmainWheels = 8;
 NmainShockStruts = 2;
-NumNoseWheels = 2;
-
+NumNoseWeels = 2;
 
 %Calculations
 fuelFraction = (1 + TrappedFuelFactor)*(1 - ProductWFs);
@@ -431,6 +430,7 @@ W_maxCargo = convforce(W_maxCargo, 'N', 'lbf');
 W_Landing = convforce(W_Landing, 'N', 'lbf');
 
 %Weight breakdown by component (all in lbs)
+
 components = nameComponents();
 
 %lifting surfaces
@@ -444,10 +444,10 @@ components(5).weight = W_mainLG(W_Landing, Ngear, lengthMainLG, NmainWheels, Vst
 components(6).weight = W_noseLG(W_Landing, Ngear, lengthNoseLG, NumNoseWheels);
 
 %engine and fuel system
-components(7).weight = convforce(6661*9.80665, 'N', 'lbf');
-components(8).weight = W_nacelle(components(7).weight, lengthNacelle, widthNacelle, Nz, NumberOfEngines, SnacelleWetted);
+components(7).weight = 6661*9.80665; %REMEMBER TO INCLUDE ACTUAL ENGINE WEIGHT
+components(8).weight = W_nacelle(W_engine, lengthNacelle, widthNacelle, Nz, NumberOfEngines, SnacelleWetted);
 components(9).weight = 5*NumberOfEngines + 0.8*lengthEngineControl; %lengthEngineControl = engine to cockpit total length (ft)
-components(10).weight = W_engineStarter(NumberOfEngines, components(7).weight);
+components(10).weight = W_engineStarter(NumberOfEngines, W_engine);
 components(11).weight = 3e-4*W0;
 components(12).weight = W_fuelSystem(numTanks, volumeTankTotal, volumeSelfSealingTank, volumeIntegralTank);
 
@@ -465,10 +465,8 @@ emptyWeight = sum([components(1:21).weight]);
 
 components(22).weight = W_People; %crew + pax
 components(23).weight = W_Luggage; %luggage of crew + pax
-W_fuel = (emptyWeight + W_People + W_Luggage)*fuelFraction/(1 - fuelFraction);
-components(24).weight = 0.5*W_fuel;
-components(25).weight = 0.5*W_fuel;
-totalWeight= sum([components.weight]);
+components(24).weight = (emptyWeight + W_People + W_Luggage)*fuelFraction/(1 - fuelFraction);
+totalWeight = sum([components.weight]);
 
 %Converting back from Imperial to SI units
 
@@ -520,19 +518,19 @@ components(3).cog = vertRootLE + liftingSurfaceCG(0.42, 0.38, 2*heightHoriz, tap
 
 %fuselage and undercarriage
 components(4).cog = [0.45*totalLength; 0; 0];
-components(5).cog = [wingRootLE(1) + cRootWing; 0; -1.5*fusDiamOuter];
-components(6).cog = [0.5*frontLength; 0; -1.5*fusDiamOuter];
+components(5).cog = W_mainLG(W_Landing, Ngear, lengthMainLG, NmainWheels, Vstall_Landing, NmainShockStruts);
+components(6).cog = W_noseLG(W_Landing, Ngear, lengthNoseLG, NumNoseWheels);
 
 %engine and fuel system
-components(7).cog = wingRootLE + [0.3*0.5*spanWing*tand(sweepWingLE); 0; 0.3*0.5*spanWing*tand(dihedralWing) - widthNacelle];
-components(8).cog = wingRootLE + [0.3*0.5*spanWing*tand(sweepWingLE) - 0.6*lengthNacelle; 0; 0.3*0.5*spanWing*tand(dihedralWing) - widthNacelle];
+components(7).cog = wingRootLE + [0.3*0.5*spanWing*tand(sweepWingLE); 0; 0.3*0.5*spanWing*tand(dihedralWing) - nacelleWidth];
+components(8).cog = wingRootLE + [0.3*0.5*spanWing*tand(sweepWingLE) - 0.6*nacelleLength; 0; 0.3*0.5*spanWing*tand(dihedralWing) - nacelleWidth];
 components(9).cog = [0.5*components(7).cog(1); 0; 0]; %lengthEngineControl = engine to cockpit total length (ft)
 components(10).cog = [0.5*totalLength;0;0];
 components(11).cog = [0.5*totalLength;0;0];
 components(12).cog = W_fuelSystem(numTanks, volumeTankTotal, volumeSelfSealingTank, volumeIntegralTank);
 
 %subsystems
-components(13).cog = [0.5*frontLength; 0; -0.25*fusDiamOuter];
+components(13).cog = W_flightControls;
 components(14).cog = [frontLength + mainLength + 0.65*aftLength; 0; 1.2];
 components(15).cog = [0.5*frontLength; 0; -0.25*fusDiamOuter];
 components(16).cog = [0.5*totalLength; 0; 0];
@@ -540,12 +538,11 @@ components(17).cog = [0.5*totalLength; 0; 0];
 components(18).cog = [frontLength + 0.2*mainLength; 0; -0.5*fusDiamOuter];
 components(19).cog = [frontLength + 0.5*mainLength; 0; 0];
 components(20).cog = [0.5*totalLength;0;0];
-components(21).cog = wingRootLE;
+components(21).cog = 0.002*W0;
 
 components(22).cog = [frontLength + 0.5*mainLength; 0; 0];
 components(23).cog = [frontLength + 0.5*mainLength; 0; 0];
-components(24).cog = 'Centre Fuel';
-components(25).cog = 'Wing Fuel';
+components(24).cog = 'Fuel';
 
 %calculating CG
 CGempty = sum([components(1:21).mass].*[components(1:21).cog], 2)/sum([components(1:21).mass]);

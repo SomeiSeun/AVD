@@ -8,7 +8,7 @@ close all
 
 %loading parameters from other scripts
 addpath('../Initial Sizing/', '../Xfoil/', '../Structures/Fuselage/', '../Aerodynamics/', '../Preliminary Design Optimiser/')
-load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio', 'root_chord', 'tip_chord', 'Twist')
+load('wingDesign.mat', 'Sref', 'MAC', 'b', 'Sweep_quarterchord', 'i_w_root', 'TaperRatio', 'Sweep_LE', 'Dihedral', 'AspectRatio', 'root_chord', 'tip_chord', 'Twist')
 load('fuselageOutputs.mat', 'fusDiamOuter', 'totalLength', 'aftLength', 'frontLength', 'mainLength', 'aftDiameter')
 load('AerodynamicsFINAL.mat', 'CL_a_Total', 'CL_ah', 'CL_a_M0', 'CD_Total')
 load('InitialSizing.mat', 'WingLoading', 'V_Cruise')
@@ -170,7 +170,7 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
 %determine iH and AoA for trimmed flight
 [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] = ...
     trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, ...
-    CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH);
+    CMoW, CMalphaF, CLtarget, CD_Total, CL_a_Total, CL_ah, i_w_root, alpha0W, alpha0H, downwash, etaH);
 
 save('tailplaneSizing.mat', 'ARhoriz', 'ARvert', 'cBarHoriz', 'cBarVert', 'cRootHoriz', 'cRootVert',...
     'dihedralHoriz', 'dihedralVert', 'maxThicknessLocationHoriz', 'maxThicknessLocationVert',...

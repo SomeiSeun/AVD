@@ -1,7 +1,4 @@
-function [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, CMoW, CMalphaF, CLtarget, CDtotal, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH)
-
-%wing setting angle to ensure horizontal fuselage during cruise
-iW = 180/pi*CLtarget(2)/CL_a_Total(2) + alpha0W - 0.4*twistWing;
+function [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, CMoW, CMalphaF, CLtarget, CDtotal, CL_a_Total, CL_ah, iW, alpha0W, alpha0H, downwash, etaH)
 
 %wing and horizontal stabiliser lift coefficients
 syms iH AoA
