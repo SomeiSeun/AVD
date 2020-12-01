@@ -13,7 +13,7 @@ close all
 % This section would include all data required from initial sizing, etc as
 % whole for multiple. E.g:
 
-%load('../Initial Sizing/InitialSizing.mat')
+addpath()
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat')
 load('../Static Stability/tailplaneSizing.mat')
