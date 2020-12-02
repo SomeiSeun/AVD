@@ -8,133 +8,135 @@ clear
 clc
 close all
 
-%% Get data
+addpath('../Aerodynamcs/', '../Initial Sizing/', '../Powerplant/', '../Static Stability/',...
+    '../Static Stability/Weight and Balance/', ',,/Structures', ',,/Structures/Fuselage',...
+    ',,/Undercarriage')
 
-% This section would include all data required from initial sizing, etc as
-% whole for multiple. E.g:
+%% Initial Sizing
 
-<<<<<<< HEAD
-load('../Initial Sizing/InitialSizing.mat', 'W0', 'WF6')
-=======
-%load('../Initial Sizing/InitialSizing.mat')
-load('../Aerodynamics/Unknowns.mat') 
-load('../Initial Sizing/InitialSizing.mat')
-load('../Aerodynamics/wingDesign.mat')
-load('../Static Stability/tailplaneSizing.mat')
-<<<<<<< HEAD
-<<<<<<< HEAD
-%>>>>>>> main
-load('../Aerodynamics/Unknowns.mat')                                        % This is just a bunch of values I am still waiting on...
-<<<<<<< HEAD
->>>>>>> main
+% Inputs
+% Update values, specially SwetSref!
+load("DesignBriefTargets.mat") 
+Mass_Person = 75; 
+Mass_Luggage = 31; 
+C_Cruise = 14.1 * 0.035316;
+C_Divert = 11.55 * 0.035316;
+C_Loiter = 11.3 * 0.035316;
+K_LD = 15.5;
+AspectRatio = 10.5;
+SWet_SRef = 6;
+TrappedFuelFactor = 0.02;
+H_Divert = 12000;
 
-=======
-=======
-=======
-load('../Static Stability/stabilityAndTrim.mat')
-<<<<<<< HEAD
->>>>>>> main
-load('../Aerodynamics/Unknowns.mat')                                        % This is just a bunch of values I am waiting on
->>>>>>> main
-=======
-                                                                                % This is just a bunch of values I am waiting on
->>>>>>> main
-load('../Structures/Fuselage/fuselageOutputs.mat')      
->>>>>>> main
+% Functions
+% Updated weight fractions, sanity check with team!
+[W_Payload, W_Crew] = payloadAndCrewWeights(N_Pilots, N_Crew, N_Pax, Mass_Person, Mass_Luggage);
+L_DMax = LiftToDragRatio(K_LD, AspectRatio, SWet_SRef);
+WF1 = WFLeg1();                                                                         % Engine start-up and warm-up
+WF2 = WFLeg2();                                                                         % Taxi
+WF3 = WFLeg3();                                                                         % Take off
+WF4 = WFLeg4();                                                                         % Climb and ascent from 0 ft to 35k ft
+[WF5, V_Cruise, V_MaxVelocity] = WFLeg5(R_Cruise, C_Cruise, H_Cruise, M_Cruise, L_DMax);               % Cruise
+VimD = VimDCalculator(H_Cruise, M_Cruise);  
+WF6 = WFLeg6();                                                                         % Descent from 35k ft to 0 ft
+WF7 = WFLeg7(WF4,H_Divert,H_Cruise);                                                    % Climb from 0 ft to 12k ft
+[WF8, V_Divert] = WFLeg8(R_Divert, C_Divert, H_Divert, L_DMax, VimD, WF5*WF6*WF7);      % Diversion cruise
+[WF9, V_Loiter] = WFLeg9(E_Loiter, C_Loiter, L_DMax, VimD, WF5*WF6*WF7*WF8, H_Loiter);  % Loiter at 5k ft
+WF10 = WFLeg10(WF6, H_Loiter, H_Cruise);                                                % Descent from 5k ft to 0 ft
+WF11 = WFLeg11();                                                                       % Landing, taxi and shutdown
+ProductWFs = WF1*WF2*WF3*WF4*WF5*WF6*WF7*WF8*WF9*WF10*WF11;
+W0 = RoskamGimmeMTOW(ProductWFs, W_Payload, W_Crew, TrappedFuelFactor);
 
-%% Assumed Values
+% Outputs
+disp(['The mass of the aircraft is: ', num2str(round(W0/9.81)), ' kg (aka ', num2str(round(W0)), ' N)'])
 
-<<<<<<< HEAD
-% Wing
-% Fuselage
-% Undercarriage
-x_cg_max = 32;
-x_cg_min = 30;
-y_cg = 0;
-z_cg_max = 3; 
-z_cg_min = 2;
-Length_ac = 60;
-x_ng_min = 5;
-x_fuse_tapers = 50;
-AoA_liftoff = 15;
-AoA_landing = 14;
-ground_clearance = 1.5;
-y_mg_max = 3;
-=======
-%For aerodynamics analysis
-<<<<<<< HEAD
-<<<<<<< HEAD
-l=[MAC,fuselage_length,nacelle_length,H_MAC,V_MAC];
-xtocmax=[xtocmax_wing,0,0,0.3,0.3];
-ttoc=[Airfoil_ThicknessRatio_used,0,0,0.12,0.12];
-theta_max=[Sweep_maxt,0,0,27,27];
-S_wet_all=[S_wetted,606,60,0,0];
-<<<<<<< HEAD
->>>>>>> main
+%% Sizing to Constraints
 
-=======
-=======
-l=[MAC,fuselage_length,nacelle_length,cBarHoriz,cBarVert];
-xtocmax=[0.349,0,0,maxThicknessLocationHoriz,maxThicknessLocationVert];
-ttoc=[Airfoil_ThicknessRatio_used,0,0,thicknessRatioHoriz,thicknessRatioVert];
-theta_max=[Sweep_maxt,0,0,sweepHorizMT,sweepVertMT];
-S_wet_all=[S_wetted,606,60,SHorizWetted,SVertWetted];
->>>>>>> main
-=======
-l=[MAC,totalLength,8,cBarHoriz,cBarVert];
-xtocmax=[0.349,0,0,maxThicknessLocationHoriz,maxThicknessLocationVert];
-ttoc=[Airfoil_ThicknessRatio_used,0,0,thicknessRatioHoriz,thicknessRatioVert];
-theta_max=[Sweep_maxt,0,0,sweepHorizMT,sweepVertMT];
-S_wet_all=[S_wetted,totalArea,90,SHorizWetted,SVertWetted];
-<<<<<<< HEAD
->>>>>>> main
-flapped_ratio=0.487;
-chord_ratio=1.26;
-Sweep_TE=20.9647;
-upsweep_angle=15*(pi/180);
-<<<<<<< HEAD
->>>>>>> main
+% Inputs
+% Check values!
+beta_Cruise = 0.2; e_Cruise = 0.85; C_D0_Cruise = 0.02;             % Cruise
+beta_Divert = 0.5; e_Divert = 0.85; C_D0_Divert = 0.02;             % Divert
+beta_Loiter = 0.8; e_Loiter = 0.75; C_D0_Loiter = 0.02;             % Loiter
+[~,~,~,rho_ConsVT] = atmosisa(H_Loiter);                            % Constant turns
+alpha_AbsC = WF1*WF2*WF3*WF4; beta_AbsC = 0.14; C_D0_AbsC = 0.02; e_AbsC = 0.85;   % Absolute ceiling   UPDATE!
+TODA = 2200; CL_TakeOff = 1.7;                                      % Takeoff
+NumberOfEngines = 2; ClimbGradient = 0.024;                         % One engine inoperative
+C_LMaxLanding = 2.2;                                                % Landing
 
-=======
-=======
-Aeff=0;
-Area_ucfrontal=0;
-nacelle_length=8;
-nacelle_diameter=4;
-flapped_ratio=0.487;
->>>>>>> main
-Cl_tail_airfoil=1.4;
->>>>>>> main
-%% Optimiser loop
+% Functions
+% Walk team through functions!
+[Const_WS_Cruise, Const_TW_Cruise] = SEP(H_Cruise, V_Cruise, 0, 0, WF1*WF2*WF3*WF4, beta_Cruise, 1, AspectRatio, e_Cruise, C_D0_Cruise);
+[Const_WS_Divert, Const_TW_Divert] = SEP(H_Divert, V_Divert, 0, 0, WF1*WF2*WF3*WF4*WF5*WF6*WF7, beta_Divert, 1, AspectRatio, e_Divert, C_D0_Divert);
+[Const_WS_Loiter, Const_TW_Loiter] = SEP(H_Loiter, V_Loiter, 0, 0, WF1*WF2*WF3*WF4*WF5*WF6*WF7*WF8, beta_Loiter, 1, AspectRatio, e_Loiter, C_D0_Loiter);
+[Const_WS_MaxSpeed, Const_TW_MaxSpeed] = SEP(H_Cruise, V_MaxVelocity, 0, 0, WF1*WF2*WF3*WF4, beta_Cruise, 1, AspectRatio, e_Cruise, C_D0_Cruise);
+[Const_WS_ConsVT, Const_TW_ConsVT] = ConsVT(rho_ConsVT, 30, V_Loiter);
+[Const_WS_AbsCeil, Const_TW_AbsCeil, TargetMatchX, TargetMatchY] = Absolute_Ceiling(H_Absolute, 1, alpha_AbsC, beta_AbsC, L_DMax, C_D0_AbsC, AspectRatio, e_AbsC);
+[Const_TW_TakeOff, Const_WS_TakeOff] = Take_off_constraint(TODA, CL_TakeOff, 1);
+[Const_WS_OEI, Const_TW_OEI] = OEI_takeoff(NumberOfEngines, L_DMax, ClimbGradient);
+[Const_WS_LandingTrev, Const_TW_LandingTrev] = Landing(C_LMaxLanding, 0.66, WF1*WF2*WF3*WF4*WF5*WF6*WF7);
+[Const_WS_LandingNoTrev, Const_TW_LandingNoTrev] = Landing(C_LMaxLanding, 1, WF1*WF2*WF3*WF4*WF5*WF6*WF7);
 
-%Aerodynamics: Lift
-[CL_a,CL_max_clean,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(AspectRatio,S_exposed,Sref,fusDiamOuter,b,M,Sweep_maxt,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,Sweep_quarterchord,Sweep_TE);
-[CL_a_M0]=WingLift(AspectRatio,S_exposed,Sref,fusDiamOuter,b,0,Sweep_maxt,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,Sweep_quarterchord,Sweep_TE);
-CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
-[CL_ah,CL_max_h]=TailLift(ARhoriz,d,spanHoriz,M,sweepHorizMT,10.5214,Cl_tail_airfoil,sweepHorizQC);
-[maxLiftLanding,maxLiftTakeoff,AoA_Stall_Wing_Clean,AoA_Stall_Tail_Clean]=TotalLift(CL_max_landing,CL_max_takeoff,CL_max_clean,CL_a,CL_ah,CL_max_h,SHoriz,Sref,rho_landing,V_landing,rho_takeoff,V_takeoff);
+% "Reading" design point off of the constraints diagram. This is not the
+% most robust method for reading it, but for reasonable values taken in
+% initial sizing, it should work. Make sure to double check with the
+% constraints diagram!
+WingLoading = TargetMatchX;
+ThrustToWeightTakeOff = Const_TW_TakeOff(Const_WS_TakeOff == TargetMatchX);
+if ThrustToWeightTakeOff > TargetMatchY
+    ThrustToWeight = ThrustToWeightTakeOff;
+elseif ThrustToWeightTakeOff < TargetMatchY
+    ThrustToWeight = TargetMatchY;
+else
+    ThrustToWeight = TargetMatchY;
+end
 
-%Aerodynamics: Drag 
-[CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise,Re,Cfc,FF]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
-[CD_Parasitic_Takeoff,CD_Parasitic_Total_Takeoff,CD_LandP_Takeoff]=Parasitic(rho_takeoff,V_takeoff,l,nu_takeoff,M_takeoff,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
-[CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
-[CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing,C_Dfu]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,fusDiamOuter,upsweep_angle);
-[CD_0_Total,CD_min]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
-[CD_iw,CD_ih,CD_Total,Drag_Landing,LtoDMax]=TotalDragFinal(CL_trimWings,CL_trimHoriz,SHoriz,Sref,CD_0_Total,rho_landing,V_landing,AspectRatio);
-[V_Stall_Landing]=StallSpeed(W0,WF1,WF2,WF3,WF4,WF5,WF6,CL_max_landing,rho_landing,Sref);
+% Outputs
+% Sanity check graph!
+figure(1)
+plot(Const_WS_Cruise, Const_TW_Cruise, '--', 'LineWidth', 1.5)
+hold on
+plot(Const_WS_Divert, Const_TW_Divert, '--', 'LineWidth', 1.5)
+plot(Const_WS_Loiter, Const_TW_Loiter, '--', 'LineWidth', 1.5)
+plot(Const_WS_MaxSpeed, Const_TW_MaxSpeed, 'LineWidth', 1.5)
+plot(Const_WS_ConsVT, Const_TW_ConsVT, '--', 'LineWidth', 1.5)
+plot(Const_WS_AbsCeil, Const_TW_AbsCeil, '--', 'LineWidth', 1.5)
+plot(Const_WS_TakeOff, Const_TW_TakeOff, 'LineWidth', 1.5)
+plot(Const_WS_OEI, Const_TW_OEI, '--', 'LineWidth', 1.5)
+plot(Const_WS_LandingTrev, Const_TW_LandingTrev, '--', 'LineWidth', 1.5)
+plot(Const_WS_LandingNoTrev, Const_TW_LandingNoTrev, 'LineWidth', 1.5)
+plot(TargetMatchX, TargetMatchY, 'x', 'LineWidth', 1.5)
+plot(WingLoading, ThrustToWeight, 'o', 'LineWidth', 1.5)
+ylim([0 1])
+xlim([0 12500])
+grid on
+legend('Cruise', 'Diversion', 'Loiter', 'Maximum velocity', 'Constant Velocity 30 deg Turns', 'Absolute Ceiling', 'Take-off', 'OEI', 'Landing with trev', 'Landing w/o trev', 'VimD optimiser', 'Selected Design Point')
+hold off
+saveas(figure(1), 'Constraints Diagram', 'png') 
+disp(['The design point selected gives a wing loading of ', num2str(WingLoading), ' N/m^2 and a thrust to weight ratio of ', num2str(ThrustToWeight), '.'])
 
-% Wing Design
+%% FUSELAGE
 
+%% WING DESIGN
 
-% Fuselage
-% Engine
-% Undercarriage
-Undercarriage(W0, WF6, x_cg_max, x_cg_min, y_cg, z_cg_max, z_cg_min, ...
-    Length_ac, x_ng_min, x_fuse_tapers, AoA_liftoff, AoA_landing, ground_clearance, y_mg_max); % No meaningful outputs yet lol.
+%% TAILPLANE DESIGN
 
-%% Once everything converges, populate the csv
-save('AerodynamicsFINAL.mat','CL_a_Total','CL_ah','CL_a_M0','CL_max_clean','delta_alpha_takeoff','delta_alpha_landing','delta_CL_max','CL_max_takeoff','CL_max_landing','CL_max_h','zeroAlphaLCT','maxLiftLanding','maxLiftTakeoff','CD_0_Total','CD_Total','Drag_Landing','LtoDMax','CD_min','V_Stall_Landing')
-% write values to csv
-% for fusion
+%% CONTROL SURFACE DESIGN
 
-%% Evaluate how good the design is
+%% ENGINE DESIGN
+
+%% UNDERCARRIAGE DESIGN
+
+%% WEIGHT ANALYSIS
+
+%% BALANCE ANALYSIS
+
+%% AERODYNAMIC ANALYSIS
+
+%% STABILTIY ANALYSIS
+
+%% TRIM ANALYSIS 
+
+%% UNDERCARRIAGE PLACEMENT
+
+%% PERFORMANCE ANALYSIS#
+
