@@ -150,7 +150,8 @@ aftDiameter = 0.7996;
 totalLength = frontLength + aftLength + mainLength;
 totalArea = frontArea + mainArea + aftArea;
 
-
+PressVol = 36.181 + 247.97 + 103.205 + 61.053; % Front + main deck + cargo + aft
+PressVolFt3 = PressVol*unitsratio('ft', 'm')^3; 
 
 %% WING DESIGN
 
@@ -164,45 +165,44 @@ Airfoil_ThicknessRatio_Required=0.138; %from historical trend line in Raymer- in
 Airfoil_ThicknessRatio_used =0.15; %depends on the airfoil selected. For NACA 64215 t/c=0.15
 
 %planform
-Sref=W0/WingLoading;
-b=sqrt(Sref*AspectRatio);
+SWing=W0/WingLoading;
+spanWing=sqrt(SWing*AspectRatio);
 
 %wing geometry
-TaperRatio= 0.38;       %from Raymer's graph
-Sweep_LE= 29;           %degrees 
-Sweep_quarterchord= sweepConverter(Sweep_LE, 0, 0.25, AspectRatio, TaperRatio);
-Sweep_TE= sweepConverter(Sweep_LE,0,1 ,AspectRatio, TaperRatio);
-Sweep_maxt= sweepConverter(Sweep_LE,0,0.349 ,AspectRatio, TaperRatio);
-Dihedral=5;             %degrees --> between 3 and 7; 5 chosen (midpoint)
-Twist=-3;                %use historical data 
+taperWing= 0.38;       %from Raymer's graph
+sweepWingLE= 29;           %degrees 
+sweepWingQC= sweepConverter(sweepWingLE, 0, 0.25, AspectRatio, taperWing);
+sweepWingTE= sweepConverter(sweepWingLE,0,1 ,AspectRatio, taperWing);
+sweepWingMT= sweepConverter(sweepWingLE,0,0.349 ,AspectRatio, taperWing);
+dihedralWing=5;             %degrees --> between 3 and 7; 5 chosen (midpoint)
+twistWing=-3;                %use historical data 
 
 %planform coordinates
 y_root=0;
-y_tip=b/2;
+y_tip=spanWing/2;
  
-root_chord=(2*Sref)/(b*(1+TaperRatio));
-tip_chord=root_chord*TaperRatio;
+cRootWing=(2*SWing)/(spanWing*(1+taperWing));
+cTipWing=cRootWing*taperWing;
 
-MAC= (2/3)*root_chord*(1+TaperRatio+TaperRatio^2)/(1+TaperRatio);
-y_MAC=(b/6)*(1+2*TaperRatio)/(1+TaperRatio);
-x_AC=y_MAC*tand(Sweep_quarterchord)+0.25*MAC;
+cBarWing= (2/3)*cRootWing*(1+taperWing+taperWing^2)/(1+taperWing);
+y_MAC=(spanWing/6)*(1+2*taperWing)/(1+taperWing);
+x_AC=y_MAC*tand(sweepWingQC)+0.25*cBarWing;
 
 %various wing areas
-fuselage_diameter= 4.175556; %from Structures
-c_fuselage = root_chord - fuselage_diameter*( tand(Sweep_LE) - tand(Sweep_TE));
-WingArea_fuselage=0.5*fuselage_diameter*(root_chord+c_fuselage);
-S_exposed= Sref-WingArea_fuselage;
+c_fuselage = cRootWing - fusDiamOuter*( tand(sweepWingLE) - tand(sweepWingTE));
+WingArea_fuselage=0.5*fusDiamOuter*(cRootWing+c_fuselage);
+S_exposed= SWing-WingArea_fuselage;
 
 S_wetted= S_exposed*(1.997+0.52*Airfoil_ThicknessRatio_used);            %check--> depends on t/c of airfoil
 
 %Structure (Palash just added another sweepConverter output)
 frontSparPercent = 0.14;    % Between 12-18 percent
 rearSparPercent = 0.60;     % Between 55-70 percent
-Sweep_rearSpar = sweepConverter(Sweep_LE, 0, rearSparPercent, AspectRatio, TaperRatio);
+Sweep_rearSpar = sweepConverter(sweepWingLE, 0, rearSparPercent, AspectRatio, taperWing);
 
 %wing incidence
 i_w_root=2.3;
-i_w_tip=i_w_root-Twist;
+i_w_tip=i_w_root-twistWing;
 
 %HLDs
 CLmax_required=2.2;
@@ -211,9 +211,8 @@ Delta_CLmax=0.9170;
 
 %using double slotted flaps at TE
 Sflapped_over_Sref=0.487; %confirmed for new aileron span
-Sweep_hingeline_TE= Sweep_TE;
+Sweep_hingeline_TE= sweepWingTE;
 flap_deflection= Delta_CLmax/(1.6*Sflapped_over_Sref*cosd(Sweep_hingeline_TE));
-
 
 
 %% TAILPLANE DESIGN
@@ -239,7 +238,7 @@ ARvert = 1.8; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
 taperHoriz = 0.3; %typically 0.3 - 0.5
 taperVert = 0.4; %typically 0.3 - 0.5
 
-%% CALCULATING TAILPLANE GEOMETRY BASED ON PARAMETERS ABOVE
+%CALCULATING TAILPLANE GEOMETRY BASED ON PARAMETERS ABOVE
 
 %calculating tailplane sweep angles based on wing sweep...
 %...for horizongtal tailplane
@@ -281,7 +280,7 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
     vertRootLE = [horizRootLE(1) - 0.7*cRootVert; 0; fusDiamOuter/2];
 
     %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
-    wingAC = wingRootLE + aerodynamicCentre(cBarWing, wingSpan, taperWing, sweepWingLE, dihedralWing);
+    wingAC = wingRootLE + aerodynamicCentre(cBarWing, spanWing, taperWing, sweepWingLE, dihedralWing);
     horizAC = horizRootLE + aerodynamicCentre(cBarHoriz, spanHoriz, taperHoriz, sweepHorizLE, dihedralHoriz);
 
     temp = aerodynamicCentre(cBarVert, 2*heightVert, taperVert, sweepVertLE, dihedralVert);
@@ -296,7 +295,7 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
 
     %tailplane volume coefficients
     VbarH = lHoriz*SHoriz/(cBarWing*SWing);
-    VbarV = lVert*SVert/(wingSpan*SWing);
+    VbarV = lVert*SVert/(spanWing*SWing);
     
     count = count + 1;
 end
@@ -311,7 +310,8 @@ SVertWetted = SVertExposed*(1.977 + 0.52*thicknessRatioVert);
 %fuselage width at horizontal tailplane intersection in m
 fuseWidthHoriz = 2;
 
-%% CONTROL SURFACE DESIGN
+
+%% ELEVEATOR AND RUDDER DESIGN
 
 % Assigning those values to variables below
 elevator_avg_chord = 0.2 * cBarHoriz;                       % Average Elevator chord in m 
@@ -324,8 +324,6 @@ rudder_span = 0.9 * heightVert;                             % Rudder half span i
 rudder_max_def = 18.75;                                     % In degrees
 rudder_area = rudder_span * rudder_avg_chord * 2;           % Total area of the rudder
 
-[t, Max_ail_def, y1, y2, aileron_area] = aileron_sizing_new(b, S, AR, lamda,...
-    C_L_aw, Vs, Ixx, S_w, S_ht, S_vt, starting_position, ending_position, root_chord);
 
 %% ENGINE DESIGN
 
@@ -337,33 +335,46 @@ rudder_area = rudder_span * rudder_avg_chord * 2;           % Total area of the 
 
 %% AERODYNAMIC ANALYSIS
 
+M = [0.1931, 0.8, 0.2282];
+
 %Assumed Values
-nacelle_length=5.5;
+lengthNacelle=5.5;
 upsweep_angle=15*(pi/180);
 Cl_tail_airfoil=1.4;
 
 %For aerodynamics analysis
-l=[MAC,totalLength,nacelle_length,cBarHoriz,cBarVert];
+l=[cBarWing,totalLength,lengthNacelle,cBarHoriz,cBarVert];
 xtocmax=[0.349,0,0,maxThicknessLocationHoriz,maxThicknessLocationVert];
 ttoc=[Airfoil_ThicknessRatio_used,0,0,thicknessRatioHoriz,thicknessRatioVert];
-theta_max=[Sweep_maxt,0,0,sweepHorizMT,sweepVertMT];
+theta_max=[sweepWingMT,0,0,sweepHorizMT,sweepVertMT];
 S_wet_all=[S_wetted,totalArea,75,SHorizWetted,SVertWetted];
 
 %Aerodynamics: Lift
-[CL_a,CL_max_clean,alpha_zero_takeoff,alpha_zero_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(AspectRatio,S_exposed,Sref,fusDiamOuter,b,M,Sweep_maxt,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,Sweep_quarterchord,Sweep_TE);
-[CL_a_M0]=WingLift(AspectRatio,S_exposed,Sref,fusDiamOuter,b,0,Sweep_maxt,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,Sweep_quarterchord,Sweep_TE);
+[CL_a,CL_max_clean,alpha_zero_takeoff,alpha_zero_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(AspectRatio,S_exposed,SWing,fusDiamOuter,spanWing,M,sweepWingMT,0,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
+[CL_a_M0]=WingLift(AspectRatio,S_exposed,SWing,fusDiamOuter,spanWing,0,sweepWingMT,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
 CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CL_ah,CL_max_h]=TailLift(ARhoriz,d,spanHoriz,M,sweepHorizMT,10.5214,Cl_tail_airfoil,sweepHorizQC);
-[maxLiftLanding,maxLiftTakeoff,AoA_Stall_Wing,AoA_Stall_Tail]=TotalLift(CL_max_landing,CL_max_takeoff,CL_max_clean,CL_a_Total,CL_ah,CL_max_h,SHoriz,Sref,rho_landing,V_landing,rho_takeoff,V_takeoff,alpha_zero_takeoff,alpha_zero_landing);
+[maxLiftLanding,maxLiftTakeoff,AoA_Stall_Wing,AoA_Stall_Tail]=TotalLift(CL_max_landing,CL_max_takeoff,CL_max_clean,CL_a_Total,CL_ah,CL_max_h,SHoriz,SWing,rho_landing,V_landing,rho_takeoff,V_takeoff,alpha_zero_takeoff,alpha_zero_landing);
 
 %Aerodynamics: Drag 
-[CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise,Re,Cfc,FF]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
-[CD_Parasitic_Takeoff,CD_Parasitic_Total_Takeoff,CD_LandP_Takeoff]=Parasitic(rho_takeoff,V_takeoff,l,nu_takeoff,M_takeoff,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
-[CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
-[CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing,C_Dfu]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,fusDiamOuter,upsweep_angle);
+[CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise,Re,Cfc,FF]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,nacelle_diameter,S_wet_all,SWing);
+[CD_Parasitic_Takeoff,CD_Parasitic_Total_Takeoff,CD_LandP_Takeoff]=Parasitic(rho_takeoff,V_takeoff,l,nu_takeoff,M_takeoff,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,nacelle_diameter,S_wet_all,SWing);
+[CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,nacelle_diameter,S_wet_all,SWing);
+[CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing,C_Dfu]=MiscD(Area_ucfrontal,SWing,flapspan,spanWing,flap_deflection_takeoff,flap_deflection_landing,Aeff,fusDiamOuter,upsweep_angle);
 [CD_0_Total,CD_min]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
-[CD_iw,CD_ih,CD_Total,Drag_Landing,LtoDMax]=TotalDragFinal(CL_trimWings,CL_trimHoriz,SHoriz,Sref,CD_0_Total,rho_landing,V_landing,AspectRatio);
-[V_Stall_Landing]=StallSpeed(W0,WF1,WF2,WF3,WF4,WF5,WF6,CL_max_landing,rho_landing,Sref);
+[CD_iw,CD_ih,CD_Total,Drag_Landing,LtoDMax]=TotalDragFinal(CL_trimWings,CL_trimHoriz,SHoriz,SWing,CD_0_Total,rho_landing,V_landing,AspectRatio);
+[V_Stall_Landing]=StallSpeed(W0,WF1,WF2,WF3,WF4,WF5,WF6,CL_max_landing,rho_landing,SWing);
+
+
+%% RUDDER DESIGN
+
+Ixx = 8.7e6;
+starting_position = 0.61;
+ending_position = 0.89;
+
+[t, Max_ail_def, y1, y2, aileron_area] = aileron_sizing_new(spanWing, SWing, ARwing, taperWing,...
+    CL_a_Total, V_Stall_Landing, Ixx, SWing, SHoriz, SVert, starting_position, ending_position, cRootWing);
+
 
 %% WEIGHT ANALYSIS
 Nz = 1.5*2.5;% minimum limit load factor = 2.5 according to FAR-25.337 (ultimate load factor = 1.5 x limit load factor)
@@ -452,7 +463,7 @@ components(16).weight = W_hydraulics(numControlFunctions, totalLength, spanWing)
 components(17).weight = W_electrical(electricRating, lengthElectrical, NumberOfEngines);
 components(18).weight = 1.73 * W_avionics_uninstalled^0.983; %installed avionics weight (uninstalled typically 800-1400lbs)
 components(19).weight = W_furnish(N_Crew, W_maxCargo, totalArea, W_seats, numPeopleOnBoard);
-components(20).weight = W_aircon(numPeopleOnBoard, volumePressurised, W_avionics_uninstalled);
+components(20).weight = W_aircon(numPeopleOnBoard, PressVolFt3, W_avionics_uninstalled);
 components(21).weight = 0.002*W0;
 emptyWeight = sum([components(1:21).weight]);
 
@@ -460,7 +471,7 @@ components(22).weight = W_People; %crew + pax
 components(23).weight = W_Luggage; %luggage of crew + pax
 W_fuel = (emptyWeight + W_People + W_Luggage)*fuelFraction/(1 - fuelFraction);
 components(24).weight = 0;
-components(25).weight = 0.5*W_fuel;
+components(25).weight = W_fuel;
 totalWeight= sum([components.weight]);
 
 %Converting back from Imperial to SI units
@@ -499,10 +510,11 @@ for i = length(components)
     components(i).mass = components(i).weight/9.80665; %N to kg
 end
 
+
+
 %% BALANCE ANALYSIS
 
 %CG of each component (in meters [x; y; z])
-
 %lifting surfaces
 components(1).cog = wingRootLE + liftingSurfraceCG(0.6, 0.35, spanWing, taperWing, cRootWing, dihedralWing, sweepWingLE, false);
 components(2).cog = horizRootLE + liftingSurfaceCG(0.42, 0.38, spanHoriz, taperHoriz, cRootHoriz, dihedralHoriz, sweepHorizLE, false);
@@ -538,11 +550,52 @@ components(25).cog = [fuelXVal+cRootWing(1),0, (fuelZVal+cRootWing(3))/2];
 CGempty = sum([components(1:21).mass].*[components(1:21).cog], 2)/sum([components(1:21).mass]);
 CGfull = sum([components.mass].*[components.cog], 2)/sum([components.mass]);
 
+
+
 %% STABILTIY ANALYSIS
+
+% %Plotting aircraft lifting surfaces and fuselage
+% wingPlanform = wingRootLE + tailplanePlanform(wingSpan, sweepWingLE, cRootWing, cTipWing, dihedralWing, false);
+% horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHoriz, cTipHoriz, dihedralHoriz, false);
+% vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
+% 
+% tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
+
+%aircraft fuselage pitching moment contribution
+CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cRootWing);
+
+%wing downwash on tailplane d(e)/d(alpha) 
+downwash = downwash(lHoriz, hHoriz, wingSpan, sweepWingQC, ARwing, taperWing, CL_a_Total, CL_a_M0);
+
+%neutral point and static margin
+[xNPOff, KnOff, xNPOn, KnOn] =...
+    staticStability(CG, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
+
+
 
 %% TRIM ANALYSIS 
 
+%wing aerofoil parameters
+CMoAerofoilW = -0.03; %Sforza and -0.04 according to airfoiltools (xfoil)
+alpha0W = -1.6; %degrees
+
+%wing zero-lift pitching moment coefficient
+CMoW = zeroLiftPitchingMoment(CMoAerofoilW, ARwing, sweepWingQC, twistWing, CL_a_Total, CL_a_M0);
+
+%required lift coefficient and drag at cruise 
+[~,~,~,rhoCruise]= atmosisa(distdim(35000,'ft','m'));
+CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC WEIGHT, RHO, AND VELOCITY AT EACH SEGMENT
+
+%determine iH and AoA for trimmed flight
+[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
+    trimAnalysis(CG, wingAC, horizAC, enginePosition, cRootWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+    CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
+
+
 %% UNDERCARRIAGE PLACEMENT
 
-%% PERFORMANCE ANALYSIS#
+
+
+%% PERFORMANCE ANALYSIS
+
 
