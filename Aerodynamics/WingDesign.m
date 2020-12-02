@@ -25,9 +25,9 @@ b=sqrt(Sref*AspectRatio);
 
 TaperRatio= 0.38;       %from Raymer's graph
 Sweep_LE= 29;           %degrees 
-Sweep_quarterchord= sweepConverter(29, 0, 0.25, AspectRatio, TaperRatio);
-Sweep_TE= sweepConverter(29,0,1 ,AspectRatio, TaperRatio);
-Sweep_maxt= sweepConverter(29,0,0.349 ,AspectRatio, TaperRatio);
+Sweep_quarterchord= sweepConverter(Sweep_LE, 0, 0.25, AspectRatio, TaperRatio);
+Sweep_TE= sweepConverter(Sweep_LE,0,1 ,AspectRatio, TaperRatio);
+Sweep_maxt= sweepConverter(Sweep_LE,0,0.349 ,AspectRatio, TaperRatio);
 Dihedral=5;             %degrees --> between 3 and 7; 5 chosen (midpoint)
 Twist=-3;                %use historical data 
 
