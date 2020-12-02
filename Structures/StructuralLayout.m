@@ -37,7 +37,7 @@ ylim_lower      = 0 - fusDiamOuter/2 + wallThickness; % Lowest point at centre
 uc_ylim         = ylim_upper - ylim_lower;
 uc_xlimGiven    = 5;
 
-save uc_limts
+
 
 %% Fuel tank calculations
 
@@ -138,3 +138,5 @@ lengthCentTank = VolReqCent/(2.56*1.2);
 lengthCentTank2 = cRootWing*0.45;
 volumeCentral = lengthCentTank2*2.56*1.2;
 %}
+
+save structural_layout
