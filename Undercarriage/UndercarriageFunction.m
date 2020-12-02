@@ -220,12 +220,38 @@ for i = 1:length(y_mgjoint)
     
 end
 
-if haveUndercarriage == 1
+if haveUndercarriage == 0
     
+    LocationMainGearJoint = 0;
+    LocationNoseGearJoint = 0;
+    
+    LengthMainGearDeployed = 0;
+    LengthMainGearRetracted = 0;
+    LengthNoseGearDeployed = 0;
+    LengthNoseGearRetracted = 0;
+    
+    GroundClearanceFuselage = 0;
+    GroundClearanceEngine = 0;
+    
+    NoseGearLoadRatio = 0;
+    LandingLoadRatio = 0;
+    
+    AngleTailstrike = 0;
+    AngleTipback = 0;
+    AngleOverturn = 0;
+    
+    FrontalAreaNoseGear = 0;
+    FrontalAreaMainGear = 0;
+    NoseWheel = 0;
+    MainWheel = 0;
+    
+    disp('Undercarriage was not possible using current inputs')
+    disp('Bruh')
+
+else
     %% Outputs
-    
     LocationMainGearJoint = [x_mgjoint, y_mgjoint(i), z_mgjoint]';
-    LocationNoseGearJoint = [x_ng(ii), 0, z_mgjoint]';
+    LocationNoseGearJoint = [x_ng(i), 0, z_mgjoint]';
     
     LengthMainGearDeployed = mg_deployed_total_length;
     LengthMainGearRetracted = mg_retracted_total_length;
@@ -246,13 +272,5 @@ if haveUndercarriage == 1
         2*(NoseWheel.InflatedOuterDiamMaxINCH*0.0254*NoseWheel.SectionWidthMaxINCH*0.0254);
     FrontalAreaMainGear = (MainOleo.Diameter*0.0254*mg_retracted_total_length) + ...
         2*(MainWheel.InflatedOuterDiamMaxINCH*0.0254*MainWheel.SectionWidthMaxINCH*0.0254);
-    
-elseif haveUndercarriage == 0
-    
-    disp('Undercarriage was not possible using current inputs')
-    disp('Bruh')
-    
 end
-
-
 end
