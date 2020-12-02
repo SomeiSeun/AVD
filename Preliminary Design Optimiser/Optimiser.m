@@ -12,7 +12,7 @@ addpath('../AerodynamIcs/', '../Initial Sizing/', '../Powerplant/', '../Static S
     '../Static Stability/Weight and Balance/', '../Structures', '../Structures/Fuselage?',...
     '../Undercarriage?')
 
-load('Unknowns.mat')
+load('AerodynamicsInputs.mat')
 
 %% INITIAL SIZING
 
@@ -354,6 +354,7 @@ M = [0.1931, 0.8, 0.2282];
 
 %Assumed Values
 lengthNacelle=5.5;
+widthNacelle=4.5;
 upsweep_angle=15*(pi/180);
 Cl_tail_airfoil=1.4;
 
@@ -365,19 +366,20 @@ theta_max=[sweepWingMT,0,0,sweepHorizMT,sweepVertMT];
 S_wet_all=[S_wetted,totalArea,75,SHorizWetted,SVertWetted];
 
 %Aerodynamics: Lift
-[CL_a,CL_max_clean,alpha_zero_takeoff,alpha_zero_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,M,sweepWingMT,0,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
-[CL_a_M0]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,0,sweepWingMT,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
+[CL_a,CL_max_clean,alpha_zero_takeoff,alpha_zero_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,M,sweepWingMT,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
+[CL_a_M0]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,0,sweepWingMT,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
 CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
-[CL_ah,CL_max_h]=TailLift(ARhoriz,d,spanHoriz,M,sweepHorizMT,10.5214,Cl_tail_airfoil,sweepHorizQC);
+[CL_ah,CL_max_h]=TailLift(ARhoriz,fusDiamOuter,spanHoriz,M,sweepHorizMT,10.5214,Cl_tail_airfoil,sweepHorizQC);
 [maxLiftLanding,maxLiftTakeoff,AoA_Stall_Wing,AoA_Stall_Tail]=TotalLift(CL_max_landing,CL_max_takeoff,CL_max_clean,CL_a_Total,CL_ah,CL_max_h,SHoriz,SWing,rho_landing,V_landing,rho_takeoff,V_takeoff,alpha_zero_takeoff,alpha_zero_landing);
 
 %Aerodynamics: Drag 
-[CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise,Re,Cfc,FF]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,nacelle_diameter,S_wet_all,SWing);
-[CD_Parasitic_Takeoff,CD_Parasitic_Total_Takeoff,CD_LandP_Takeoff]=Parasitic(rho_takeoff,V_takeoff,l,nu_takeoff,M_takeoff,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,nacelle_diameter,S_wet_all,SWing);
-[CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,nacelle_diameter,S_wet_all,SWing);
+[CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise,Re,Cfc,FF]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,widthNacelle,S_wet_all,SWing);
+[CD_Parasitic_Takeoff,CD_Parasitic_Total_Takeoff,CD_LandP_Takeoff]=Parasitic(rho_takeoff,V_takeoff,l,nu_takeoff,M_takeoff,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,widthNacelle,S_wet_all,SWing);
+[CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,widthNacelle,S_wet_all,SWing);
 [CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing,C_Dfu]=MiscD(Area_ucfrontal,SWing,flapspan,spanWing,flap_deflection_takeoff,flap_deflection_landing,Aeff,fusDiamOuter,upsweep_angle);
 [CD_0_Total,CD_min]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
-[V_Stall_Landing]=StallSpeed(W0,WF1,WF2,WF3,WF4,WF5,WF6,CL_max_landing,rho_landing,SWing);
+
+
 
 %% RUDDER DESIGN
 
@@ -397,8 +399,8 @@ electricRating = 60; %typically 40 ? 60 for transports (kVA)
 W_APU_uninstalled = 8*(1.1*N_Pax)^0.75; %(lb) Pasquale Sforza, in Commercial Airplane Design Principles, 2014
 lengthEngineControl = 2*(wingRootLE(1) + 0.2*spanWing)*unitsratio('ft', 'm'); %initial assumption
 lengthElectrical = totalLength*unitsratio('ft', 'm');
-lengthNacelle = 5.56*unitsratio('ft', 'm');
-widthNacelle = 4.5*unitsratio('ft', 'm');
+lengthNacelle = lengthNacelle*unitsratio('ft', 'm');
+widthNacelle = widthNacelle*unitsratio('ft', 'm');
 engineDiam = 3.97*unitsratio('ft', 'm');
 SnacelleWetted = 70*unitsratio('ft', 'm')^2;
 lengthMainLG = 4.445*unitsratio('ft', 'm');
