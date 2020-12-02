@@ -15,7 +15,7 @@ addpath('../Aerodynamics/', '../Initial Sizing/', '../Powerplant/', '../Static S
 load('AerodynamicsInputs.mat')
 
 %% INITIAL SIZING
-
+tic
 % Inputs
 % Update values, specially SwetSref!
 load("DesignBriefTargets.mat") 
@@ -345,7 +345,7 @@ rudder_area = rudder_span * rudder_avg_chord * 2;           % Total area of the 
 y_engine_ref = 8;
 
 [Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight,...
-    Engine_BPR, lengthNacelle, nacelleRadius, SnacelleWetted, y_engine_strike, z_engine_strike] = ...
+    Engine_BPR, lengthNacelle, nacelleRadius, SnacelleWetted, y_engine_strike, z_engine_strike, Engine_CG, Nacelle_CG] = ...
     EngineFunction(ThrustToWeight, W0, wingRootLE(1) + 0.25*cRootWing, wingRootLE(3), cRootWing, i_w_root, sweepWingLE,...
     dihedralWing, y_engine_ref);
 
@@ -540,8 +540,8 @@ components(4).cog = [0.45*totalLength; 0; 0];
 components(5).cog = [wingRootLE(1) + cRootWing; 0; -1.5*fusDiamOuter/2];
 components(6).cog = [0.5*frontLength; 0; -1.5*fusDiamOuter/2];
 %engine and fuel system
-components(7).cog = [23;0;-1];
-components(8).cog = [23;0;-1];
+components(7).cog = Engine_CG;
+components(8).cog = Nacelle_CG;
 components(9).cog = [0.5*components(7).cog(1); 0; 0]; %lengthEngineControl = engine to cockpit total length (ft)
 components(10).cog = [0.5*totalLength;0;0];
 components(11).cog = [frontLength+0.5*mainLength;0;0];
@@ -580,7 +580,7 @@ wingPlanform = wingRootLE + tailplanePlanform(spanWing, sweepWingLE, cRootWing, 
 horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHoriz, cTipHoriz, dihedralHoriz, false);
 vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
 
-%tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
+tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 %aircraft fuselage pitching moment contribution
 CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cRootWing);
@@ -639,3 +639,4 @@ z_cg = CGfull(3);
 %% PERFORMANCE ANALYSIS
 
 
+toc
