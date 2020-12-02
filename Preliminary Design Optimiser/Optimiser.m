@@ -39,8 +39,8 @@ Cl_tail_airfoil=1.4;
 %% Optimiser loop
 
 %Aerodynamics: Lift
-[CL_a,CL_max_clean,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(AspectRatio,S_exposed,Sref,d,b,M,Sweep_maxt,Cl_am,chord_ratio,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
-[CL_a_M0]=WingLift(AspectRatio,S_exposed,Sref,d,b,0,Sweep_maxt,Cl_am,flap_deflection,Cl_wing_airfoil,flapped_ratio,Sweep_quarterchord,Sweep_TE);
+[CL_a,CL_max_clean,delta_alpha_takeoff,delta_alpha_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(AspectRatio,S_exposed,Sref,fusDiamOuter,b,M,Sweep_maxt,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,Sweep_quarterchord,Sweep_TE);
+[CL_a_M0]=WingLift(AspectRatio,S_exposed,Sref,fusDiamOuter,b,0,Sweep_maxt,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,Sweep_quarterchord,Sweep_TE);
 CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CL_ah,CL_max_h]=TailLift(ARhoriz,d,spanHoriz,M,sweepHorizMT,10.5214,Cl_tail_airfoil,sweepHorizQC);
 [maxLiftLanding,maxLiftTakeoff,AoA_Stall_Wing_Clean,AoA_Stall_Tail_Clean]=TotalLift(CL_max_landing,CL_max_takeoff,CL_max_clean,CL_a,CL_ah,CL_max_h,SHoriz,Sref,rho_landing,V_landing,rho_takeoff,V_takeoff);

@@ -59,7 +59,7 @@ CLmax_required=2.2;
 CLmax_clean=1.283;
 Delta_CLmax=0.9170;
 %% using double slotted flaps at TE
-Sflapped_over_Sref=0.487; %dependent on aileron span
+Sflapped_over_Sref=0.487; %confirmed for new aileron span
 Sweep_hingeline_TE= Sweep_TE;
 
 flap_deflection= Delta_CLmax/(1.6*Sflapped_over_Sref*cosd(Sweep_hingeline_TE));
