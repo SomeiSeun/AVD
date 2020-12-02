@@ -76,5 +76,5 @@ Sflapped_over_Sref=0.487; %confirmed for new aileron span
 Sweep_hingeline_TE= Sweep_TE;
 
 flap_deflection= Delta_CLmax/(1.6*Sflapped_over_Sref*cosd(Sweep_hingeline_TE));
-
+flap_span= 15.0; %in metres
 save('WingDesign.mat')
