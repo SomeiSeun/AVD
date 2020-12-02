@@ -56,29 +56,24 @@ taperWing   = TaperRatio;
 cRootWing   = root_chord;
 clear TaperRatio root_chord b Sref
 
-%% Wing Fuel tanks
-volumeWingCAD = 71.882; % m^3 for one wing
-volumeWingTotal = volumeWingCAD*2;
+%
 
-% Empirical Relation
+% Convert units from m to ft
+%spanWing = spanWing*unitsratio('ft', 'm');
+%SWing = SWing*unitsratio('ft', 'm')^2;
+
+
 volumeWetWing = 0.54*((SWing^2)/(spanWing))*tcRatioRoot*(1+taperWing+taperWing)/(1+taperWing)^2; % Volume in ft^3
 volumeWetWingUsable = 0.95*volumeWetWing; % 5% unusable due to engine
 
-volumeFuelReqGal = 19361.75238;
-volumeFuelReq = 73.65065391; % Volume in m^3
+volumeFuelReq = 19361.75238/264; % Volume in m^3
 wingCapacityFuel = volumeFuelReq/volumeWetWingUsable;
 wingCapacityFuelWorst = volumeFuelReq/(volumeWetWingUsable*0.9);
 wingCapacityFuelBest = volumeFuelReq/(volumeWetWingUsable*1.1);
 
-disp(['The average wet wing capacity is ', volumeWetWingUsable,' m^3']);
-disp(['The avg occupied capacity ', wingCapacityFuel,'%']);
-disp(['The worst case is ', wingCapacityFuelWorst,'% and best case is ', wingCapacityFuelBest,'%']);
-
-% 
-% disp(wingCapacityFuelWorst)
-% disp(wingCapacityFuel)
-% disp(wingCapacityFuelBest)
-
+disp(wingCapacityFuelWorst)
+disp(wingCapacityFuel)
+disp(wingCapacityFuelBest)
 
 %}
 

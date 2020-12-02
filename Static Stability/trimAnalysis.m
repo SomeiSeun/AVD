@@ -1,12 +1,14 @@
-function [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] = trimAnalysis(CG, wingAC, horizAC, enginePosition, cBarWing, SWing, SHoriz, CMoW, CMalphaF, CLtarget, CDtotal, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH)
-
-%wing setting angle to ensure horizontal fuselage during cruise
-iW = 180/pi*CLtarget(2)/CL_a_Total(2) + alpha0W - 0.4*twistWing;
+function [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
+    trimAnalysis(CG, wingAC, horizAC, enginePosition, cRootWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+    CLtarget, CDtotal, CL_a_Total, CL_ah, twistWing, iW, alpha0W, alpha0H, downwash, etaH)
 
 %wing and horizontal stabiliser lift coefficients
+
+iW_MAC = iW + twistWing*cBarWing/cRootWing; %wing MAC setting angle
+
 syms iH AoA
-CLwing = CL_a_Total*(AoA + iW - alpha0W)*pi/180;
-CLhoriz = CL_ah.*((AoA + iW - alpha0W).*(1-downwash) + (iH-iW) - (alpha0H - alpha0W))*pi/180;
+CLwing = CL_a_Total*(AoA + iW_MAC - alpha0W)*pi/180;
+CLhoriz = CL_ah.*((AoA + iW_MAC - alpha0W).*(1-downwash) + (iH-iW_MAC) - (alpha0H - alpha0W))*pi/180;
 
 %aircraft total lift and moment coefficient about cg
 CLtotal = CLwing + etaH*SHoriz/SWing*CLhoriz;
@@ -29,6 +31,6 @@ AoA_trim = double(AoA_trim);
 CL_trimWings = double(CL_trimWings);
 CL_trimHoriz = double(CL_trimHoriz);
 
-AoA_trimWings = AoA_trim + iW;
-AoA_trimHoriz = (AoA_trim + iW - alpha0W).*(1-downwash) + (iH_trim-iW) + alpha0W;
+AoA_trimWings = AoA_trim + iW_MAC;
+AoA_trimHoriz = (AoA_trim + iW_MAC - alpha0W).*(1-downwash) + (iH_trim-iW_MAC) + alpha0W;
 end
