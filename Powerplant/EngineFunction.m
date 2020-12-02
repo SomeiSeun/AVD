@@ -1,4 +1,4 @@
-function [Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight, Engine_BPR, Nacelle_length, Nacelle_radius, Nacelle_wetted_area, y_engine_strike, z_engine_strike] = EngineFunction(ThrustToWeight, W0, x_wingroot, z_wingroot, length_rootchord, theta_setting, theta_sweepLE, theta_dihedral, y_engine_ref)
+function [Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight, Engine_BPR, Nacelle_length, Nacelle_radius, Nacelle_wetted_area, y_engine_strike, z_engine_strike, Engine_CG, Nacelle_CG] = EngineFunction(ThrustToWeight, W0, x_wingroot, z_wingroot, length_rootchord, theta_setting, theta_sweepLE, theta_dihedral, y_engine_ref)
 % This is the function-ified version of the engine and nacelle sizing
 % script
 
@@ -62,6 +62,8 @@ Engine_SeaLevelThrust = UninstalledThrustPerEngineReq;
 Engine_Weight = W;
 %Engine_TSFC;
 Thrustline_position = [x_engine_front, y_engine_front, z_engine_front]';
+Engine_CG = [x_engine_front + L/2, 0, z_engine_front]';
+Nacelle_CG = [x_engine_front - Length_inlet + Nacelle_length/2, 0, z_engine_front]';
 %Nacelle_wetted_area;
 %y_engine_strike;
 %z_engine_strike;
