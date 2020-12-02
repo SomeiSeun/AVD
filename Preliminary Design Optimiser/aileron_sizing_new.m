@@ -31,19 +31,18 @@ rho = 1.225;                       % Density of air at sea level in kg/m^3
 tau = 0.4;                         % Aileron effectiveness parameter 
 y1 = starting_position * b / 2;    % Setting the starting position for the aileron
 y2 = ending_position * b / 2;      % Setting the ending position for the aileron
-C_bar = b / AR;                    % Finding out the variable to be used in line below
 
 chord_distribution = linspace(starting_position,ending_position,201); % Chord distribution
-
-area = zeros(1,size(chord_distribution));
 
 for i = 1 : size(chord_distribution)
     area(i) = ((ending_position - starting_position) * b * 0.5 *...
         0.2 * chord_distribution(i) * 0.38 * root_chord) / 201;    
 end
-aileron_area = sum(area) * 2;     % Finding the total area for the 2 ailerons
 
-C_r = 1.5 * C_bar * ((1 + lamda) / (1 + lamda + lamda^2));    % Finding out variable Cr to be used in equation below
+aileron_area = sum(area) * 2;     % Finding the total area for the 2 ailerons
+fprintf('The area of the aileron is %f m^2. \n',aileron_area);
+
+C_r = root_chord;   % Root chord value
 
 C_l_delta_A = ((2 * C_L_aw * tau * C_r) / (S * b)) *... 
     ((((y2^2) / 2) + 2 * y2^3 * (lamda - 1) / (3 * b)) - ((y1^2) / 2) + 2 * (y1^3) * (lamda - 1) / (3 * b)); 
@@ -57,19 +56,18 @@ V_app = 1.3 * Vs;                           % Approach velocity during landing
 L_A = 0.5 * rho * (V_app^2) * S * C_l * b;  % Gives the Aircraft Rolling moment when aileron has maximum deflection
 
 C_DR = 0.9;          % Average value of 0.9 is selected for horizontal wing, vertical tail and tail rolling drag coefficient
-y_D = (0.4 * b) / 2; % Drag moment arm is assumed to be 40% of wing span  ??????? FIND OUT ABOUT THIS
+y_D = (0.4 * b) / 2; % Drag moment arm is assumed to be 40% of wing span
 
 P_ss = sqrt((2 * L_A) / (rho * (S_w + S_ht + S_vt) * C_DR * (y_D^3))); % Finding out the Steady-state roll rate in rad/sec
 
-bank_angle = (Ixx / (rho * (y_D^3) * (S_w + S_ht + S_vt) * C_DR)) * ln(P_ss^2); % Gives the bank angle at which aircraft achieves steady roll rate
+bank_angle = (Ixx / (rho * (y_D^3) * (S_w + S_ht + S_vt) * C_DR)) * log(P_ss^2); % Gives the bank angle at which aircraft achieves steady roll rate
 
 P_dot = (P_ss^2) / (2 * bank_angle); % Finding out the aircraft rate of roll 
 
-t = sqrt((2 * 30) / P_dot); % Finding out the time taken for the aircraft to achieve the time to bank.
-% This value decided if the aileron size needs to be changed or not
-% So this value of t must be less than 2.5 seconds in the case of this
-% aircraft
+angle_rad = 30 * pi /180;  % The rotation angle required
 
+t = sqrt((2 * angle_rad) / P_dot); % Finding out the time taken for the aircraft to achieve the time to bank.
+fprintf('The time taken for the aircraft to rotate 30 degrees is %f s. \n',t);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 end
