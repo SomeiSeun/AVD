@@ -144,4 +144,6 @@ volumeCentral = lengthCentTank2*2.56*1.2;
 
 thiagoiscool = 1;
 
+butts = 2;
+
 save structural_layout
