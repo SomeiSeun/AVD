@@ -13,7 +13,7 @@ function CMalphaf = fuselagePitchingMoment(lf, wf, cBarWing, Swing, xWing)
 xFract = xWing/lf;
 
 %constant of proportionality based on graph from errikos' slides
-Kf = 61.199*xFract^4 + 61.489*xFract^3 + 26.05*xFract^2 - 2.151*xFract + 0.0632;
+Kf = 91.667*xFract^4 - 102.78*xFract^3 + 45.25*xFract^2 - 5.7841*xFract + 0.3;
 
 CMalphaf = Kf*lf*wf^2/(cBarWing*Swing);
 end
