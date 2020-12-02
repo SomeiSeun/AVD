@@ -140,4 +140,6 @@ lengthCentTank2 = cRootWing*0.45;
 volumeCentral = lengthCentTank2*2.56*1.2;
 %}
 
+thiagoiscool = 1;
+
 save structural_layout
