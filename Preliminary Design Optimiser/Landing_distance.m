@@ -1,4 +1,4 @@
-function [S_L] = Landing_distance(Cl0, V_S1, W_L, VS0, T_l, L_over_D, S, AR, e, CD0, CD_Total)
+function [S_L] = Landing_distance(Cl0, V_S1, W_L, VS0, T_L, L_over_D, S, AR, e, CD0)
 
 % This function is used to find the Landing distance for the aircraft. 
 
@@ -22,8 +22,8 @@ h_obs = 50*0.3048;                                 % Obstacle height according t
 g = 9.81;                                          % Gravitational Acceleration
 n = 1.2;                                           % Load factor during landing approximately
 R = (1.15^2 * VS0^2) / ((n - 1)*g);                % Gives the radius of rotation
-%theta_approach = asin((1/L_over_D) - (T_L/W_L));   % Gives the theta approach angle. Also initially can be assumed to be 3 deg
-theta_approach = 3 * pi/180; 
+%theta_approach = asin((1/L_over_D) - (T_L/W_L))   % Gives the theta approach angle. Also initially can be assumed to be 3 deg 
+theta_approach = 3 * pi / 180; 
 h_f = R * (1 - cos(theta_approach));               % Gives the flare height
 
 S_a = (h_obs - h_f) / (tan(theta_approach));       % This gives the approach distance
@@ -41,7 +41,6 @@ fprintf('The Free Roll Distance is %f m. \n',S_FR);
 rho = 1.225;                         % Density of air in kg/m^3
 V2 = 0;                              % Velocity when the plane has stopped
 V1 = 1.1 * VS0;                      % Touchdown velocity
-T_L = 0.5 * rho * S * V1^2 * CD_Total;
 mu = 0.05;                           % Friction coefficient of tarmac
 K_T = (T_L / W_L) - mu;              % A constant
 C_LTO = Cl0;                         % Lift coefficient during Landing

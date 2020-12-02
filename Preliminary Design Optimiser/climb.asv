@@ -23,7 +23,6 @@ addpath('C:\Users\usain\Documents\Aerospace Vehicle Design\Programmes\Git Kraken
 
 height = 0;          % Setting a value for altitude
 i = 1;               % Setting a value for i
-theta = 0.05;
 
 while height < 10000
 
@@ -36,7 +35,7 @@ Z = 1 + sqrt(1 + (3) / ((L_Dmax^2) * (Thrust / W)^2));   % A variable used for R
 
 ROC_max_metres = ((Thrust / W)^1.5) * sqrt((W / S) * Z / (3 * rho * C_Dmin)) * ...
     (1 - (Z / 6) - ((3 * cos(theta) * ...
-    cos(theta)) / (2 * (Thrust / W)^2 * Z * L_Dmax^2))); % Finding out Rate of Climb in m/s
+    cos(theta)) / (2 * (T / W)^2 * Z * L_Dmax^2))); % Finding out Rate of Climb in m/s
 
 ROC_max(i) = ROC_max_metres * 3.28084 * 60;         % Converting Rate of Climb to feet per minute
 height = height + 100;                              % Adding 100 m to the height for next iteration
