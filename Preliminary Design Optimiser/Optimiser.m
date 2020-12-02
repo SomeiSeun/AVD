@@ -53,6 +53,8 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 % [V_Stall_Landing]=StallSpeed(W0,WF1,WF2,WF3,WF4,WF5,WF6,CL_max_landing,rho_landing,Sref);
 
 % Wing Design
+
+
 % Fuselage
 % Engine
 % Performance
