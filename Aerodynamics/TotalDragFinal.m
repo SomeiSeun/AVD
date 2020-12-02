@@ -7,5 +7,5 @@ CD_ih=0.9.*(SHoriz/Sref).*K_h.*((CL_trimHoriz).^2);
 CD_Total=CD_0_Total+CD_iw+CD_ih;
 Drag_Landing=0.5*rho_landing*(V_landing^2)*Sref*CD_Total(3);
 LtoDMax=0.5*sqrt((pi.*AspectRatio.*e)./CD_0_Total);
-CLmD=sqrt((AspectRatio*pi*e).*CD_0_Total)
+CLmD=sqrt((AspectRatio*pi*e).*CD_0_Total);
 end 
