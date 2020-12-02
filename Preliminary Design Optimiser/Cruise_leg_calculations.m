@@ -42,6 +42,7 @@ V_max = sqrt((T + 2*W*k*C_LminD) + sqrt(((T + 2*W*k*C_LminD)^2) - 4*(W^2)*k*(C_D
 Temp_cruise_1 = 218.808;                                        % Temperature at 35000 ft in Kelvin 
 V_max_mach = V_max / sqrt(1.4 * 287 * Temp_cruise_1);
 
+fprintf('The max velocity of the aircraft is %f m/s. \n',V_max);
 fprintf('The max velocity of the aircraft is %f mach. \n',V_max_mach);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -49,5 +50,6 @@ V_min = sqrt((T + 2*W*k*C_LminD) - sqrt(((T + 2*W*k*C_LminD)^2) - 4*(W^2)*k*(C_D
     /(rho*S*(C_Dmin + k*(C_LminD^2))));                         % This equation gives the Minimum Level Airspeed in m/s
 V_min_mach = V_min / sqrt(1.4 * 287 * Temp_cruise_1);
 
+fprintf('The Minimum level ',V_min);
 fprintf('The Minimum level airspeed is %f mach. \n',V_min_mach);
 end
