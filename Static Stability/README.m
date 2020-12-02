@@ -119,8 +119,6 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
     
     count = count + 1;
 end
-
-
 clear VbarH_target VbarV_target
 
 %exposed and wetted areas
