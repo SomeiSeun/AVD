@@ -49,7 +49,7 @@ UninstalledThrustPerEngineReq = UninstalledThrustTotalReq/2;
 
 %% Thrust lapse model
 Mach_numbers = 0:0.1:1;
-Altitudes = 0:1000:35000;
+Altitudes = 0:1000:42000;
 beta = zeros(length(Mach_numbers), length(Altitudes));
 for i = 1:length(Mach_numbers)
     for ii = 1:length(Altitudes)
@@ -58,8 +58,7 @@ for i = 1:length(Mach_numbers)
 end
 
 for i = 1:length(Mach_numbers)
-    width = num2str(i);
-    plot(Altitudes, beta(i,:), 'LineWidth', width)
+    plot(Altitudes, beta(i,:), 'k', 'LineWidth', sqrt(i))
     hold on
 end
 

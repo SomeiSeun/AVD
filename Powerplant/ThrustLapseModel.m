@@ -18,9 +18,9 @@ wish our engine to perform the best. In our case, that would be cruise
 altitude and speed (35000ft and Mach 0.8)
 %}
 
-[T_design, ~, ~, ~] = atmosisa(30000*0.3048);
+[T_design, ~, ~, ~] = atmosisa(35000*0.3048);
 [T_sealvl, ~, P_sealvl, ~] = atmosisa(0);
-M_design = 0.6;
+M_design = 0.8;
 
 TR = (T_design*(1 + ((1.4-1)/2)*0.8*0.8) )/T_sealvl;
 
