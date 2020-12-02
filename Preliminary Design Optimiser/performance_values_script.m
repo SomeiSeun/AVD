@@ -10,7 +10,7 @@ load('../Static Stability/tailplaneSizing.mat');
 load('AerodynamicsFINAL.mat');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%{
 V_S1 = sqrt((2 * W0) / (1.225 * Sref * CLmax_clean));              % Finding out the stall speed in clean config
 V_stall_takeoff = sqrt((2 * W0) / (1.225 * Sref* CL_max_takeoff)); % Stall speed in take off config
 
@@ -40,17 +40,17 @@ T_oei = 0.5 * T_Takeoff;
 
 % This equation gives the Balanced Field Length in metres
 BFL = Balanced_Field_Length(W0, Sref, Cl_TakeOff,...
-    T_oei, D2, BPR, CL_max_landing, T_takeoff_static)
+    T_oei, D2, BPR, CL_max_landing, T_takeoff_static);
 % ^ Values still needed: BPR, T_takeoff_static
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This section gives the Range, Endurance and Fuel Consumption for the 2 cruise phases
-
+%}
 W_ini_1 = W0 * WF1 * WF2 * WF3 * WF4;       % Weight at start of cruise 1 in Newtons
 W_fin_1 = W0 * WF1 * WF2 * WF3 * WF4 * WF5; % Weight at end of cruise 1 in Newtons
 c_t1 = 14.10 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 1 in 1/second
 [E1, R1, FC1] = Range(W_ini_1, rho_cruise, V_Cruise, Sref,...
     0.0440, c_t1, AspectRatio, W_fin_1, e_Cruise); 
-
+%{
 W_ini_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7;        % Weight at start of cruise 2
 W_fin_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF8;  % Weight at end of cruise 2
 rho_cruise_2 = 0.849137;                                       % Density of air at 12000 ft in kg/m^3
@@ -79,17 +79,19 @@ fprintf('The fuel consumption of the aircraft during Loiter is %f.\n',FC3);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The equation below is used to find several variables during cruise 1 phase of the flight
+%}
+W = W_ini_1;            % Weight of the aircraft at start of cruise 1
+D_cruise = 0.5 * rho_cruise * Sref * (V_Cruise^2) * CD_Total(2);  % Finding out the drag during cruise
+T_cruise = D_cruise;    % Finding out the thrust during cruise 1
 
-W = W_ini_1;  % Weight of the aircraft at start of cruise 1
-
-[L_over_D_max, Vs_Cruise, V_LDmax, V_max, V_min] = Cruise_leg_calculations(CD_Total(2),...
-    0.7853, AspectRatio, e_Cruise, rho_cruise, W, Sref, CL_max_clean, 1, T_cruise)
-% ^ Values still needed: C_LminD (0.7853 for now) (COULD CHANGE), T_cruise
+[L_over_D_max, Vs_Cruise, V_LDmax, V_max, V_min] = Cruise_leg_calculations(CD_min(2),...
+    0.45, AspectRatio, e_Cruise, rho_cruise, W, Sref, CL_max_clean, 1, T_cruise);
+% ^ Values still needed: C_LminD (0.7853 for now) (COULD CHANGE)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This section plots a graph for Altitude against Rate of climb which is
 % then used to find the Absolute and Service ceilings
-
+%{
 W_cruise = W_ini_1;  % Weight of aircraft at start of cruise 1
 [ROC_max, altitude] = climb(W_ini_1, CD_Total(2), L_over_D_max, Sref);  
 % ^ Values still needed: Thrust (Equation needed inside the function)
@@ -125,5 +127,5 @@ filename = 'Performance_and_control_surface_values.mat' ;
 save(filename, 'S_to', 'S_L', 'BFL', 'E1', 'R1', 'FC1',...
     'E2', 'R2', 'EC2', 't', 'Max_ail_def', 'L_over_D_max',...
     'Vs_cruise', 'V_LDmax', 'V_max', 'V_min', 'y1', 'y2');
-
+%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
