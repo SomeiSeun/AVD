@@ -109,7 +109,7 @@ Ixx = 8.716*10^6;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Specific Excess Energy plot
-[] = specific_energy_plot(W0, Sref, CL_max_clean);
+%[] = specific_energy_plot(W0, Sref, CL_max_clean);
 % ^ How does one output the graph from a function? 
 % ^ NEED AN EQUATION FOR THRUST VARIATION WITH ALTITUDE AND MACH NUMBER
 % ^ NEED AN EQUATION FOR CD VARIATION WITH ALTITUDE 
