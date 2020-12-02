@@ -37,7 +37,7 @@ ylim_lower      = 0 - fusDiamOuter/2 + wallThickness; % Lowest point at centre
 uc_ylim         = ylim_upper - ylim_lower;
 uc_xlimGiven    = 5;
 
-save uc_limts
+
 
 %% Fuel tank calculations
 
@@ -63,6 +63,7 @@ volumeWingTotal = volumeWingCAD*2;
 % Empirical Relation
 volumeWetWing = 0.54*((SWing^2)/(spanWing))*tcRatioRoot*(1+taperWing+taperWing)/(1+taperWing)^2; % Volume in ft^3
 volumeWetWingUsable = 0.95*volumeWetWing; % 5% unusable due to engine
+volumeWingTotalGal = volumeWetWingUsable*264;
 
 volumeFuelReqGal = 19361.75238;
 volumeFuelReq = 73.65065391; % Volume in m^3
@@ -138,3 +139,5 @@ lengthCentTank = VolReqCent/(2.56*1.2);
 lengthCentTank2 = cRootWing*0.45;
 volumeCentral = lengthCentTank2*2.56*1.2;
 %}
+
+save structural_layout
