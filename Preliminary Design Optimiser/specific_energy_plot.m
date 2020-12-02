@@ -1,14 +1,11 @@
 function [] = specific_energy_plot(W_tow, S, Clmax)
-% HOW DOES ONE OUTPUT THE GRAPH IN A FUNCTION ^
+
 % This function can be used to plot Specific Excess Energy plots
 
 % The INPUTS are: (ALL SI UNITS)
 % W_tow is the Maximum Take off weight in Newtons
 % S is the reference wing area in m^2
 % Clmax is the max lift coefficient in clean configuration
-% NEED AN EQUATION FOR THRUST VARIATION WITH ALTITUDE
-% NEED AN EQUATION FOR Cd VARIATION WITH ALTITUDE
-% AN EQUATION FOR COMPRESSIBILITY CORRECTION
 
 % The OUTPUTS are: 
 % The contour plot is the output

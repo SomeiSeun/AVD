@@ -19,27 +19,29 @@ function [S_to] = Take_off_distance(V_stall_takeoff, V_S1, T, W_to, Cd0_takeoff,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-V_LOF = 1.1*V_stall_takeoff;     % Finding the Liftoff velocity
+V_LOF = 1.1 * V_stall_takeoff;     % Finding the Liftoff velocity
 
-S_R = 3 * V_LOF; % This gives the Rotation distance in metres
-
+S_R = 3 * V_LOF;                   % This gives the Rotation distance in metres
+fprintf('The Rotation Distance is %f m. \n',S_R);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-g = 9.81;                                        % Gravitational Acceleration
-n = 1.2;                                         % Load factor during take-off approximately
-h_obs = 35*0.3048;                               % This is the obstacle height in metres
-theta_climb = arcsin((T/W_to) - (1/(L_over_D))); % This gives the Climb angle theta
-R = ((1.15^2) * (V_S1^2)) / (g*(n-1));           % Radius of the climb
-h_TR = R*(1 - cos(theta_climb));                 % Transition height
+g = 9.81;                                             % Gravitational Acceleration
+n = 1.2;                                              % Load factor during take-off approximately
+h_obs = 35 * 0.3048;                                  % This is the obstacle height in metres
+theta_climb = asin((T/W_to) - (1/(L_over_D)));        % This gives the Climb angle theta
+R = ((1.15^2) * (V_stall_takeoff^2)) / (g * (n-1));   % Radius of the climb
+h_TR = R * (1 - cos(theta_climb));                    % Transition height
 
 if h_obs >= h_TR
-    S_C = (h_obs - h_TR) / (tan(theta_climb));                % This is the Climb distance in metres
-    S_TR = 0.2156*(V_S1^2) * ((T/W_to) - (1/(L_over_D)));     % This gives the Transition distance in metres
+    S_C = (h_obs - h_TR) / (tan(theta_climb));        % This is the Climb distance in metres
+    S_TR = 0.2156 * (V_stall_takeoff^2) ...
+        * ((T/W_to) - (1/(L_over_D)));                % This gives the Transition distance in metres
 else
-    S_C = 0;                                     % Climb distance in alternate scenario in metres
-    S_TR = sqrt(R^2 - (R^2 - h_obs^2));          % Transition distance in alternate scenario in metres
+    S_C = 0;                                          % Climb distance in alternate scenario in metres
+    S_TR = sqrt(R^2 - (R^2 - h_obs^2));               % Transition distance in alternate scenario in metres
 end
-
+fprintf('The Climb Distance is %f m. \n',S_C);
+fprintf('The Transition Distance is %f m. \n',S_TR);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 rho = 1.225;                                % Air density in kg/m^3
@@ -47,13 +49,13 @@ V_1 = 0;                                    % This is the starting velocity whic
 V_2 = V_LOF;                                % Lift off velocity
 mu = 0.05;                                  % Friction coefficient of tarmac
 K_T = (T/W_to) - mu;                        % A constant
-C_LTO = Cl0                                 % Lift coefficient during take-off
-K_A = (rho/(2*W_to/S))*((mu*C_LTO) - Cd0_takeoff - ((C_LTO)^2/(pi*AR*e))); 
+C_LTO = Cl0;                                % Lift coefficient during take-off
+K_A = (rho/(2 * W_to/S)) * ((mu * C_LTO) - Cd0_takeoff - ((C_LTO)^2/(pi * AR * e))); 
 
-S_G = (1/(2*g*K_A))*ln((K_T + K_A*(V_2)^2)/(K_T + K_A*(V_1)^2));  % This is the Ground distance in metres
-
+S_G = (1/(2*g*K_A))*log((K_T + K_A*(V_2)^2)/(K_T + K_A*(V_1)^2));  % This is the Ground distance in metres
+fprintf('The Ground Distance is %f m. \n',S_G);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 S_to = 1.15*(S_R + S_G + S_C + S_TR);  % This gives the final take-off distance in metres
-
+fprintf('The total Takeoff Distance is %f m. \n',S_to);
 end

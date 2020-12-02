@@ -2,7 +2,7 @@
 % Enter values in the order: Main Wing, Fuselage, Nacelle, Horizontal Tail, Vertical Tail : 
 
 
-function [CD_Parasitic,CD_Parasitic_Total,CD_LandP,Re,Cfc]=Parasitic(rho,v,l,nu,M,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,SWET,Sref)
+function [CD_Parasitic,CD_Parasitic_Total,CD_LandP,Re,Cfc,FF]=Parasitic(rho,v,l,nu,M,xtocmax,ttoc,theta_max,fuselage_length,fuselage_diameter,nacelle_length,nacelle_diameter,SWET,Sref)
 %% Determine the Skin Friction Coefficient for Each Component
 Re=(rho.*v.*l)./nu;
 % %Define the skin roughness value for each component-depends of polish on

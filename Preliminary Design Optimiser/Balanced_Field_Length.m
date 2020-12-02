@@ -48,5 +48,5 @@ BFL_feet = (0.863 / (1 + (2.3 * G))) * (((W_to_lbs / S_ft) / (rho * g * 0.694 * 
 % convert it which is done below
 
 BFL = BFL_feet * 0.3048;
-
+fprintf('The Balanced Field Length is %f m. \n',BFL);
 end
