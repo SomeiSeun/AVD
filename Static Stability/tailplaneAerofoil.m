@@ -5,18 +5,18 @@ clf
 
 addpath('../Xfoil')
 
-NACA = '0010';
+NACA = '0012';
 numNodes = 500;
 Mach = [0 : 0.1 : 0.8];
 RE = 1e6;
 AoAmin = 0;
 AoAstep = 1;
-AoAmax = 2;
+AoAmax = 3;
 ITER = 300;
 
 for i = 1:length(Mach)
     [AoA{i}, CL{i}, CM{i}, CD{i}] = viscXfoilAnalyse(NACA, numNodes, Mach(i), RE, [AoAmin, AoAstep, AoAmax], ITER);
-    CLalpha(i) = 180/pi*(CL{i}(3) - CL{i}(1))/(AoA{i}(3) - AoA{i}(1));
+    CLalpha(i) = 180/pi*(CL{i}(4) - CL{i}(1))/(AoA{i}(4) - AoA{i}(1));
 end
 
 save('tailplaneAerofoil.mat')
