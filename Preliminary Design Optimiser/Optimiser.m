@@ -342,28 +342,30 @@ rudder_area = rudder_span * rudder_avg_chord * 2;           % Total area of the 
 
 %% ENGINE DESIGN
 
+y_engine_ref = 8;
 
-
-%% UNDERCARRIAGE DESIGN
-
-
+[Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight,...
+    Engine_BPR, lengthNacelle, nacelleRadius, SnacelleWetted, y_engine_strike, z_engine_strike] = ...
+    EngineFunction(ThrustToWeight, W0, wingRootLE(1) + 0.25*cRootWing, wingRootLE(3), cRootWing, i_w_root, sweepWingLE,...
+    dihedralWing, y_engine_ref);
 
 %% AERODYNAMIC ANALYSIS
 
 M = [0.1931, 0.8, 0.2282];
 
 %Assumed Values
-lengthNacelle=5.5;
-widthNacelle=4.5;
+widthNacelle=nacelleRadius*2;
 upsweep_angle=15*(pi/180);
 Cl_tail_airfoil=1.4;
+
 
 %For aerodynamics analysis
 l=[cBarWing,totalLength,lengthNacelle,cBarHoriz,cBarVert];
 xtocmax=[0.349,0,0,maxThicknessLocationHoriz,maxThicknessLocationVert];
 ttoc=[thicknessRatioWing,0,0,thicknessRatioHoriz,thicknessRatioVert];
 theta_max=[sweepWingMT,0,0,sweepHorizMT,sweepVertMT];
-S_wet_all=[S_wetted,totalArea,75,SHorizWetted,SVertWetted];
+S_wet_all=[S_wetted,totalArea,SnacelleWetted,SHorizWetted,SVertWetted];
+Area_ucfrontal = 8.37;
 
 %Aerodynamics: Lift
 [CL_a,CL_max_clean,alpha_zero_takeoff,alpha_zero_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,M,sweepWingMT,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
@@ -402,7 +404,7 @@ lengthElectrical = totalLength*unitsratio('ft', 'm');
 lengthNacelle = lengthNacelle*unitsratio('ft', 'm');
 widthNacelle = widthNacelle*unitsratio('ft', 'm');
 engineDiam = 3.97*unitsratio('ft', 'm');
-SnacelleWetted = 70*unitsratio('ft', 'm')^2;
+SnacelleWetted = SnacelleWetted*unitsratio('ft', 'm')^2;
 lengthMainLG = 4.445*unitsratio('ft', 'm');
 lengthNoseLG = 5*unitsratio('ft', 'm');
 NmainWheels = 8;
@@ -570,6 +572,27 @@ for i = 1:length(components)
 end
 
 CGfull = sumBalance/sumMass;
+
+%% UNDERCARRIAGE DESIGN
+
+theta_maxground = 15;
+x_firsttailstrike = frontLength + mainLength;
+height_mgmax = 1.5;
+length_mgmax = 3;
+x_cgmin = CGfull(1) - 0.5;
+x_cgmax = CGfull(1) + 0.5;
+z_cg = CGfull(3);
+
+
+[LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
+    LengthMainGearRetracted, LengthNoseGearDeployed, LengthNoseGearRetracted, ...
+    GroundClearanceFuselage, GroundClearanceEngine, NoseGearLoadRatio, LandingLoadRatio, ...
+    AngleTailstrike, AngleTipback, AngleOverturn, NoseWheel, MainWheel, FrontalAreaNoseGear, FrontalAreaMainGear] ...
+    = UndercarriageFunction(W0, WF1*WF2*WF3*WF4*WF5*WF6, wingRootLE(1) + 0.25*cBarWing, wingRootLE(3), cRootWing, ...
+    i_w_root, Sweep_rearSpar, dihedralWing, ...
+    theta_maxground, rearSparPercent, totalLength, fusDiamOuter/2, ...
+    x_firsttailstrike, -fusDiamOuter/2, height_mgmax, length_mgmax, x_cgmin, x_cgmax, ...
+    z_cg, y_engine_strike, z_engine_strike)
 
 
 %% STABILTIY ANALYSIS
