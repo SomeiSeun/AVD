@@ -1,4 +1,4 @@
-function CG = liftingSurfraceCG(chord_fraction, semiSpan_fraction, span, taperRatio, rootChord, dihedral, sweepLE, vert)
+function CG = liftingSurfaceCG(chord_fraction, semiSpan_fraction, span, taperRatio, rootChord, dihedral, sweepLE, vert)
 % this function calculates the CG position of a lifting surface w.r.t. the
 % leading edge of the root chord.
 % 

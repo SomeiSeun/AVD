@@ -7,6 +7,5 @@ function W_fuelSystem = W_fuelSystem(numTanks, volumeTankTotal, volumeSelfSealin
 % volumeIntegralTank = integral fuel tank volume (gal)
 % numTanks = total number of fuel tanks
 
-W_fuelSystem = 2.405 * volumeTankTotal^0.606 * numTanks^0.5 *...
-    (1 + volumeSelfSealingTank/volumeTankTotal) / (1 - volumeIntegralTank/volumeTankTotal);
+W_fuelSystem = 2.405 * volumeTankTotal^0.606 * numTanks^0.5;
 end
