@@ -37,10 +37,10 @@ dihedralHoriz = 0;
 dihedralVert = 0;
 
 %aerofoil choice and characteristics
-NACAhoriz = '0012';
-NACAvert = '0012';
-thicknessRatioHoriz = 0.12;
-thicknessRatioVert = 0.12;
+NACAhoriz = '0010';
+NACAvert = '0010';
+thicknessRatioHoriz = 0.1;
+thicknessRatioVert = 0.1;
 maxThicknessLocationHoriz = 0.3;
 maxThicknessLocationVert = 0.3;
 alpha0H = 0;
