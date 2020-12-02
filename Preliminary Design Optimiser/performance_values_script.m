@@ -6,7 +6,7 @@ clc
 % Loading in the relevant .mat files
 load('../Initial Sizing/InitialSizing.mat')
 load('../Aerodynamics/wingDesign.mat');
-load('tailplane_Sizing_variable_values.mat'); 
+load('../Static Stability/tailplaneSizing.mat'); 
 load('AerodynamicsFINAL.mat');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,18 +16,19 @@ V_stall_takeoff = sqrt((2 * W0) / (1.225 * Sref* CL_max_takeoff)); % Stall speed
 
 L_over_D = CL_max_takeoff/CD_Total(1);        % Lift to drag ratio at Transition phase
 T_Takeoff = W0 * ThrustToWeightTakeOff;       % Finding out the Takeoff Thrust
-%{
+
 % This equation gives the Take off distance in metres
 S_to = Take_off_distance(V_stall_takeoff, V_S1, T_Takeoff, W0,...
     CD_0_Total(1), AspectRatio, e_Cruise, zeroAlphaLCT, L_over_D, Sref);    
-%}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 W_L = W0 * WF8 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF9 * WF10;
 % ^ Weight of the flight at start of landing phase
 
 VS0 = sqrt((2 * W_L) / (1.225 * Sref * CL_max_landing)); % Stall speed in Landing config
-L_over_D_landing = CL_max_landing/CD_Total(3); 
+L_over_D_landing = CL_max_landing/CD_Total(3);           % Lift to Drag ratio in landing config
+
 T_L = 0.5*T_Takeoff;
 % This equation gives the Landing distance in metres
 S_L = Landing_distance(zeroAlphaLCT, V_S1, W_L, VS0,...
@@ -99,11 +100,22 @@ xlabel('Maximum Rate of Climb (feet/minute)');
 ylabel('Altitude (feet)');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ixx = 8.716*10^6; 
+
 % The equation below gives the Maximum aileron deflection and the time 
 % taken by the aircraft to achieve the max bank angle
 [t, Max_ail_def, y1, y2] = aileron_sizing_new(b, Sref, AspectRatio,...
-    TaperRatio, CL_a_Total(1), VS0, Ixx, Sref, S_HT, S_VT, 0.6, 0.9, root_chord)
-% ^ Values still needed: Ixx
+    TaperRatio, CL_a_Total(3), VS0, Ixx, Sref, SHoriz, SVert, 0.61, 0.89, root_chord);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Specific Excess Energy plot
+%[] = specific_energy_plot(W0, Sref, CL_max_clean);
+% ^ How does one output the graph from a function? 
+% ^ NEED AN EQUATION FOR THRUST VARIATION WITH ALTITUDE AND MACH NUMBER
+% ^ NEED AN EQUATION FOR CD VARIATION WITH ALTITUDE 
+% ^ ALSO ADD A COMPRESSIBILITY CORRECTION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Climb rate during OEI
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

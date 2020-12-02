@@ -25,9 +25,9 @@ b=sqrt(Sref*AspectRatio);
 
 TaperRatio= 0.38;       %from Raymer's graph
 Sweep_LE= 29;           %degrees 
-Sweep_quarterchord= sweepConverter(29, 0, 0.25, AspectRatio, TaperRatio);
-Sweep_TE= sweepConverter(29,0,1 ,AspectRatio, TaperRatio);
-Sweep_maxt= sweepConverter(29,0,0.349 ,AspectRatio, TaperRatio);
+Sweep_quarterchord= sweepConverter(Sweep_LE, 0, 0.25, AspectRatio, TaperRatio);
+Sweep_TE= sweepConverter(Sweep_LE,0,1 ,AspectRatio, TaperRatio);
+Sweep_maxt= sweepConverter(Sweep_LE,0,0.349 ,AspectRatio, TaperRatio);
 Dihedral=5;             %degrees --> between 3 and 7; 5 chosen (midpoint)
 Twist=-3;                %use historical data 
 
@@ -72,7 +72,7 @@ CLmax_required=2.2;
 CLmax_clean=1.283;
 Delta_CLmax=0.9170;
 %% using double slotted flaps at TE
-Sflapped_over_Sref=0.487; %dependent on aileron span
+Sflapped_over_Sref=0.487; %confirmed for new aileron span
 Sweep_hingeline_TE= Sweep_TE;
 
 flap_deflection= Delta_CLmax/(1.6*Sflapped_over_Sref*cosd(Sweep_hingeline_TE));

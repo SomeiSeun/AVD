@@ -33,7 +33,7 @@ clear AspectRatio MAC b Sweep_quarterchord TaperRatio Sweep_LE Sref Dihedral roo
 etaH = 0.9; %crude approximation for jet planes
 twistHoriz = 0;
 twistVert = 0;
-dihedralHoriz = 0;
+dihedralHoriz = 3;
 dihedralVert = 0;
 
 %aerofoil choice and characteristics
@@ -47,19 +47,21 @@ alpha0H = 0;
 
 %tailplane parameters to optimse
 ARhoriz = 5; %typically 3-5 where AR = b^2/Sh and b is the tail span
-ARvert = 2; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
+ARvert = 1.8; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
 taperHoriz = 0.3; %typically 0.3 - 0.5
-taperVert = 0.3; %typically 0.3 - 0.5
+taperVert = 0.4; %typically 0.3 - 0.5
+
+%% CALCULATING TAILPLANE GEOMETRY BASED ON PARAMETERS ABOVE
 
 %calculating tailplane sweep angles based on wing sweep...
 %...for horizongtal tailplane
-sweepHorizLE = sweepWingLE + 5;
+sweepHorizLE = 35;
 sweepHorizQC = sweepConverter(sweepHorizLE, 0, 0.25, ARhoriz, taperHoriz);
 sweepHorizMT = sweepConverter(sweepHorizLE, 0, maxThicknessLocationHoriz, ARhoriz, taperHoriz);
 sweepHorizTE = sweepConverter(sweepHorizLE, 0, 1, ARhoriz, taperHoriz);
 
 %...for vertical tailplane
-sweepVertLE = sweepWingLE + 12;
+sweepVertLE = 40;
 sweepVertQC = sweepConverter(sweepVertLE, 0, 0.25, 2*ARvert, taperVert);
 sweepVertMT = sweepConverter(sweepVertLE, 0, maxThicknessLocationVert, 2*ARhoriz, taperVert);
 sweepVertTE = sweepConverter(sweepVertLE, 0, 1, 2*ARvert, taperVert);
@@ -76,7 +78,7 @@ VbarV = 0.01;
 count = 0;
 
 while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
-    %% CALCULATING TAILPLANE GEOMETRY BASED ON PARAMETERS ABOVE
+    
     
     SHoriz = SHoriz*VbarH_target/VbarH;
     SVert = SVert*VbarV_target/VbarV;
@@ -94,7 +96,7 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
 
     %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
     wingRootLE = [0.35*totalLength; 0; -0.8*fusDiamOuter/2];
-    horizRootLE = [totalLength - 1.1*cRootHoriz; 0; 0.8*fusDiamOuter/2];
+    horizRootLE = [totalLength - 1.2*cRootHoriz; 0; 0.8*fusDiamOuter/2];
     vertRootLE = [horizRootLE(1) - 0.7*cRootVert; 0; fusDiamOuter/2];
 
     %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
@@ -117,6 +119,8 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
     
     count = count + 1;
 end
+SHoriz
+SVert
 
 clear VbarH_target VbarV_target
 
@@ -143,13 +147,14 @@ CG = [28,29,30; 0,0,0; 0,0,0]; %guesses to make the code work for now
 enginePosition = wingRootLE + [0; 8; -0.4]; %guesses to make the code work for now
 
 %aircraft fuselage pitching moment contribution
-CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cBarWing);
+CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cRootWing);
 
 %wing downwash on tailplane d(e)/d(alpha) 
 downwash = downwash(lHoriz, hHoriz, wingSpan, sweepWingQC, ARwing, taperWing, CL_a_Total, CL_a_M0);
 
 %neutral point and static margin
-[xNPOff, KnOff, xNPOn, KnOn] = staticStability(CG, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
+[xNPOff, KnOff, xNPOn, KnOn] =...
+    staticStability(CG, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
 
 %% TRIM ANALYSIS
 
