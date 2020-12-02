@@ -268,3 +268,7 @@ z_engine_front = z_engine_ref - (D_e/2);
 y_engine_strike = y_engine_front + ((D_e + 0.3048)/2)*sind(5);
 z_engine_strike = z_engine_front - ((D_e + 0.3048)/2)*cosd(5);
 
+for i = 0:0.1:1
+    for ii = 0:1000:42000
+        beta = ThrustLapseModel(i,ii)
+        plot(ii, beta, 'x', 'LineWidth', num2str(
