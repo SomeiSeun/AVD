@@ -53,10 +53,15 @@ Altitudes = 0:100:42000;
 beta = zeros(length(Mach_numbers), length(Altitudes));
 for i = 1:length(Mach_numbers)
     for ii = 1:length(Altitudes)
-        beta(i,ii) = ThrustLapseModel(Mach_numbers(i), Altitudes(ii));
+        beta(i,ii) = ThrustLapseModel(Mach_numbers(i), Altitudes(ii), 0.6, 30000);
     end
 end
-contour(Altitudes, Mach_numbers, beta, 100)
+figure(1)
+contourf(Altitudes, Mach_numbers, beta, 100)
+title('Contour plot of thrust ratio $\beta$ with Mach number and altitude', 'interpreter', 'latex', 'fontsize', 20)
+xlabel('Altitude (ft)', 'interpreter', 'latex', 'fontsize', 15)
+ylabel('Mach number', 'interpreter', 'latex', 'fontsize', 15)
+
 
 
 

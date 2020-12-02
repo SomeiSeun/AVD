@@ -1,4 +1,4 @@
-function beta_thrust_ratio = ThrustLapseModel(M_flight, A_flight)
+function beta_thrust_ratio = ThrustLapseModel(M_flight, A_flight, M_design, A_design)
 
 %% High BPR Turbofan thrust lapse calculator
 %{
@@ -15,11 +15,10 @@ wish our engine to perform the best. In our case, that would be cruise
 altitude and speed (35000ft and Mach 0.8)
 %}
 
-[T_design, ~, ~, ~] = atmosisa(35000*0.3048);
+[T_design, ~, ~, ~] = atmosisa(A_design*0.3048);
 [T_sealvl, ~, P_sealvl, ~] = atmosisa(0);
-M_design = 0.8;
 
-TR = (T_design*(1 + ((1.4-1)/2)*0.8*0.8) )/T_sealvl;
+TR = (T_design*(1 + ((1.4-1)/2)*M_design*M_design) )/T_sealvl;
 
 %% Step 2: Calculate temperature and pressure ratio in flight
 [T_flight, ~, P_flight, ~] = atmosisa(A_flight.*0.3048);
