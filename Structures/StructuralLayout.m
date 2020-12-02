@@ -91,6 +91,8 @@ tFuelFS = (0.082900+0.063460)*cFuelEnd;
 tFuelRS = (0.050850+0.031410)*cFuelEnd;
 %}
 
+TanmayIsNot = 0;
+
 % Convert units from m to ft
 %spanWing = spanWing*unitsratio('ft', 'm');
 %SWing = SWing*unitsratio('ft', 'm')^2;
