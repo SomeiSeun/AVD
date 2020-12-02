@@ -251,7 +251,7 @@ if haveUndercarriage == 0
 else
     %% Outputs
     LocationMainGearJoint = [x_mgjoint, y_mgjoint(i), z_mgjoint]';
-    LocationNoseGearJoint = [x_ng(i), 0, z_mgjoint]';
+    LocationNoseGearJoint = [x_ng(ii), 0, z_mgjoint]';
     
     LengthMainGearDeployed = mg_deployed_total_length;
     LengthMainGearRetracted = mg_retracted_total_length;
