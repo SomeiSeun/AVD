@@ -335,36 +335,6 @@ rudder_area = rudder_span * rudder_avg_chord * 2;           % Total area of the 
 
 
 
-%% AERODYNAMIC ANALYSIS
-
-%Assumed Values
-nacelle_length=5.5;
-upsweep_angle=15*(pi/180);
-Cl_tail_airfoil=1.4;
-
-%For aerodynamics analysis
-l=[MAC,totalLength,nacelle_length,cBarHoriz,cBarVert];
-xtocmax=[0.349,0,0,maxThicknessLocationHoriz,maxThicknessLocationVert];
-ttoc=[Airfoil_ThicknessRatio_used,0,0,thicknessRatioHoriz,thicknessRatioVert];
-theta_max=[Sweep_maxt,0,0,sweepHorizMT,sweepVertMT];
-S_wet_all=[S_wetted,totalArea,75,SHorizWetted,SVertWetted];
-
-%Aerodynamics: Lift
-[CL_a,CL_max_clean,alpha_zero_takeoff,alpha_zero_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(AspectRatio,S_exposed,Sref,fusDiamOuter,b,M,Sweep_maxt,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,Sweep_quarterchord,Sweep_TE);
-[CL_a_M0]=WingLift(AspectRatio,S_exposed,Sref,fusDiamOuter,b,0,Sweep_maxt,Cl_am,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,Sweep_quarterchord,Sweep_TE);
-CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
-[CL_ah,CL_max_h]=TailLift(ARhoriz,d,spanHoriz,M,sweepHorizMT,10.5214,Cl_tail_airfoil,sweepHorizQC);
-[maxLiftLanding,maxLiftTakeoff,AoA_Stall_Wing,AoA_Stall_Tail]=TotalLift(CL_max_landing,CL_max_takeoff,CL_max_clean,CL_a_Total,CL_ah,CL_max_h,SHoriz,Sref,rho_landing,V_landing,rho_takeoff,V_takeoff,alpha_zero_takeoff,alpha_zero_landing);
-
-%Aerodynamics: Drag 
-[CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise,Re,Cfc,FF]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
-[CD_Parasitic_Takeoff,CD_Parasitic_Total_Takeoff,CD_LandP_Takeoff]=Parasitic(rho_takeoff,V_takeoff,l,nu_takeoff,M_takeoff,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
-[CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,nacelle_length,nacelle_diameter,S_wet_all,Sref);
-[CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing,C_Dfu]=MiscD(Area_ucfrontal,Sref,flapspan,b,flap_deflection_takeoff,flap_deflection_landing,Aeff,fusDiamOuter,upsweep_angle);
-[CD_0_Total,CD_min]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
-[CD_iw,CD_ih,CD_Total,Drag_Landing,LtoDMax]=TotalDragFinal(CL_trimWings,CL_trimHoriz,SHoriz,Sref,CD_0_Total,rho_landing,V_landing,AspectRatio);
-[V_Stall_Landing]=StallSpeed(W0,WF1,WF2,WF3,WF4,WF5,WF6,CL_max_landing,rho_landing,Sref);
-
 %% WEIGHT ANALYSIS
 Nz = 1.5*2.5;% minimum limit load factor = 2.5 according to FAR-25.337 (ultimate load factor = 1.5 x limit load factor)
 Ngear = 2.7; %typically 2.7-3
@@ -501,42 +471,7 @@ end
 
 %% BALANCE ANALYSIS
 
-%CG of each component (in meters [x; y; z])
-
-%lifting surfaces
-components(1).cog = wingRootLE + liftingSurfraceCG(0.6, 0.35, spanWing, taperWing, cRootWing, dihedralWing, sweepWingLE, false);
-components(2).cog = horizRootLE + liftingSurfaceCG(0.42, 0.38, spanHoriz, taperHoriz, cRootHoriz, dihedralHoriz, sweepHorizLE, false);
-components(3).cog = vertRootLE + liftingSurfaceCG(0.42, 0.38, 2*heightHoriz, taperVert, cRootVert, dihedralVert, sweepVertLE, true);
-%fuselage and undercarriage
-components(4).cog = [0.45*totalLength; 0; 0];
-components(5).cog = [wingRootLE(1) + cRootWing; 0; -1.5*fusDiamOuter];
-components(6).cog = [0.5*frontLength; 0; -1.5*fusDiamOuter];
-%engine and fuel system
-components(7).cog = wingRootLE + [0.3*0.5*spanWing*tand(sweepWingLE); 0; 0.3*0.5*spanWing*tand(dihedralWing) - widthNacelle];
-components(8).cog = wingRootLE + [0.3*0.5*spanWing*tand(sweepWingLE) - 0.6*lengthNacelle; 0; 0.3*0.5*spanWing*tand(dihedralWing) - widthNacelle];
-components(9).cog = [0.5*components(7).cog(1); 0; 0]; %lengthEngineControl = engine to cockpit total length (ft)
-components(10).cog = [0.5*totalLength;0;0];
-components(11).cog = [0.5*totalLength;0;0];
-components(12).cog = [fuelXVal,0,fuelZVal]; % tank cg + root chord for x, z half way between root and fuel
-%subsystems
-components(13).cog = [0.5*frontLength; 0; -0.25*fusDiamOuter];
-components(14).cog = [frontLength + mainLength + 0.65*aftLength; 0; 1.2];
-components(15).cog = [0.5*frontLength; 0; -0.25*fusDiamOuter];
-components(16).cog = [0.5*totalLength; 0; 0];
-components(17).cog = [0.5*totalLength; 0; 0];
-components(18).cog = [frontLength + 0.2*mainLength; 0; -0.5*fusDiamOuter];
-components(19).cog = [frontLength + 0.5*mainLength; 0; 0];
-components(20).cog = [0.5*totalLength;0;0];
-components(21).cog = wingRootLE;
-
-components(22).cog = [frontLength + 0.5*mainLength; 0; 0];
-components(23).cog = [frontLength + 0.5*mainLength; 0; 0];
-components(24).cog = [0,0,0];
-components(25).cog = [fuelXVal+cRootWing(1),0, (fuelZVal+cRootWing(3))/2];
-
-%calculating CG
-CGempty = sum([components(1:21).mass].*[components(1:21).cog], 2)/sum([components(1:21).mass]);
-CGfull = sum([components.mass].*[components.cog], 2)/sum([components.mass]);
+%% AERODYNAMIC ANALYSIS
 
 %% STABILTIY ANALYSIS
 
