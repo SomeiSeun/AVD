@@ -6,9 +6,9 @@ load('../Aerodynamics/Unknowns.mat')                                        % Th
 load('../Structures/Fuselage/fuselageOutputs.mat')      
 
 %% Assumed Values
-nacelle_length=5.5;
+nacelle_length=5.5
 %For aerodynamics analysis
-l=[MAC,totalLength,nacelle_length,cBarHoriz,cBarVert];
+l=[MAC,totalLength,5.5,cBarHoriz,cBarVert];
 xtocmax=[0.349,0,0,maxThicknessLocationHoriz,maxThicknessLocationVert];
 ttoc=[Airfoil_ThicknessRatio_used,0,0,thicknessRatioHoriz,thicknessRatioVert];
 theta_max=[Sweep_maxt,0,0,sweepHorizMT,sweepVertMT];
