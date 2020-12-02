@@ -10,7 +10,7 @@ close all
 %mkdir('AVD')
 addpath('../Structures/Fuselage/', '../Aerodynamics/', '../Static Stability')
 load('wingDesign.mat', 'TaperRatio', 'root_chord')
-load('fuselageOutputs.mat', 'totalLength', 'totalArea', 'fusDiamOuter', 'wallThickness')
+load('fuselageOutputs.mat', 'fusDiamOuter', 'wallThickness')
 load('stabilityAndTrim.mat', 'wingRootLE')
 
 %renaming wing parameters to avoid confusion with tailplane parameters
@@ -39,3 +39,99 @@ uc_xlimGiven    = 5;
 
 save uc_limts
 
+%% Fuel tank calculations
+
+
+%% LOADING PARAMETERS
+addpath('../Aerodynamics/')
+load('wingDesign.mat', 'TaperRatio', 'root_chord', 'b', 'Sref', 'AspectRatio')
+
+%renaming wing parameters to avoid confusion with tailplane parameters
+spanWing    = b;
+SWing       = Sref;
+tcRatioTip  = 0.15;
+tcRatioRoot = 0.15;
+tau_w = tcRatioTip/tcRatioRoot;
+taperWing   = TaperRatio;
+cRootWing   = root_chord;
+clear TaperRatio root_chord b Sref
+
+%
+
+% Convert units from m to ft
+%spanWing = spanWing*unitsratio('ft', 'm');
+%SWing = SWing*unitsratio('ft', 'm')^2;
+
+volumeWetWing = 0.54*((SWing^2)/(spanWing))*tcRatioRoot*(1+taperWing+taperWing)/(1+taperWing)^2; % Volume in ft^3
+%volumeWetWing = volumeWetWing*unitsratio('m','ft')^3; % Volume in m^3
+%volumeWetWing = volumeWetWing*264.172052; % Volume in gallons
+volumeWetWingUsable = 0.95*volumeWetWing; % 5% unusable due to engine
+
+volumeFuelReq = 19361.75238/264; % Volume in gallons
+
+wingCapacityFuel = volumeFuelReq/volumeWetWingUsable;
+wingCapacityFuelWorst = volumeFuelReq/(volumeWetWingUsable*0.9);
+wingCapacityFuelBest = volumeFuelReq/(volumeWetWingUsable*1.1);
+
+disp(wingCapacityFuelWorst)
+disp(wingCapacityFuel)
+disp(wingCapacityFuelBest)
+
+%}
+
+%
+cFuelEnd = 0.796; % From CAD
+trootFS = (0.082900+0.063460)*cRootWing;
+trootRS = (0.050850+0.031410)*cRootWing;
+tFuelFS = (0.082900+0.063460)*cFuelEnd;
+tFuelRS = (0.050850+0.031410)*cFuelEnd;
+%}
+
+% Convert units from m to ft
+%spanWing = spanWing*unitsratio('ft', 'm');
+%SWing = SWing*unitsratio('ft', 'm')^2;
+
+%{
+volumeWetWing = 0.54*(SWing^1.5)*tcRatioRoot*((2*AspectRatio)^-0.5)*(1+taperWing+taperWing)/(1+taperWing)^2; % Volume in ft^3
+%volumeWetWing = volumeWetWing*unitsratio('m','ft')^3; % Volume in m^3
+%volumeWetWing = volumeWetWing*264.172052; % Volume in gallons
+volumeWetWingUsable = 0.95*volumeWetWing; % 5% unusable due to engine
+
+volumeFuelReq = 19361.75238/264; % Volume in gallons
+
+wingCapacityFuel = volumeFuelReq/volumeWetWingUsable;
+wingCapacityFuelWorst = volumeFuelReq/(volumeWetWingUsable*0.9);
+wingCapacityFuelBest = volumeFuelReq/(volumeWetWingUsable*1.1);
+
+disp(wingCapacityFuelWorst)
+disp(wingCapacityFuel)
+disp(wingCapacityFuelBest)
+%}
+
+%{
+
+volumeWetWingUsable = 2*17.028*0.95; % 5% unusable due to engine
+
+volumeFuelReq = 19361.75238/264; % Volume in gallons
+
+wingCapacityFuel = volumeFuelReq/volumeWetWingUsable;
+wingCapacityFuelWorst = volumeFuelReq/(volumeWetWingUsable*0.9);
+wingCapacityFuelBest = volumeFuelReq/(volumeWetWingUsable*1.1);
+
+disp(wingCapacityFuelWorst)
+disp(wingCapacityFuel)
+disp(wingCapacityFuelBest)
+
+volumeCentral = cRootWing*(0.7-0.25)*trootFS;
+
+
+%% CAD version
+
+VolOneWing = 17.028;
+VolReqCent = volumeFuelReq - VolOneWing*2;
+lengthCentTank = VolReqCent/(2.56*1.2);
+
+%% Alternatively
+lengthCentTank2 = cRootWing*0.45;
+volumeCentral = lengthCentTank2*2.56*1.2;
+%}
