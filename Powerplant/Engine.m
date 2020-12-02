@@ -48,20 +48,15 @@ UninstalledThrustTotalReq = InstalledThrustTotalReq * SystemsLossFactor * Nacell
 UninstalledThrustPerEngineReq = UninstalledThrustTotalReq/2;
 
 %% Thrust lapse model
-Mach_numbers = 0:0.1:1;
-Altitudes = 0:1000:42000;
+Mach_numbers = 0:0.01:1;
+Altitudes = 0:100:42000;
 beta = zeros(length(Mach_numbers), length(Altitudes));
 for i = 1:length(Mach_numbers)
     for ii = 1:length(Altitudes)
         beta(i,ii) = ThrustLapseModel(Mach_numbers(i), Altitudes(ii));
     end
 end
-
-for i = 1:length(Mach_numbers)
-    plot(Altitudes, beta(i,:), 'k', 'LineWidth', sqrt(i))
-    hold on
-end
-
+contour(Altitudes, Mach_numbers, beta, 100)
 
 
 
