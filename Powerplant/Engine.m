@@ -252,6 +252,11 @@ Length_inlet = (Engine_radius - Capture_radius)/tand(10);
 
 disp(['Diffuser length from inlet to fan = ', num2str(Length_inlet), ' m'])
 
+%% Nacelle sizing
+Nacelle_length = Length_inlet + L;
+Nacelle_diameter = D_e * 1.03;
+Nacelle_wetted_area = 2 * pi * Nacelle_diameter/2 * Nacelle_diameter;
+
 %% Engine placement
 
 % Wing design / aerodynamics inputs
