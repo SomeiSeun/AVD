@@ -249,9 +249,9 @@ maxThicknessLocationHoriz = 0.3;
 maxThicknessLocationVert = 0.3;
 alpha0H = 0;
 
-%tailplane parameters to optimse
-ARhoriz = 3.2; %typically 3-5 where AR = b^2/Sh and b is the tail span 
-ARvert = 1.5; %typically 1.3-2 where AR = h^2/Sv and h is the tail height 
+%tailplane parameters to optimse8
+ARhoriz = 3.17; %typically 3-5 where AR = b^2/Sh and b is the tail span 
+ARvert = 1.7; %typically 1.3-2 where AR = h^2/Sv and h is the tail height 
 taperHoriz = 0.5; %typically 0.3 - 0.5 
 taperVert = 0.5; %typically 0.3 - 0.5 
 
@@ -293,8 +293,8 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
 
     %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
     wingRootLE = [0.3*totalLength; 0; -0.8*fusDiamOuter/2]; 
-    horizRootLE = [totalLength - 1.6*cRootHoriz; 0; 0.8*fusDiamOuter/2]; 
-    vertRootLE = [horizRootLE(1) - 0.6*cRootVert; 0; fusDiamOuter/2]; 
+    horizRootLE = [totalLength - 1.4*cRootHoriz; 0; 0.8*fusDiamOuter/2]; 
+    vertRootLE = [horizRootLE(1) - 0.75*cRootVert; 0; fusDiamOuter/2]; 
 
     %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
     wingAC = wingRootLE + aerodynamicCentre(cBarWing, spanWing, taperWing, sweepWingLE, dihedralWing);
