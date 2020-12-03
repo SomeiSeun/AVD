@@ -25,12 +25,11 @@ for i = 1 : length(h)
         velocity = M(j) * a;                         % Finding out the velocity
         beta_thrust_ratio_cruise = ThrustLapseModel(M(j), alt/0.3048, 0.8, 35000);
         Thrust = W_tow * ThrustToWeightTakeOff * beta_thrust_ratio_cruise; 
-        q = 0.5 * rho * velocity^2; 
-        D = q * (CD_0_Total(2) + (1 / (pi * AspectRatio * e_Cruise)) * ((W_ini_Cruise / S) / (q * sqrt(1 - M^2)))^2);
+        D = q * (CD_0_Total(2) + (1 / (pi * AspectRatio * e_Cruise)) * (() / )^2)
         Ps(i,j) = (velocity / W_tow) * (Thrust - D); % Finding out specific excess power
     end
     
-    vstall(i) = sqrt((2 * W_tow / S) / (rho * Clmax)) / a;   % Stall speed to be plotted in Mach
+    vstall(i) = sqrt((2 * W_tow / S) / (rho * Clmax));   % Stall speed to be plotted
     
 end
 
@@ -38,13 +37,13 @@ end
 
 % Plotting the Contour plot
 figure(1)
-[cl,hl] = contour(M,height_metres,Ps,vals);
+[cl,hl] = contour(M,h,Ps,vals);
 clabel(cl,hl)
 title('Specific Excess Power')
 xlabel('Mach number')
 ylabel('Altitude (feet)')
 hold on
-plot(vstall, height_metres, '-r')
+plot(vstall, h, '-r')
 legend('Specific Excess Energy', 'Stall Boundary')
 
 end
