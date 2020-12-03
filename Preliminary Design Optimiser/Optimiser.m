@@ -197,8 +197,8 @@ S_exposed= SWing-WingArea_fuselage;
 S_wetted= S_exposed*(1.997+0.52*thicknessRatioWing);            %check--> depends on t/c of airfoil
 
 %Structure (Palash just added another sweepConverter output)
-frontSparPercent = 0.14;    % Between 12-18 percent
-rearSparPercent = 0.60;     % Between 55-70 percent
+frontSparPercent = 0.25;    % Between 12-18 percent
+rearSparPercent = 0.70;     % Between 55-70 percent
 Sweep_rearSpar = sweepConverter(sweepWingLE, 0, rearSparPercent, ARwing, taperWing);
 
 %wing incidence
@@ -291,9 +291,9 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
     %wing and tail placement
 
     %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
-    wingRootLE = [0.2628*totalLength; 0; -0.8*fusDiamOuter/2];
-    horizRootLE = [totalLength - 1.2*cRootHoriz; 0; 0.8*fusDiamOuter/2];
-    vertRootLE = [horizRootLE(1) - 0.6*cRootVert; 0; fusDiamOuter/2];
+    wingRootLE = [0.29*totalLength; 0; -0.8*fusDiamOuter/2];
+    horizRootLE = [totalLength - 1.5*cRootHoriz; 0; 0.8*fusDiamOuter/2];
+    vertRootLE = [horizRootLE(1) - 0.7*cRootVert; 0; fusDiamOuter/2];
 
     %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
     wingAC = wingRootLE + aerodynamicCentre(cBarWing, spanWing, taperWing, sweepWingLE, dihedralWing);
@@ -488,7 +488,7 @@ components(22).weight = W_People; %crew + pax
 components(23).weight = W_Luggage; %luggage of crew + pax
 W_fuel = (emptyWeight + W_People + W_Luggage)*fuelFraction/(1 - fuelFraction);
 components(24).weight = 0;
-components(25).weight = W_fuel;
+components(25).weight = W_fuel; %Using more fuel than we need for CG and stability ;)
 totalWeight= sum([components.weight]);
 
 %Converting back from Imperial to SI units
@@ -519,6 +519,7 @@ W_Crew = convforce(W_Crew, 'lbf', 'N');
 W_Luggage = convforce(W_Luggage, 'lbf', 'N');
 W_Landing = convforce(W_Landing, 'lbf', 'N');
 W_maxCargo = convforce(W_maxCargo, 'lbf', 'N');
+W_fuel = convforce(W_fuel, 'lbf', 'N');
 emptyWeight = convforce(emptyWeight, 'lbf', 'N');
 totalWeight = convforce(totalWeight, 'lbf', 'N');
 
@@ -526,7 +527,8 @@ for i = 1:length(components)
     components(i).weight = convforce(components(i).weight, 'lbf', 'N');
 end
 
-
+%Fuel volume check
+V_fuel = (W_fuel/9.81)/804;
 
 %% BALANCE ANALYSIS
 
@@ -562,7 +564,7 @@ components(23).cog = [frontLength + 0.5*mainLength; 0; 0];
 components(24).cog = [0;0;0];
 components(25).cog = [fuelXVal; 0; (fuelZVal+wingRootLE(3))/2];
 
-%calculating CG
+%calculating CG MTOW
 sumBalance = [0;0;0];
 sumWeight = 0;
 for i = 1:length(components)
@@ -571,6 +573,17 @@ for i = 1:length(components)
 end
 
 CGfull = sumBalance./sumWeight;
+
+
+%calculating CG empty
+sumBalance_2 = [0;0;0];
+sumWeight_2 = 0;
+for i = 1:(length(components)-4)
+    sumBalance_2 = sumBalance_2 + components(i).weight.*components(i).cog;
+    sumWeight_2 = sumWeight_2 + components(i).weight;
+end
+
+CGempty = sumBalance_2./sumWeight_2;
 
 
 %% STABILTIY ANALYSIS
@@ -620,8 +633,8 @@ theta_maxground = 15;
 x_firsttailstrike = frontLength + mainLength;
 height_mgmax = 1.5;
 length_mgmax = 3;
-x_cgmin = CGfull(1) - 0.5;
-x_cgmax = CGfull(1) + 0.5;
+x_cgmin = CGempty(1);
+x_cgmax = CGfull(1);
 z_cg = CGfull(3);
 
 [LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...

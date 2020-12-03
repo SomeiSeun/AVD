@@ -49,7 +49,7 @@ WNGRmax = 0.20;
 
 %% Initialise variables and arrays
 x_ng = 0:0.001:length_aircraft;
-y_mgjoint = 0:0.01:10;
+y_mgjoint = 0:0.1:10;
 haveUndercarriage = 0;
 
 %% Loop 1: Picking lateral positions of landing gears
