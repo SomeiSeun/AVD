@@ -345,7 +345,7 @@ rudder_area = rudder_span * rudder_avg_chord * 2;           % Total area of the 
 
 %% ENGINE DESIGN
 
-y_engine_ref = 9;
+y_engine_ref = 10; %DO NOT go below 8
 
 [engine_uninstalled_length, D_f, Capture_radius, Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight,...
     Engine_BPR, lengthNacelle, nacelleRadius, SnacelleWetted, y_engine_strike, z_engine_strike, Engine_CG, Nacelle_CG] = ...
