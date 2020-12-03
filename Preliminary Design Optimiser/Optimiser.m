@@ -570,26 +570,45 @@ components(23).cog = [frontLength + 0.5*mainLength; 0; 0];
 components(24).cog = [0;0;0];
 components(25).cog = [fuelXVal; 0; (fuelZVal+wingRootLE(3))/2];
 
-%calculating CG MTOW
-sumBalance = [0;0;0];
-sumWeight = 0;
-for i = 1:length(components)
-    sumBalance = sumBalance + components(i).weight.*components(i).cog;
-    sumWeight = sumWeight + components(i).weight;
-end
-
-CGfull = sumBalance./sumWeight;
-
-
 %calculating CG empty
-sumBalance_2 = [0;0;0];
-sumWeight_2 = 0;
+sumBalance_empty = [0;0;0];
+sumWeight_empty = 0;
 for i = 1:(length(components)-4)
-    sumBalance_2 = sumBalance_2 + components(i).weight.*components(i).cog;
-    sumWeight_2 = sumWeight_2 + components(i).weight;
+    sumBalance_empty = sumBalance_empty + components(i).weight.*components(i).cog;
+    sumWeight_empty = sumWeight_empty + components(i).weight;
 end
 
-CGempty = sumBalance_2./sumWeight_2;
+CGempty = sumBalance_empty./sumWeight_empty;
+
+%calculating CG fuel no pax no cargo
+sumBalance_fuel = sumBalance_empty;
+sumWeight_fuel = sumWeight_empty;
+
+i = 25;
+sumBalance_fuel = sumBalance_fuel + components(i).weight.*components(i).cog;
+sumWeight_fuel = sumWeight_fuel + components(i).weight;
+
+CGfuel = sumBalance_fuel./sumWeight_fuel;
+
+%calculating CG fuel no pax with cargo
+sumBalance_frontLoad = [0;0;0];
+sumWeight_frontLoad = sumWeight_fuel;
+for i = 1:(length(components)-4)
+    sumBalance_frontLoad = sumBalance_frontLoad + components(i).weight.*components(i).cog;
+    sumWeight_frontLoad = sumWeight_frontLoad + components(i).weight;
+end
+
+CGnopax = sumBalance_frontLoad./sumWeight_frontLoad;
+
+%calculating CG MTOW
+sumBalance_MTOW = [0;0;0];
+sumWeight_MTOW = 0;
+for i = 1:length(components)
+    sumBalance_MTOW = sumBalance_MTOW + components(i).weight.*components(i).cog;
+    sumWeight_MTOW = sumWeight_MTOW + components(i).weight;
+end
+
+CGfull = sumBalance_MTOW./sumWeight_MTOW;
 
 
 %% STABILTIY ANALYSIS
