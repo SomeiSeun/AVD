@@ -270,7 +270,7 @@ sweepVertMT = sweepConverter(sweepVertLE, 0, maxThicknessLocationVert, 2*ARhoriz
 sweepVertTE = sweepConverter(sweepVertLE, 0, 1, 2*ARvert, taperVert);
 
 %target volume coefficients
-VbarH_target = 1; %horizontal volume coefficient estimates based off Raymer's historical data
+VbarH_target = 0.7; %horizontal volume coefficient estimates based off Raymer's historical data
 VbarV_target = 0.07; %vertical volume coefficient estimates based off Raymer's historical data
 
 %initialising loop
@@ -291,9 +291,9 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
     %wing and tail placement
 
     %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
-    wingRootLE = [0.35*totalLength; 0; -0.8*fusDiamOuter/2];
+    wingRootLE = [0.2628*totalLength; 0; -0.8*fusDiamOuter/2];
     horizRootLE = [totalLength - 1.2*cRootHoriz; 0; 0.8*fusDiamOuter/2];
-    vertRootLE = [horizRootLE(1) - 0.7*cRootVert; 0; fusDiamOuter/2];
+    vertRootLE = [horizRootLE(1) - 0.6*cRootVert; 0; fusDiamOuter/2];
 
     %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
     wingAC = wingRootLE + aerodynamicCentre(cBarWing, spanWing, taperWing, sweepWingLE, dihedralWing);
@@ -381,9 +381,9 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing,C_Dfu]=MiscD(Area_ucfrontal,SWing,flapspan,spanWing,flap_deflection_takeoff,flap_deflection_landing,Aeff,fusDiamOuter,upsweep_angle);
 [CD_0_Total,CD_min]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
 [V_Stall_Landing]=StallSpeed(W0,WF1,WF2,WF3,WF4,WF5,WF6,CL_max_landing,rho_landing,SWing);
-[CD_iw,CD_ih,CD_Total,Drag_Landing,LtoDMax,CLmD]=TotalDragFinal(CL_trimWings,CL_trimHoriz,SHoriz,SWing,CD_0_Total,rho_landing,V_landing,ARwing);
+%[CD_iw,CD_ih,CD_Total,Drag_Landing,LtoDMax,CLmD]=TotalDragFinal(CL_trimWings,CL_trimHoriz,SHoriz,SWing,CD_0_Total,rho_landing,V_landing,ARwing);
 
-%% RUDDER DESIGN
+%% AILERON DESIGN
 
 Ixx = 8.7e6;
 starting_position = 0.61;
@@ -580,7 +580,6 @@ wingPlanform = wingRootLE + tailplanePlanform(spanWing, sweepWingLE, cRootWing, 
 horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHoriz, cTipHoriz, dihedralHoriz, false);
 vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
 
-tailplanePlot(wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 %aircraft fuselage pitching moment contribution
 CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cRootWing);
@@ -592,6 +591,7 @@ downwash = downwash(lHoriz, hHoriz, spanWing, sweepWingQC, ARwing, taperWing, CL
 [xNPOff, KnOff, xNPOn, KnOn] =...
     staticStability(CGfull, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
 
+tailplanePlot(xNPOff, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 
 %% TRIM ANALYSIS 
@@ -609,9 +609,9 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
 
 
 %determine iH and AoA for trimmed flight
-[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
-    trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, cRootWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
-    CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
+%[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
+%    trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, cRootWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+%   CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
 
 
 %% UNDERCARRIAGE DESIGN
@@ -638,5 +638,5 @@ z_cg = CGfull(3);
 
 %% PERFORMANCE ANALYSIS
 
-
+KnOff
 toc
