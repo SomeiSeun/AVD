@@ -464,15 +464,15 @@ components = nameComponents();
 
 %lifting surfaces
 components(1).weight = W_wings(W0, Nz, SWing, ARwing, taperWing, aileron_area, sweepWingQC, thicknessRatioWing);
-components(2).weight = W_horizTail(W0, Nz, SHoriz, ARhoriz, elevator_area, lHoriz, fuseWidthHoriz, spanHoriz, sweepHorizQC);
-components(3).weight = 0.5*W_vertTail(W0, Nz, SVert, lVert, ARvert, sweepVertQC, thicknessRatioVert);
+components(2).weight = 0.75*W_horizTail(W0, Nz, SHoriz, ARhoriz, elevator_area, lHoriz, fuseWidthHoriz, spanHoriz, sweepHorizQC);
+components(3).weight = 0.75*0.5*W_vertTail(W0, Nz, SVert, lVert, ARvert, sweepVertQC, thicknessRatioVert);
 %fuselage and undercarriage
 components(4).weight = W_fuse(W0, Nz, taperWing, spanWing, sweepWingQC, totalLength, totalArea, fusDiamOuter);
-components(5).weight = W_mainLG(W_Landing, Ngear, lengthMainLG, NmainWheels, V_Stall_Landing, NmainShockStruts);
-components(6).weight = W_noseLG(W_Landing, Ngear, lengthNoseLG, NumNoseWheels);
+components(5).weight = 0.88*W_mainLG(W_Landing, Ngear, lengthMainLG, NmainWheels, V_Stall_Landing, NmainShockStruts);
+components(6).weight = 0.88*W_noseLG(W_Landing, Ngear, lengthNoseLG, NumNoseWheels);
 %engine and fuel system
 components(7).weight = 2*convforce(Engine_Weight*9.80665, 'N', 'lbf');
-components(8).weight = 2*W_nacelle(components(7).weight/2, lengthNacelle, widthNacelle, Nz, NumberOfEngines, SnacelleWetted);
+components(8).weight = 0.8*2*W_nacelle(components(7).weight/2, lengthNacelle, widthNacelle, Nz, NumberOfEngines, SnacelleWetted);
 components(9).weight = 5*NumberOfEngines + 0.8*lengthEngineControl; %lengthEngineControl = engine to cockpit total length (ft)
 components(10).weight = W_engineStarter(NumberOfEngines, components(7).weight);
 components(11).weight = 3e-4*W0;
