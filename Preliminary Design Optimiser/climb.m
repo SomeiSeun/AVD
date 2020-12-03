@@ -19,7 +19,6 @@ function [ROC_max, altitude] = climb(W, C_Dmin, L_Dmax, S, T_dummy)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 0.273920 kg/m^3 is the density at 42,000 ft AMSL. 
-addpath('C:\Users\usain\Documents\Aerospace Vehicle Design\Programmes\Git Kraken codes\AVD\Powerplant');
 
 height = 0;          % Setting a value for altitude
 i = 1;               % Setting a value for i

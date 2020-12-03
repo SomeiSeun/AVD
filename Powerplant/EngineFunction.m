@@ -1,4 +1,4 @@
-function [Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight, Engine_BPR, Nacelle_length, Nacelle_radius, Nacelle_wetted_area, y_engine_strike, z_engine_strike, Engine_CG, Nacelle_CG] = EngineFunction(ThrustToWeight, W0, x_wingroot, z_wingroot, length_rootchord, theta_setting, theta_sweepLE, theta_dihedral, y_engine_ref)
+function [L, D_f,Capture_radius, Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight, Engine_BPR, Nacelle_length, Nacelle_radius, Nacelle_wetted_area, y_engine_strike, z_engine_strike, Engine_CG, Nacelle_CG] = EngineFunction(ThrustToWeight, W0, x_wingroot, z_wingroot, length_rootchord, theta_setting, theta_sweepLE, theta_dihedral, y_engine_ref)
 % This is the function-ified version of the engine and nacelle sizing
 % script
 

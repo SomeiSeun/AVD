@@ -3,7 +3,6 @@
 % This code would call on each individual member's codes and populate the
 % .csv file based on results produced by each.
 
-%% Housekeeping
 clear
 clc
 close all
@@ -344,7 +343,7 @@ rudder_area = rudder_span * rudder_avg_chord * 2;           % Total area of the 
 
 y_engine_ref = 8;
 
-[Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight,...
+[engine_uninstalled_length, D_f, Capture_radius, Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight,...
     Engine_BPR, lengthNacelle, nacelleRadius, SnacelleWetted, y_engine_strike, z_engine_strike, Engine_CG, Nacelle_CG] = ...
     EngineFunction(ThrustToWeight, W0, wingRootLE(1) + 0.25*cRootWing, wingRootLE(3), cRootWing, i_w_root, sweepWingLE,...
     dihedralWing, y_engine_ref);
@@ -386,11 +385,11 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 %% AILERON DESIGN
 
 Ixx = 8.7e6;
-starting_position = 0.61;
-ending_position = 0.89;
+aileron_starting_position = 0.61;
+aileron_ending_position = 0.89;
 
 [t, Max_ail_def, y1, y2, aileron_area] = aileron_sizing_new(spanWing, SWing, ARwing, taperWing,...
-    CL_a_Total(3), V_Stall_Landing, Ixx, SWing, SHoriz, SVert, starting_position, ending_position, cRootWing);
+    CL_a_Total(3), V_Stall_Landing, Ixx, SWing, SHoriz, SVert, aileron_starting_position, aileron_ending_position, cRootWing);
 
 
 %% WEIGHT ANALYSIS
@@ -508,6 +507,8 @@ heightVert = heightVert/unitsratio('ft', 'm');
 cRootWing = cRootWing/unitsratio('ft', 'm');
 cRootHoriz = cRootHoriz/unitsratio('ft', 'm');
 cRootVert = cRootVert/unitsratio('ft', 'm');
+lengthNacelle = lengthNacelle/unitsratio('ft', 'm');
+widthNacelle = widthNacelle/unitsratio('ft', 'm');
 lHoriz = lHoriz/unitsratio('ft', 'm');
 lVert = lVert/unitsratio('ft', 'm');
 fusDiamOuter = fusDiamOuter/unitsratio('ft', 'm');
@@ -631,9 +632,9 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
 
 
 %determine iH and AoA for trimmed flight
-%[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
-%    trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, cRootWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
-%   CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
+[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
+   trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, cRootWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+  CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
 
 
 %% UNDERCARRIAGE DESIGN
@@ -646,7 +647,7 @@ x_cgmin = CGempty(1);
 x_cgmax = CGfull(1);
 z_cg = CGfull(3);
 
-[LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
+[MainOleo, NoseOleo, LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
     LengthMainGearRetracted, LengthNoseGearDeployed, LengthNoseGearRetracted, ...
     GroundClearanceFuselage, GroundClearanceEngine, NoseGearLoadRatio, LandingLoadRatio, ...
     AngleTailstrike, AngleTipback, AngleOverturn, NoseWheel, MainWheel, FrontalAreaNoseGear, FrontalAreaMainGear] ...
@@ -752,3 +753,110 @@ xlabel('Altitude (feet)');
 
 KnOff
 toc
+
+
+%% OUTPUTS
+
+designparams = readtable('designparams.csv');
+
+designparams(1,2) = {W0};
+designparams(2,2) = {W0*WF1*WF2*WF3*WF4*WF5*WF6}; %max landing weight
+designparams(3,2) = {W_People + W_Luggage}; %total pax/crew/payload weight
+designparams(4,2) = {W_fuel};
+designparams(5,2) = {totalLength};
+designparams(6,2) = {fusDiamOuter};
+designparams(7,2) = {6}; %num seats abreast
+designparams(8,2) = {aftDiameter};
+designparams(9,2) = {frontFR};
+designparams(10,2) = {aftFR};
+designparams(11,2) = {15.7}; %aftbody upsweep angle
+designparams(12,2) = {wingRootLE(1)};
+designparams(13,2) = {wingRootLE(3)};
+designparams(15,2) = {thicknessRatioWing};
+designparams(16,2) = {5.73}; %wing aerofoil lift curve slope
+designparams(17,2) = {alpha0W};
+designparams(18,2) = {1.6}; %wing aerofoil max CL
+designparams(19,2) = {SWing};
+designparams(20,2) = {taperWing};
+designparams(21,2) = {ARwing};
+designparams(22,2) = {sweepWingQC};
+designparams(23,2) = {dihedralWing};
+designparams(24,2) = {twistWing};
+designparams(25,2) = {i_w_root};
+designparams(26,2) = {frontSparPercent};
+designparams(27,2) = {rearSparPercent};
+designparams(29,2) = {0.2}; %TE device chord ratio c' = cf + c
+designparams(30,2) = {flap_deflection}; %TE device extension ratio
+designparams(31,2) = {0.0844}; %TE device start position
+designparams(32,2) = {0.493}; %TE device end position
+designparams(38,2) = {0.2}; %aileron chord ratio
+designparams(39,2) = {aileron_starting_position};
+designparams(40,2) = {aileron_ending_position};
+designparams(42,2) = {thicknessRatioHoriz};
+designparams(43,2) = {6.11}; %HT aerofoil lift curve slope
+designparams(44,2) = {alpha0H};
+designparams(45,2) = {horizRootLE(1)};
+designparams(46,2) = {horizRootLE(2)};
+designparams(47,2) = {SHoriz};
+designparams(48,2) = {taperHoriz};
+designparams(49,2) = {ARhoriz};
+designparams(50,2) = {sweepHorizQC};
+designparams(51,2) = {dihedralHoriz};
+designparams(52,2) = {iH_trim(2)};
+designparams(53,2) = {frontSparPercent};
+designparams(54,2) = {rearSparPercent};
+designparams(55,2) = {0.2}; %elevator chord ratio
+designparams(56,2) = {0.05};
+designparams(57,2) = {0.95};
+designparams(59,2) = {thicknessRatioVert};
+designparams(60,2) = {vertRootLE(1)};
+designparams(61,2) = {vertRootLE(3)};
+designparams(62,2) = {SVert};
+designparams(63,2) = {taperVert};
+designparams(64,2) = {ARvert};
+designparams(65,2) = {sweepVertQC};
+designparams(66,2) = {frontSparPercent};
+designparams(67,2) = {rearSparPercent};
+designparams(68,2) = {0.2}; %rudder chord ratio
+designparams(69,2) = {0.05};
+designparams(70,2) = {0.95};
+designparams(71,2) = {LocationMainGearJoint(1)};
+designparams(72,2) = {LocationMainGearJoint(2)};
+designparams(73,2) = {LengthMainGearRetracted};
+designparams(74,2) = {MainOleo.Stroke}; %main gear stroke
+designparams(75,2) = {4};
+designparams(76,2) = {0.508};
+designparams(77,2) = {0.714};
+designparams(78,2) = {MainWheel.InflatedOuterDiamMaxINCH*0.0254};
+designparams(79,2) = {MainWheel.InflatedOuterDiamMinINCH*0.0254};
+designparams(80,2) = {MainWheel.SectionWidthMaxINCH*0.0254};
+designparams(81,2) = {MainWheel.RatedInflationPSI*6894.76};
+designparams(82,2) = {LocationNoseGearJoint(1)};
+designparams(83,2) = {LengthNoseGearRetracted};
+designparams(84,2) = {NoseOleo.Stroke};
+designparams(85,2) = {2};
+designparams(86,2) = {0.4064};
+designparams(87,2) = {NoseWheel.InflatedOuterDiamMaxINCH*0.0254};
+designparams(88,2) = {NoseWheel.InflatedOuterDiamMinINCH*0.0254};
+designparams(89,2) = {NoseWheel.SectionWidthMaxINCH*0.0254};
+designparams(90,2) = {NoseWheel.RatedInflationPSI*6894.76};
+designparams(91,2) = {Engine_SeaLevelThrust};
+designparams(92,2) = {D_f};
+designparams(93,2) = {engine_uninstalled_length};
+designparams(94,2) = {Engine_BPR};
+designparams(95,2) = {Capture_radius*2};
+designparams(96,2) = {lengthNacelle};
+designparams(97,2) = {Thrustline_position(2)};
+designparams(99,2) = {0.50643144};
+designparams(100,2) = {Engine_Weight};
+designparams(101,2) = {1};
+
+designparams.Value = num2str(designparams.Value);
+
+designparams{14,2} = "NACA 64-215 ";
+designparams{28,2} = "double      ";
+designparams{41,2} = "NACA 0012   ";
+designparams{58,2} = "NACA 0012   ";
+designparams{14,2} = "NACA 64-215 ";
+
+writetable(designparams, 'designparams.csv')
