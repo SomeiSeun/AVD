@@ -391,8 +391,8 @@ CD_0_Loiter=CD_Parasitic_Total_Loiter+0.0066;
 %% AILERON DESIGN
 
 Ixx = 8.716e6;
-starting_position = 0.61;
-ending_position = 0.89;
+aileron_starting_position = 0.61;
+aileron_ending_position = 0.89;
 
 [t, Max_ail_def, y1, y2, aileron_area] = aileron_sizing_new(spanWing, SWing, ARwing, taperWing,...
     CL_a_Total(3), V_Stall_Landing, Ixx, SWing, SHoriz, SVert, aileron_starting_position, aileron_ending_position, cRootWing);
@@ -493,7 +493,7 @@ components(22).weight = W_People; %crew + pax
 components(23).weight = W_Luggage; %luggage of crew + pax
 W_fuel = (emptyWeight + W_People + W_Luggage)*fuelFraction/(1 - fuelFraction);
 components(24).weight = 0;
-components(25).weight = W_fuel*1.4; %Using more fuel than we need for CG and stability ;) 
+components(25).weight = W_fuel*1.2; %Using more fuel than we need for CG and stability ;) 
 totalWeight= sum([components.weight]);
 
 %Converting back from Imperial to SI units
@@ -564,7 +564,7 @@ components(17).cog = [0.5*totalLength; 0; 0];
 components(18).cog = [0.8*frontLength; 0; -0.5*fusDiamOuter];
 components(19).cog = [frontLength + 0.6*mainLength; 0; 0]; 
 components(20).cog = [0.5*totalLength;0;0];
-components(21).cog = wingRootLE;
+components(21).cog = wingRootLE+0.5*cRootWing;
 
 components(22).cog = [frontLength + 0.55*mainLength; 0; 0]; 
 components(23).cog = [frontLength + 0.5*mainLength; 0; 0];
@@ -609,7 +609,8 @@ for i = 1:length(components)
     sumWeight_MTOW = sumWeight_MTOW + components(i).weight;
 end
 
-CGfull = sumBalance_MTOW./sumWeight_MTOW;
+CGmtow = sumBalance_MTOW./sumWeight_MTOW;
+% CGfull = [CGmtow, CGcstart, CGcend, CGland];
 
 
 %% STABILTIY ANALYSIS
@@ -798,7 +799,8 @@ toc
 
 %% OUTPUTS
 
-designparams = readtable('designparams.csv');
+%
+designparams = readtable('designparamsempty.csv');
 
 designparams(1,2) = {W0};
 designparams(2,2) = {W0*WF1*WF2*WF3*WF4*WF5*WF6}; %max landing weight
@@ -892,12 +894,14 @@ designparams(99,2) = {0.50643144};
 designparams(100,2) = {Engine_Weight};
 designparams(101,2) = {1};
 
-designparams.Value = num2str(designparams.Value);
+%{
+designparams.Value = num2cell(designparams.Value);
 
 designparams{14,2} = "NACA 64-215 ";
 designparams{28,2} = "double      ";
 designparams{41,2} = "NACA 0012   ";
 designparams{58,2} = "NACA 0012   ";
 designparams{14,2} = "NACA 64-215 ";
-
+%}
 writetable(designparams, 'designparams.csv')
+%}
