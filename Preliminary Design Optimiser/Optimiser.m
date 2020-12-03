@@ -204,7 +204,7 @@ Sweep_rearSpar = sweepConverter(sweepWingLE, 0, rearSparPercent, ARwing, taperWi
 
 %wing incidence
 i_w_root=2.3;
-i_w_tip=i_w_root-twistWing;
+i_w_tip=i_w_root+twistWing;
 
 %HLDs
 CLmax_required=2.2;
@@ -659,8 +659,8 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
 
 %determine iH and AoA for trimmed flight
 [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
-   trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, cRootWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
-  CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
+    trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+    CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
 
 
 %% UNDERCARRIAGE DESIGN
