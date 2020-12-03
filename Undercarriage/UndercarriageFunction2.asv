@@ -2,7 +2,7 @@ function [MainOleo, NoseOleo, LocationMainGearJoint, LocationNoseGearJoint, Leng
     LengthMainGearRetracted, LengthNoseGearDeployed, LengthNoseGearRetracted, ...
     GroundClearanceFuselage, GroundClearanceEngine, NoseGearLoadRatio, LandingLoadRatio, ...
     AngleTailstrike, AngleTipback, AngleOverturn, NoseWheel, MainWheel, FrontalAreaNoseGear, FrontalAreaMainGear] ...
-    = UndercarriageFunction2(AAAAthetas, iiiii, jjjjj, fudge, W0, WFCumulative6, x_wingroot, z_wingroot, length_rootchord, ...
+    = UndercarriageFunction2(fudge, W0, WFCumulative6, x_wingroot, z_wingroot, length_rootchord, ...
     theta_setting, theta_sweeprearspar, theta_dihedral, ...
     theta_maxground, chord_rearspar, length_aircraft, radius_fuselage, ...
     x_firsttailstrike, z_firsttailstrike, height_mgmax, length_mgmax, x_cgmin, x_cgmax, ...
@@ -34,8 +34,6 @@ haveUndercarriage = 0;
 for i = 1:length(y_mgjoint)
     
     % Specify details
-    disp(['Trying fudgefactor = ', num2str(iiiii)])
-    disp(['Trying thetamaxground = ', num2str(AAAAthetas(jjjjj))])
     disp(['Trying y_mg = ', num2str(y_mgjoint(i)), ':'])
     
     % Calculate x_mgjoint and z_mgjoint
@@ -332,7 +330,7 @@ for i = 1:length(y_mgjoint)
         disp('Final undercarriage placement successful')  
         break
     end
-    %pause(0.005)
+    pause(0.005)
     clc
 end
 %% \Loop 1: Picking lateral positions of landing gears
