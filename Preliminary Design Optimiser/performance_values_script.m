@@ -90,7 +90,7 @@ fprintf('The fuel consumption of the aircraft during Loiter is %f.\n',FC3);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The equation below is used to find several variables during cruise 1 phase of the flight
-%{
+
 W = W_ini_1;            % Weight of the aircraft at start of cruise 1
 beta_thrust_ratio_cruise = ThrustLapseModel(0.8, 35000, 0.8, 35000);
 T_cruise = T_dummy * beta_thrust_ratio_cruise; 
@@ -98,7 +98,7 @@ T_cruise = T_dummy * beta_thrust_ratio_cruise;
 [L_over_D_max, Vs_Cruise, V_LDmax, V_max, V_min] = Cruise_leg_calculations(CD_min(2),...
     0.7853, AspectRatio, e_Cruise, rho_cruise, W, Sref, CL_max_clean, 1, T_cruise);
 % ^ Values still needed: C_LminD (0.7853 for now) (COULD CHANGE)
-%}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This section plots a graph for Altitude against Rate of climb which is
 % then used to find the Absolute and Service ceilings
