@@ -250,8 +250,8 @@ maxThicknessLocationVert = 0.3;
 alpha0H = 0;
 
 %tailplane parameters to optimse
-ARhoriz = 3; %typically 3-5 where AR = b^2/Sh and b is the tail span 
-ARvert = 1.3; %typically 1.3-2 where AR = h^2/Sv and h is the tail height 
+ARhoriz = 3.2; %typically 3-5 where AR = b^2/Sh and b is the tail span 
+ARvert = 1.5; %typically 1.3-2 where AR = h^2/Sv and h is the tail height 
 taperHoriz = 0.5; %typically 0.3 - 0.5 
 taperVert = 0.5; %typically 0.3 - 0.5 
 
