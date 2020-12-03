@@ -366,7 +366,7 @@ ttoc=[thicknessRatioWing,0,0,thicknessRatioHoriz,thicknessRatioVert];
 theta_max=[sweepWingMT,0,0,sweepHorizMT,sweepVertMT];
 S_wet_all=[S_wetted,totalArea,SnacelleWetted,SHorizWetted,SVertWetted];
 Area_ucfrontal = 8.37;
-
+A_eff=1.7;
 %Aerodynamics: Lift
 [CL_a,CL_max_clean,alpha_zero_takeoff,alpha_zero_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,M,sweepWingMT,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
 [CL_a_M0]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,0,sweepWingMT,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
@@ -382,7 +382,7 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CD_0_Total,CD_min]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
 [V_Stall_Landing]=StallSpeed(W0,WF1,WF2,WF3,WF4,WF5,WF6,CL_max_landing,rho_landing,SWing);
 %[CD_iw,CD_ih,CD_Total,Drag_Landing,LtoDMax,CLmD]=TotalDragFinal(CL_trimWings,CL_trimHoriz,SHoriz,SWing,CD_0_Total,rho_landing,V_landing,ARwing);
-
+[CL_Target,CD_Total,LtoDMax,CLmD,Drag_Landing]=TotalDragFinal(W0,WF1,WF2,WF3,WF4,WF5,WF6,WF7,WF8,WF9,WF10,rho_takeoff,rho_cruise,rho_landing,V_Cruise,V_Stall_Landing,SWing,CD_0_Total,ARwing);
 %% AILERON DESIGN
 
 Ixx = 8.7e6;
