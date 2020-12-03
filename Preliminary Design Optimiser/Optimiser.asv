@@ -607,13 +607,16 @@ downwash = downwash(lHoriz, hHoriz, spanWing, sweepWingQC, ARwing, taperWing, CL
 
 %% Ground clearance checker (temporary)
 theta_maxground = 15;
-Bruhg1 = tand(theta_maxground - 90);
-Bruhc1 = CGfull(3) - Bruhg1*CGfull(1);
-Bruhg2 = tand(theta_maxground);
-Bruhc2 = -fusDiamOuter/2 - Bruhg2*(frontLength + mainLength);
-Bruhxmin = (Bruhc2-Bruhc1)/(Bruhg1-Bruhg2);
+g1 = tand(theta_maxground - 90);
+c1 = CGfull(3) - g1*CGfull(1);
+g2 = tand(theta_maxground);
+c2 = -fusDiamOuter/2 - g2*
 
-tailplanePlot2(Bruhxmin, xNPOff, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
+
+
+
+
+tailplanePlot(xNPOff, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 
 %% TRIM ANALYSIS 
