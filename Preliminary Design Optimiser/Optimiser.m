@@ -150,6 +150,7 @@ aftDiameter = 0.7996;
 
 totalLength = frontLength + aftLength + mainLength;
 totalArea = frontArea + mainArea + aftArea;
+totalFR = totalLength/fusDiamOuter;
 
 PressVol = 36.181 + 247.97 + 103.205 + 61.053; % Front + main deck + cargo + aft
 PressVolFt3 = PressVol*unitsratio('ft', 'm')^3; 
