@@ -636,7 +636,7 @@ sumBalance_land = sumBalance_land + (components(25).weight - (W0 - W0*WF1*WF2*WF
 CG_land = sumBalance_land./sumWeight_land;
 
 
-CG_all = [CG_mtow, CG_start, CG_end, CG_land];
+CG_all = [CG_mtow, CG_start, CG_end, CG_land]; 
 
 
 %% STABILTIY ANALYSIS
@@ -646,7 +646,6 @@ wingPlanform = wingRootLE + tailplanePlanform(spanWing, sweepWingLE, cRootWing, 
 horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHoriz, cTipHoriz, dihedralHoriz, false);
 vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
 
-
 %aircraft fuselage pitching moment contribution
 CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cRootWing);
 
@@ -654,37 +653,30 @@ CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wi
 downwash = downwash(lHoriz, hHoriz, spanWing, sweepWingQC, ARwing, taperWing, CL_a_Total, CL_a_M0);
 
 %neutral point and static margin
-%[xNPOff, KnOff, xNPOn, KnOn] =...
-%    staticStability(CG_all, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
+[xNPOff, KnOff, xNPOn, KnOn] =...
+   staticStability(CG_all, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
 
 %% TRIM ANALYSIS 
 
 %wing aerofoil parameters
 CMoAerofoilW = -0.03; %Sforza and -0.04 according to airfoiltools (xfoil)
-alpha0W = -1.6; %degrees
+alpha0W = [alpha_zero_takeoff, -1.8, alpha_zero_landing]; %degrees
 
 %wing zero-lift pitching moment coefficient
 CMoW = zeroLiftPitchingMoment(CMoAerofoilW, ARwing, sweepWingQC, twistWing, CL_a_Total, CL_a_M0);
 
-%required lift coefficient and drag at cruise 
-[~,~,~,rhoCruise]= atmosisa(distdim(35000,'ft','m'));
-CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC WEIGHT, RHO, AND VELOCITY AT EACH SEGMENT
+%determine iH, AoA, AoA_h, AoA_w, CL_w, and CL_h for trimmed flight
+[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
+   trimAnalysis(CG_all, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+   CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
 
 
-%determine iH and AoA for trimmed flight
-%[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
-%    trimAnalysis(CG_all, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
-%    CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
-
-
-
-
-
+%% Ground clearance checker ( DO NOT DELETE )
 
 AAAAthetas = [10:0.5:20];
 for iiiii = 0:0.1:1.5
     for jjjjj = 1:length(AAAAthetas)
-        %% Ground clearance checker ( DO NOT DELETE )
+        
         fudge = iiiii;
         theta_maxground = AAAAthetas(jjjjj);
 %         Bruhg1 = tand(theta_maxground - 90);
