@@ -365,8 +365,8 @@ xtocmax=[0.349,0,0,maxThicknessLocationHoriz,maxThicknessLocationVert];
 ttoc=[thicknessRatioWing,0,0,thicknessRatioHoriz,thicknessRatioVert];
 theta_max=[sweepWingMT,0,0,sweepHorizMT,sweepVertMT];
 S_wet_all=[S_wetted,totalArea,SnacelleWetted,SHorizWetted,SVertWetted];
-Area_ucfrontal = 8.37;
-
+Area_ucfrontal =6;
+A_eff=1.7;
 %Aerodynamics: Lift
 [CL_a,CL_max_clean,alpha_zero_takeoff,alpha_zero_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,M,sweepWingMT,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
 [CL_a_M0]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,0,sweepWingMT,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);
@@ -382,7 +382,7 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CD_0_Total,CD_min]=TotalSubsonicDrag(CD_Parasitic_Total_Takeoff,CD_Misc_Takeoff,CD_LandP_Takeoff,CD_Parasitic_Total_Cruise,CD_Misc_Cruise,CD_LandP_Cruise,CD_Parasitic_Total_Landing,CD_Misc_Landing,CD_LandP_Landing);
 [V_Stall_Landing]=StallSpeed(W0,WF1,WF2,WF3,WF4,WF5,WF6,CL_max_landing,rho_landing,SWing);
 %[CD_iw,CD_ih,CD_Total,Drag_Landing,LtoDMax,CLmD]=TotalDragFinal(CL_trimWings,CL_trimHoriz,SHoriz,SWing,CD_0_Total,rho_landing,V_landing,ARwing);
-
+[CL_Target,CD_Total,LtoDMax,CLmD,Drag_Landing]=TotalDragFinal(W0,WF1,WF2,WF3,WF4,WF5,WF6,WF7,WF8,WF9,WF10,rho_takeoff,rho_cruise,rho_landing,V_Cruise,V_Stall_Landing,SWing,CD_0_Total,ARwing);
 %% AILERON DESIGN
 
 Ixx = 8.7e6;
@@ -659,6 +659,96 @@ z_cg = CGfull(3);
 
 
 %% PERFORMANCE ANALYSIS
+
+V_S1 = sqrt((2 * W0) / (1.225 * SWing * CLmax_clean));              % Finding out the stall speed in clean config
+V_stall_takeoff = sqrt((2 * W0) / (1.225 * SWing* CL_max_takeoff)); % Stall speed in take off config
+
+beta_thrust_ratio_takeoff = ThrustLapseModel(0, 0, 0.8, 35000); % Finding out Beta value during takeoff
+L_over_D_transition = CL_max_takeoff/CD_Total(1);               % Lift to drag ratio at Transition phase
+T_dummy = W0 * ThrustToWeightTakeOff;      
+T_Takeoff = T_dummy * beta_thrust_ratio_takeoff; % Finding out the Takeoff Thrust
+
+% This equation gives the Take off distance in metres
+S_to = Take_off_distance(V_stall_takeoff, V_S1, T_Takeoff, W0,...
+    CD_0_Total(1), ARwing, e_Cruise, zeroAlphaLCT, L_over_D_transition, SWing);    
+
+
+
+W_L = W0 * WF8 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF9 * WF10;
+% ^ Weight of the flight at start of landing phase
+
+VS0 = sqrt((2 * W_L) / (1.225 * SWing * CL_max_landing)); % Stall speed in Landing config
+L_over_D_landing = sqrt((pi * ARwing * e_Cruise) / (4 * CD_0_Total(3)));  % Lift to drag ratio in landing config
+landing_velocity = 1.1 * VS0;                            % Landing velocity
+landing_velocity_mach = landing_velocity / sqrt(1.4 * 287 * 288.051); % Mach number for landing velocity
+
+beta_thrust_ratio_landing = ThrustLapseModel(landing_velocity_mach,...
+    50, 0.8, 35000);                                     % Beta value for landing
+T_L = T_dummy * beta_thrust_ratio_landing;               % Thrust during landing in Newtons
+
+% This equation gives the Landing distance in metres
+S_L = Landing_distance(zeroAlphaLCT, V_S1, W_L, VS0,...
+    T_L, L_over_D_landing, SWing, ARwing, e_Cruise, CD_0_Total(3));
+
+
+D2 = 0.5 * 1.225 * SWing * 1.44 * V_stall_takeoff^2 * CD_Total(1);
+T_oei = 0.5 * T_Takeoff;
+T_takeoff_static = T_dummy; 
+
+% This equation gives the Balanced Field Length in metres
+BFL = Balanced_Field_Length(W0, SWing, CL_max_takeoff,...
+    T_oei, D2, 10, CL_max_landing, T_takeoff_static);
+
+
+
+W_ini_1 = W0 * WF1 * WF2 * WF3 * WF4;       % Weight at start of cruise 1 in Newtons
+W_fin_1 = W0 * WF1 * WF2 * WF3 * WF4 * WF5; % Weight at end of cruise 1 in Newtons
+c_t1 = 14.10 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 1 in 1/second
+[E1, R1, FC1] = Range(W_ini_1, rho_cruise, V_Cruise, SWing,...
+    CD_min(2), c_t1, ARwing, W_fin_1, e_Cruise); 
+
+W_ini_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7;        % Weight at start of cruise 2
+W_fin_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF8;  % Weight at end of cruise 2
+rho_cruise_2 = 0.849137;                                       % Density of air at 12000 ft in kg/m^3
+c_t2 = 11.55 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 2 in 1/second
+
+[E2, R2, FC2] = Range(W_ini_2, rho_cruise_2, V_Divert, SWing,...
+    CD_min(2), c_t2, ARwing, W_fin_2, e_Cruise); 
+
+W_ini_3 = W_fin_2;                                                  % Weight of aircraft at start of Loiter
+W_fin_3 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF8 * WF9; % Weight of aircraft at end of Loiter
+rho_cruise_3 = 1.05555;                                             % Density of air at 5000 ft in kg/m^3
+c_t3 = 11.30 * 9.81 / 1000000;             % Thrust Specific Fuel Consumption for Loiter in 1/second
+
+[E3, R3, FC3] = Range(W_ini_3, rho_cruise_3, V_Loiter, SWing,...
+    CD_min(2), c_t3, ARwing, W_fin_3, e_Loiter); 
+
+fprintf('The Endurance of the aircraft during Cruise 1 is %f hours.\n',E1);
+fprintf('The Endurance of the aircraft during Cruise 2 is %f hours.\n',E2);
+fprintf('The Endurance of the aircraft during Loiter is %f hours.\n',E3);
+fprintf('The Range of the aircraft during Cruise 1 is %f km.\n',R1);
+fprintf('The Range of the aircraft during Cruise 2 is %f km.\n',R2);
+fprintf('The Range of the aircraft during Loiter is %f km.\n',R3);
+fprintf('The fuel consumption of the aircraft during Cruise 1 is %f.\n',FC1);
+fprintf('The fuel consumption of the aircraft during Cruise 2 is %f.\n',FC2);
+fprintf('The fuel consumption of the aircraft during Loiter is %f.\n',FC3);
+
+
+% Climb rate during OEI
+climb_rate = tan(asin((0.5 * (ThrustToWeightTakeOff)) - (CD_Total(1) / CL_max_takeoff))); 
+fprintf('The climb rate during OEI Take off is %f. \n',climb_rate);
+
+
+% This section plots a graph for Altitude against Rate of climb which is
+% then used to find the Absolute and Service ceilings
+
+W_cruise = W_ini_1;  % Weight of aircraft at start of cruise 1
+[ROC_max, altitude] = climb(W_ini_1, CD_Total(2), 18, SWing, T_dummy);  
+
+figure 
+plot(altitude, ROC_max, '-xr')
+ylabel('Maximum Rate of Climb (feet/minute)');
+xlabel('Altitude (feet)');
 
 KnOff
 toc

@@ -45,5 +45,5 @@ delta_alpha_landing=(-15)*(Sflapped_over_Sref)*cosd(Sweep_hingeline_TE);
 %Determine zero lift angle of attack after flaps
 alpha_zero_takeoff=-1.8+delta_alpha_takeoff;
 alpha_zero_landing=-1.8+delta_alpha_landing;
-zeroAlphaLCT=CL_a(1)*(0-alpha_zero_takeoff);
+zeroAlphaLCT=CL_a(1)*deg2rad(0-alpha_zero_takeoff);
 end 
