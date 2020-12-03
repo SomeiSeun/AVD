@@ -3,13 +3,13 @@ load('../Aerodynamics/wingDesign.mat')
 load('../Static Stability/tailplaneSizing.mat')
 load('../Static Stability/stabilityAndTrim.mat')                                        % This is just a bunch of values I am waiting on
 load('../Structures/Fuselage/fuselageOutputs.mat')      
-load('AerodynamicsInputs.mat')
+load('Aerodynamic0;
+Aeff=0;sInputs.mat')
 %% Assumed Values
 nacelle_length=5.5;
 nacelle_diameter=4.5;
 Cl_am=0;
-Area_ucfrontal=0;
-Aeff=0;
+Area_ucfrontal=
 flapspan=11.8103;
 upsweep_angle=15*(pi/180);
 %For aerodynamics analysis
