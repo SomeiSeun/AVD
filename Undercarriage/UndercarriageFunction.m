@@ -76,13 +76,13 @@ for i = 1:length(y_mgjoint)
     x_ng_maxload_less = (x_cgmin + (WNGRmax-1)*x_mgjoint)/WNGRmax;
     
     % Find minimum ground clearance from tailstrike constraint
-    grc_min_tailstrike = (x_firsttailstrike - x_mgjoint)*tand(theta_maxground) - z_firsttailstrike - radius_fuselage;
+    grc_min_tailstrike = (x_firsttailstrike - x_mgjoint -1.5)*tand(theta_maxground) - z_firsttailstrike - radius_fuselage; %Fudge factor
     
     % Find minimum ground clearance from engine clearance constraint
     grc_min_engine = grc_engine_min - radius_fuselage - z_enginestrike;
     
     % Find maximum ground clearance from tipback constraint
-    grc_max_tipback = ((x_mgjoint - x_cgmax)/(tand(theta_maxground))) - radius_fuselage - z_cg;
+    grc_max_tipback = ((x_mgjoint + 1.5  - x_cgmax)/(tand(theta_maxground))) - radius_fuselage - z_cg; %Fudge factor
     
     % Find maximum ground clearance from undercarriage max length
     grc_max_undercarriage_length = y_mgjoint(i) - z_mgjoint - radius_fuselage;
@@ -130,8 +130,8 @@ for i = 1:length(y_mgjoint)
             for ii = 1:length(x_ng)
                 
                 WNGR_actual = (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint); %OUTPUT
-                theta_tailstrike_actual = atand( (grc_chosen + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint) ); %OUTPUT
-                theta_tipback_actual = atand( (x_mgjoint-x_cgmax)/h_cg ); %OUTPUT
+                theta_tailstrike_actual = atand( (grc_chosen + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint - 1.5) ); %OUTPUT
+                theta_tipback_actual = atand( (x_mgjoint + 1.5 -x_cgmax)/h_cg ); %OUTPUT
                 theta_overturn_actual = atand( (h_cg*sqrt(y_mgjoint(i)^2+(x_mgjoint-x_ng(ii))^2))/(y_mgjoint(i)*(x_cgmin-x_ng(ii)))); %OUTPUT
                 
                 % Calculate wheel loads
@@ -140,7 +140,7 @@ for i = 1:length(y_mgjoint)
                     x_mgjoint, x_cgmin, x_cgmax, h_cg); %OUTPUT can take W_(...) because they are metric. the Lbs(...) are just unit converted for ease
                 
                 % Pick tires
-                [NoseWheel] = GimmeTires(LbsReqNoseGearStatic+LbsReqNoseGearDynamic, 200, 40); %OUTPUT
+                [NoseWheel] = GimmeTires(LbsReqNoseGearStatic+LbsReqNoseGearDynamic, 500, 60); %OUTPUT
                 [MainWheel] = GimmeTires(LbsReqMainGear, 200, length_mgmax*39.3700787/2); %OUTPUT
                 
                 

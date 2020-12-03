@@ -142,15 +142,17 @@ frontArea = noseArea + cockpitArea;
 mainLength = 36.506; 
 mainArea = 479.325;
 
+upsweep = 15.7;
 aftLength = 12.60;
 aftFR = aftLength/fusDiamOuter;
-aftArea = 0.223 + 99.78;
-aftDiameter = 0.7996;
+aftArea = 0.17 + 96.546;
+aftDiameter = fusDiamOuter - aftLength*tand(upsweep);
 
 totalLength = frontLength + aftLength + mainLength;
 totalArea = frontArea + mainArea + aftArea;
+totalFR = totalLength/fusDiamOuter;
 
-PressVol = 36.181 + 247.97 + 103.205 + 61.053; % Front + main deck + cargo + aft
+PressVol = 36.181 + 247.97 + 103.205 + 58.316; % Front + main deck + cargo + aft
 PressVolFt3 = PressVol*unitsratio('ft', 'm')^3; 
 
 %% WING DESIGN
@@ -248,10 +250,10 @@ maxThicknessLocationVert = 0.3;
 alpha0H = 0;
 
 %tailplane parameters to optimse
-ARhoriz = 5; %typically 3-5 where AR = b^2/Sh and b is the tail span
-ARvert = 1.8; %typically 1.3-2 where AR = h^2/Sv and h is the tail height
-taperHoriz = 0.3; %typically 0.3 - 0.5
-taperVert = 0.4; %typically 0.3 - 0.5
+ARhoriz = 3; %typically 3-5 where AR = b^2/Sh and b is the tail span 
+ARvert = 1.3; %typically 1.3-2 where AR = h^2/Sv and h is the tail height 
+taperHoriz = 0.5; %typically 0.3 - 0.5 
+taperVert = 0.5; %typically 0.3 - 0.5 
 
 %CALCULATING TAILPLANE GEOMETRY BASED ON PARAMETERS ABOVE
 
@@ -269,8 +271,8 @@ sweepVertMT = sweepConverter(sweepVertLE, 0, maxThicknessLocationVert, 2*ARhoriz
 sweepVertTE = sweepConverter(sweepVertLE, 0, 1, 2*ARvert, taperVert);
 
 %target volume coefficients
-VbarH_target = 0.7; %horizontal volume coefficient estimates based off Raymer's historical data
-VbarV_target = 0.07; %vertical volume coefficient estimates based off Raymer's historical data
+VbarH_target = 0.7; %horizontal volume coefficient estimates based off Raymer's historical data  % 0.7-1.2 
+VbarV_target = 0.07; %vertical volume coefficient estimates based off Raymer's historical data % 0.07-0.12 
 
 %initialising loop
 SHoriz = 1;
@@ -290,9 +292,9 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
     %wing and tail placement
 
     %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
-    wingRootLE = [0.29*totalLength; 0; -0.8*fusDiamOuter/2];
-    horizRootLE = [totalLength - 1.5*cRootHoriz; 0; 0.8*fusDiamOuter/2];
-    vertRootLE = [horizRootLE(1) - 0.7*cRootVert; 0; fusDiamOuter/2];
+    wingRootLE = [0.27*totalLength; 0; -0.8*fusDiamOuter/2]; 
+    horizRootLE = [totalLength - 1.6*cRootHoriz; 0; 0.8*fusDiamOuter/2]; 
+    vertRootLE = [horizRootLE(1) - 0.6*cRootVert; 0; fusDiamOuter/2]; 
 
     %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
     wingAC = wingRootLE + aerodynamicCentre(cBarWing, spanWing, taperWing, sweepWingLE, dihedralWing);
@@ -355,7 +357,7 @@ M = [0.1931, 0.8, 0.2282];
 %Assumed Values
 widthNacelle=nacelleRadius*2;
 Aeff = pi*nacelleRadius^2;
-upsweep_angle=15*(pi/180);
+upsweep_angle=upsweep*(pi/180);
 Cl_tail_airfoil=1.4;
 
 %For aerodynamics analysis
@@ -375,6 +377,10 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 
 %Aerodynamics: Drag 
 [CD_Parasitic_Cruise,CD_Parasitic_Total_Cruise,CD_LandP_Cruise,Re,Cfc,FF]=Parasitic(rho_cruise,V_Cruise,l,nu_cruise,M_Cruise,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,widthNacelle,S_wet_all,SWing);
+[CD_Parasitic_Cruise2,CD_Parasitic_Total_Cruise2,CD_LandP_Cruise2]=Parasitic(0.849,140.622,l,0.0000169,0.5,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,widthNacelle,S_wet_all,SWing);
+CD_0_Cruise2=CD_Parasitic_Total_Cruise2+0.0066;
+[CD_Parasitic_Loiter,CD_Parasitic_Total_Loiter,CD_LandP_Loiter]=Parasitic(0.849,95.3,l,0.0000176219,0.3,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,widthNacelle,S_wet_all,SWing);
+CD_0_Loiter=CD_Parasitic_Total_Loiter+0.0066;
 [CD_Parasitic_Takeoff,CD_Parasitic_Total_Takeoff,CD_LandP_Takeoff]=Parasitic(rho_takeoff,V_takeoff,l,nu_takeoff,M_takeoff,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,widthNacelle,S_wet_all,SWing);
 [CD_Parasitic_Landing,CD_Parasitic_Total_Landing,CD_LandP_Landing]=Parasitic(rho_landing,V_landing,l,nu_landing,M_landing,xtocmax,ttoc,theta_max,totalLength,fusDiamOuter,lengthNacelle,widthNacelle,S_wet_all,SWing);
 [CD_Misc_Takeoff,CD_Misc_Cruise,CD_Misc_Landing,C_Dfu]=MiscD(Area_ucfrontal,SWing,flapspan,spanWing,flap_deflection_takeoff,flap_deflection_landing,Aeff,fusDiamOuter,upsweep_angle);
@@ -384,9 +390,9 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CL_Target,CD_Total,LtoDMax,CLmD,Drag_Landing]=TotalDragFinal(W0,WF1,WF2,WF3,WF4,WF5,WF6,WF7,WF8,WF9,WF10,rho_takeoff,rho_cruise,rho_landing,V_Cruise,V_Stall_Landing,SWing,CD_0_Total,ARwing);
 %% AILERON DESIGN
 
-Ixx = 8.7e6;
-aileron_starting_position = 0.61;
-aileron_ending_position = 0.89;
+Ixx = 8.716e6;
+starting_position = 0.61;
+ending_position = 0.89;
 
 [t, Max_ail_def, y1, y2, aileron_area] = aileron_sizing_new(spanWing, SWing, ARwing, taperWing,...
     CL_a_Total(3), V_Stall_Landing, Ixx, SWing, SHoriz, SVert, aileron_starting_position, aileron_ending_position, cRootWing);
@@ -487,7 +493,7 @@ components(22).weight = W_People; %crew + pax
 components(23).weight = W_Luggage; %luggage of crew + pax
 W_fuel = (emptyWeight + W_People + W_Luggage)*fuelFraction/(1 - fuelFraction);
 components(24).weight = 0;
-components(25).weight = W_fuel; %Using more fuel than we need for CG and stability ;)
+components(25).weight = W_fuel*1.4; %Using more fuel than we need for CG and stability ;) 
 totalWeight= sum([components.weight]);
 
 %Converting back from Imperial to SI units
@@ -527,9 +533,9 @@ totalWeight = convforce(totalWeight, 'lbf', 'N');
 for i = 1:length(components)
     components(i).weight = convforce(components(i).weight, 'lbf', 'N');
 end
-
 %Fuel volume check
-V_fuel = (W_fuel/9.81)/804;
+V_fuel = (components(25).weight/9.81)/804;
+
 
 %% BALANCE ANALYSIS
 
@@ -540,51 +546,70 @@ components(2).cog = horizRootLE + liftingSurfaceCG(0.42, 0.38, spanHoriz, taperH
 components(3).cog = vertRootLE + liftingSurfaceCG(0.42, 0.38, 2*heightVert, taperVert, cRootVert, dihedralVert, sweepVertLE, true);
 %fuselage and undercarriage
 components(4).cog = [0.45*totalLength; 0; 0];
-components(5).cog = [wingRootLE(1) + cRootWing; 0; -1.5*fusDiamOuter/2];
-components(6).cog = [0.5*frontLength; 0; -1.5*fusDiamOuter/2];
+components(5).cog = [23.8226; 0; -1.5*fusDiamOuter/2]; 
+components(6).cog = [5.1; 0; -1.5*fusDiamOuter/2];
 %engine and fuel system
 components(7).cog = Engine_CG;
 components(8).cog = Nacelle_CG;
 components(9).cog = [0.5*components(7).cog(1); 0; 0]; %lengthEngineControl = engine to cockpit total length (ft)
 components(10).cog = [0.5*totalLength;0;0];
-components(11).cog = [frontLength+0.5*mainLength;0;0];
-components(12).cog = [fuelXVal+wingRootLE(1);0;fuelZVal]; % tank cg + root chord for x, z half way between root and fuel
+components(11).cog = [frontLength+0.65*mainLength;0;0]; 
+components(12).cog = [fuelXVal+1.3*wingRootLE(1);0;fuelZVal]; % tank cg + root chord for x, z half way between root and fuel
 %subsystems
 components(13).cog = [0.5*frontLength; 0; -0.25*fusDiamOuter];
 components(14).cog = [frontLength + mainLength + 0.65*aftLength; 0; 1.2];
 components(15).cog = [0.5*frontLength; 0; -0.25*fusDiamOuter];
 components(16).cog = [0.5*totalLength; 0; 0];
 components(17).cog = [0.5*totalLength; 0; 0];
-components(18).cog = [frontLength + 0.2*mainLength; 0; -0.5*fusDiamOuter];
-components(19).cog = [frontLength + 0.5*mainLength; 0; 0];
+components(18).cog = [0.8*frontLength; 0; -0.5*fusDiamOuter];
+components(19).cog = [frontLength + 0.6*mainLength; 0; 0]; 
 components(20).cog = [0.5*totalLength;0;0];
 components(21).cog = wingRootLE;
 
-components(22).cog = [frontLength + 0.5*mainLength; 0; 0];
+components(22).cog = [frontLength + 0.55*mainLength; 0; 0]; 
 components(23).cog = [frontLength + 0.5*mainLength; 0; 0];
 components(24).cog = [0;0;0];
 components(25).cog = [fuelXVal; 0; (fuelZVal+wingRootLE(3))/2];
 
-%calculating CG MTOW
-sumBalance = [0;0;0];
-sumWeight = 0;
-for i = 1:length(components)
-    sumBalance = sumBalance + components(i).weight.*components(i).cog;
-    sumWeight = sumWeight + components(i).weight;
-end
-
-CGfull = sumBalance./sumWeight;
-
-
 %calculating CG empty
-sumBalance_2 = [0;0;0];
-sumWeight_2 = 0;
+sumBalance_empty = [0;0;0];
+sumWeight_empty = 0;
 for i = 1:(length(components)-4)
-    sumBalance_2 = sumBalance_2 + components(i).weight.*components(i).cog;
-    sumWeight_2 = sumWeight_2 + components(i).weight;
+    sumBalance_empty = sumBalance_empty + components(i).weight.*components(i).cog;
+    sumWeight_empty = sumWeight_empty + components(i).weight;
 end
 
-CGempty = sumBalance_2./sumWeight_2;
+CGempty = sumBalance_empty./sumWeight_empty;
+
+%calculating CG fuel no pax no cargo
+sumBalance_fuel = sumBalance_empty;
+sumWeight_fuel = sumWeight_empty;
+
+i = 25;
+sumBalance_fuel = sumBalance_fuel + components(i).weight.*components(i).cog;
+sumWeight_fuel = sumWeight_fuel + components(i).weight;
+
+CGfuel = sumBalance_fuel./sumWeight_fuel;
+
+%calculating CG fuel no pax with cargo
+sumBalance_frontLoad = [0;0;0];
+sumWeight_frontLoad = sumWeight_fuel;
+for i = 1:(length(components)-4)
+    sumBalance_frontLoad = sumBalance_frontLoad + components(i).weight.*components(i).cog;
+    sumWeight_frontLoad = sumWeight_frontLoad + components(i).weight;
+end
+
+CGnopax = sumBalance_frontLoad./sumWeight_frontLoad;
+
+%calculating CG MTOW
+sumBalance_MTOW = [0;0;0];
+sumWeight_MTOW = 0;
+for i = 1:length(components)
+    sumBalance_MTOW = sumBalance_MTOW + components(i).weight.*components(i).cog;
+    sumWeight_MTOW = sumWeight_MTOW + components(i).weight;
+end
+
+CGfull = sumBalance_MTOW./sumWeight_MTOW;
 
 
 %% STABILTIY ANALYSIS
@@ -614,7 +639,7 @@ Bruhg2 = tand(theta_maxground);
 Bruhc2 = -fusDiamOuter/2 - Bruhg2*(frontLength + mainLength);
 Bruhxmin = (Bruhc2-Bruhc1)/(Bruhg1-Bruhg2);
 
-tailplanePlot2(Bruhxmin, xNPOff, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
+tailplanePlot2(Bruhxmin-1.5, xNPOff, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 
 %% TRIM ANALYSIS 
@@ -644,7 +669,7 @@ x_firsttailstrike = frontLength + mainLength;
 height_mgmax = 1.5;
 length_mgmax = 3;
 x_cgmin = CGempty(1);
-x_cgmax = CGfull(1);
+x_cgmax = CGempty(1);
 z_cg = CGfull(3);
 
 [MainOleo, NoseOleo, LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
@@ -706,7 +731,7 @@ W_ini_1 = W0 * WF1 * WF2 * WF3 * WF4;       % Weight at start of cruise 1 in New
 W_fin_1 = W0 * WF1 * WF2 * WF3 * WF4 * WF5; % Weight at end of cruise 1 in Newtons
 c_t1 = 14.10 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 1 in 1/second
 [E1, R1, FC1] = Range(W_ini_1, rho_cruise, V_Cruise, SWing,...
-    CD_min(2), c_t1, ARwing, W_fin_1, e_Cruise); 
+    CD_0_Total(2), c_t1, ARwing, W_fin_1, e_Cruise); 
 
 W_ini_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7;        % Weight at start of cruise 2
 W_fin_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF8;  % Weight at end of cruise 2
@@ -714,7 +739,7 @@ rho_cruise_2 = 0.849137;                                       % Density of air 
 c_t2 = 11.55 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 2 in 1/second
 
 [E2, R2, FC2] = Range(W_ini_2, rho_cruise_2, V_Divert, SWing,...
-    CD_min(2), c_t2, ARwing, W_fin_2, e_Cruise); 
+    CD_0_Total(2), c_t2, ARwing, W_fin_2, e_Cruise); 
 
 W_ini_3 = W_fin_2;                                                  % Weight of aircraft at start of Loiter
 W_fin_3 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF8 * WF9; % Weight of aircraft at end of Loiter
@@ -722,7 +747,7 @@ rho_cruise_3 = 1.05555;                                             % Density of
 c_t3 = 11.30 * 9.81 / 1000000;             % Thrust Specific Fuel Consumption for Loiter in 1/second
 
 [E3, R3, FC3] = Range(W_ini_3, rho_cruise_3, V_Loiter, SWing,...
-    CD_min(2), c_t3, ARwing, W_fin_3, e_Loiter); 
+    CD_0_Total(2), c_t3, ARwing, W_fin_3, e_Loiter); 
 
 fprintf('The Endurance of the aircraft during Cruise 1 is %f hours.\n',E1);
 fprintf('The Endurance of the aircraft during Cruise 2 is %f hours.\n',E2);
@@ -751,7 +776,23 @@ plot(altitude, ROC_max, '-xr')
 ylabel('Maximum Rate of Climb (feet/minute)');
 xlabel('Altitude (feet)');
 
+%{
+% Finding out some parameters during cruise
+beta_thrust_ratio_cruise = ThrustLapseModel(0.8, 35000, 0.8, 35000);
+T_cruise = T_dummy * beta_thrust_ratio_cruise; 
+
+[L_over_D_max, Vs_Cruise, V_LDmax, V_max, V_min] = Cruise_leg_calculations(CD_min(2),...
+    0.7853, ARwing, e_Cruise, rho_cruise, W_cruise, SWing, CL_max_clean, 1, T_cruise);
+%}
+
+CGfull 
+xNPOff 
 KnOff
+LocationNoseGearJoint
+LocationMainGearJoint
+AngleOverturn
+AngleTailstrike
+AngleTipback
 toc
 
 
