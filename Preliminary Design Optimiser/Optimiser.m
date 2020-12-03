@@ -200,6 +200,8 @@ S_wetted= S_exposed*(1.997+0.52*thicknessRatioWing);            %check--> depend
 %Structure (Palash just added another sweepConverter output)
 frontSparPercent = 0.25;    % Between 12-18 percent
 rearSparPercent = 0.70;     % Between 55-70 percent
+UCSparPercent = 0.8;
+Sweep_UCspar = sweepConverter(sweepWingLE, 0, UCSparPercent, ARwing, taperWing);
 Sweep_rearSpar = sweepConverter(sweepWingLE, 0, rearSparPercent, ARwing, taperWing);
 
 %wing incidence
@@ -343,7 +345,7 @@ rudder_area = rudder_span * rudder_avg_chord * 2;           % Total area of the 
 
 %% ENGINE DESIGN
 
-y_engine_ref = 8;
+y_engine_ref = 9;
 
 [engine_uninstalled_length, D_f, Capture_radius, Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight,...
     Engine_BPR, lengthNacelle, nacelleRadius, SnacelleWetted, y_engine_strike, z_engine_strike, Engine_CG, Nacelle_CG] = ...
@@ -652,20 +654,8 @@ CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wi
 downwash = downwash(lHoriz, hHoriz, spanWing, sweepWingQC, ARwing, taperWing, CL_a_Total, CL_a_M0);
 
 %neutral point and static margin
-[xNPOff, KnOff, xNPOn, KnOn] =...
-    staticStability(CG_all, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
-
-
-%% Ground clearance checker (temporary)
-theta_maxground = 15;
-Bruhg1 = tand(theta_maxground - 90);
-Bruhc1 = CG_all(3) - Bruhg1*CG_all(1);
-Bruhg2 = tand(theta_maxground);
-Bruhc2 = -fusDiamOuter/2 - Bruhg2*(frontLength + mainLength);
-Bruhxmin = (Bruhc2-Bruhc1)/(Bruhg1-Bruhg2);
-
-tailplanePlot2(Bruhxmin-1.5, xNPOff, CG_all, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
-
+%[xNPOff, KnOff, xNPOn, KnOn] =...
+%    staticStability(CG_all, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
 
 %% TRIM ANALYSIS 
 
@@ -682,32 +672,58 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
 
 
 %determine iH and AoA for trimmed flight
-[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
-    trimAnalysis(CG_all, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
-    CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
+%[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
+%    trimAnalysis(CG_all, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+%    CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
 
 
-%% UNDERCARRIAGE DESIGN
-
-%theta_maxground = 15;
-x_firsttailstrike = frontLength + mainLength;
-height_mgmax = 1.5;
-length_mgmax = 3;
-x_cgmin = CG_empty(1);
-x_cgmax = CG_empty(1);
-z_cg = CG_all(3);
-
-[MainOleo, NoseOleo, LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
-    LengthMainGearRetracted, LengthNoseGearDeployed, LengthNoseGearRetracted, ...
-    GroundClearanceFuselage, GroundClearanceEngine, NoseGearLoadRatio, LandingLoadRatio, ...
-    AngleTailstrike, AngleTipback, AngleOverturn, NoseWheel, MainWheel, FrontalAreaNoseGear, FrontalAreaMainGear] ...
-    = UndercarriageFunction(W0, WF1*WF2*WF3*WF4*WF5*WF6, wingRootLE(1) + 0.25*cBarWing, wingRootLE(3), cRootWing, ...
-    i_w_root, Sweep_rearSpar, dihedralWing, ...
-    theta_maxground, rearSparPercent, totalLength, fusDiamOuter/2, ...
-    x_firsttailstrike, -fusDiamOuter/2, height_mgmax, length_mgmax, x_cgmin, x_cgmax, ...
-    z_cg, y_engine_strike, z_engine_strike);
 
 
+
+
+AAAAthetas = [10:0.5:20];
+for iiiii = 0:0.1:1.5
+    for jjjjj = 1:length(AAAAthetas)
+        %% Ground clearance checker ( DO NOT DELETE )
+        fudge = iiiii;
+        theta_maxground = AAAAthetas(jjjjj);
+%         Bruhg1 = tand(theta_maxground - 90);
+%         Bruhc1 = CG_full(3) - Bruhg1*CGfull(1);
+%         Bruhg2 = tand(theta_maxground);
+%         Bruhc2 = -fusDiamOuter/2 - Bruhg2*(frontLength + mainLength);
+%         Bruhxmin = (Bruhc2-Bruhc1)/(Bruhg1-Bruhg2);
+%         Bruhxmin = Bruhxmin - 1.5; % FUDGE factor to allow more ground clearance options
+
+        %tailplanePlot2(Bruhxmin, xNPOff, CGempty, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
+
+        %% UNDERCARRIAGE DESIGN
+
+        %theta_maxground = 15;
+        x_firsttailstrike = frontLength + mainLength;
+        height_mgmax = 1.5;
+        length_mgmax = 3;
+        x_cgmin = CG_empty(1); % FUDGE factor to move ground CG forward
+        x_cgmax = CG_empty(1); % FUDGE factor to move ground CG forward
+        z_cg = CG_all(3,1);
+
+        [MainOleo, NoseOleo, LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
+            LengthMainGearRetracted, LengthNoseGearDeployed, LengthNoseGearRetracted, ...
+            GroundClearanceFuselage, GroundClearanceEngine, NoseGearLoadRatio, LandingLoadRatio, ...
+            AngleTailstrike, AngleTipback, AngleOverturn, NoseWheel, MainWheel, FrontalAreaNoseGear, FrontalAreaMainGear] ...
+            = UndercarriageFunction2(AAAAthetas, iiiii, jjjjj, fudge, W0, WF1*WF2*WF3*WF4*WF5*WF6, wingRootLE(1) + 0.25*cBarWing, wingRootLE(3), cRootWing, ...
+            i_w_root, Sweep_UCspar, dihedralWing, ...
+            theta_maxground, UCSparPercent, totalLength, fusDiamOuter/2, ...
+            x_firsttailstrike, -fusDiamOuter/2, height_mgmax, length_mgmax, x_cgmin, x_cgmax, ...
+            z_cg, y_engine_strike, z_engine_strike);
+        fudgeEfficiency((iiiii+1)*100,jjjjj) = LocationMainGearJoint(2)*LocationNoseGearJoint(1);
+        disp(['Fudge efficiency is ', num2str(fudgeEfficiency((iiiii+1)*100,jjjjj))])
+        pause(0.0001)
+    end
+end
+
+        
+        
+        
 
 %% PERFORMANCE ANALYSIS
 
