@@ -143,16 +143,17 @@ frontArea = noseArea + cockpitArea;
 mainLength = 36.506; 
 mainArea = 479.325;
 
+upsweep = 15.7;
 aftLength = 12.60;
 aftFR = aftLength/fusDiamOuter;
-aftArea = 0.223 + 99.78;
-aftDiameter = 0.7996;
+aftArea = 0.17 + 96.546;
+aftDiameter = fusDiamOuter - aftLength*tand(upsweep);
 
 totalLength = frontLength + aftLength + mainLength;
 totalArea = frontArea + mainArea + aftArea;
 totalFR = totalLength/fusDiamOuter;
 
-PressVol = 36.181 + 247.97 + 103.205 + 61.053; % Front + main deck + cargo + aft
+PressVol = 36.181 + 247.97 + 103.205 + 58.316; % Front + main deck + cargo + aft
 PressVolFt3 = PressVol*unitsratio('ft', 'm')^3; 
 
 %% WING DESIGN
@@ -357,7 +358,7 @@ M = [0.1931, 0.8, 0.2282];
 %Assumed Values
 widthNacelle=nacelleRadius*2;
 Aeff = pi*nacelleRadius^2;
-upsweep_angle=15*(pi/180);
+upsweep_angle=upsweep*(pi/180);
 Cl_tail_airfoil=1.4;
 
 %For aerodynamics analysis
