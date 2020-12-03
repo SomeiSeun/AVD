@@ -3,11 +3,10 @@ function [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trim
     CLtarget, CDtotal, CL_a_Total, CL_ah, twistWing, iW, alpha0W, alpha0H, downwash, etaH)
 
 %wing and horizontal stabiliser lift coefficients
-
 iW_MAC = iW + twistWing*y_MAC/(spanWing/2); %wing MAC setting angle
 
 syms iH AoA
-CLwing = CL_a_Total*(AoA + iW_MAC - alpha0W)*pi/180;
+CLwing = CL_a_Total.*(AoA + iW_MAC - alpha0W)*pi/180;
 CLhoriz = CL_ah.*((AoA + iW_MAC - alpha0W).*(1-downwash) + (iH-iW_MAC) - (alpha0H - alpha0W))*pi/180;
 
 %aircraft total lift and moment coefficient about cg
