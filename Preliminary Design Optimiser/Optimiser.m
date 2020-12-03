@@ -385,7 +385,7 @@ CL_a_Total=[CL_a(1)*takeoff_factor,CL_a(2),CL_a(3)*landing_factor];
 [CL_Target,CD_Total,LtoDMax,CLmD,Drag_Landing]=TotalDragFinal(W0,WF1,WF2,WF3,WF4,WF5,WF6,WF7,WF8,WF9,WF10,rho_takeoff,rho_cruise,rho_landing,V_Cruise,V_Stall_Landing,SWing,CD_0_Total,ARwing);
 %% AILERON DESIGN
 
-Ixx = 8.7e6;
+Ixx = 8.716e6;
 starting_position = 0.61;
 ending_position = 0.89;
 
@@ -696,7 +696,7 @@ W_ini_1 = W0 * WF1 * WF2 * WF3 * WF4;       % Weight at start of cruise 1 in New
 W_fin_1 = W0 * WF1 * WF2 * WF3 * WF4 * WF5; % Weight at end of cruise 1 in Newtons
 c_t1 = 14.10 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 1 in 1/second
 [E1, R1, FC1] = Range(W_ini_1, rho_cruise, V_Cruise, SWing,...
-    CD_min(2), c_t1, ARwing, W_fin_1, e_Cruise); 
+    CD_0_Total(2), c_t1, ARwing, W_fin_1, e_Cruise); 
 
 W_ini_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7;        % Weight at start of cruise 2
 W_fin_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF8;  % Weight at end of cruise 2
@@ -704,7 +704,7 @@ rho_cruise_2 = 0.849137;                                       % Density of air 
 c_t2 = 11.55 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 2 in 1/second
 
 [E2, R2, FC2] = Range(W_ini_2, rho_cruise_2, V_Divert, SWing,...
-    CD_min(2), c_t2, ARwing, W_fin_2, e_Cruise); 
+    CD_0_Total(2), c_t2, ARwing, W_fin_2, e_Cruise); 
 
 W_ini_3 = W_fin_2;                                                  % Weight of aircraft at start of Loiter
 W_fin_3 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF8 * WF9; % Weight of aircraft at end of Loiter
@@ -712,7 +712,7 @@ rho_cruise_3 = 1.05555;                                             % Density of
 c_t3 = 11.30 * 9.81 / 1000000;             % Thrust Specific Fuel Consumption for Loiter in 1/second
 
 [E3, R3, FC3] = Range(W_ini_3, rho_cruise_3, V_Loiter, SWing,...
-    CD_min(2), c_t3, ARwing, W_fin_3, e_Loiter); 
+    CD_0_Total(2), c_t3, ARwing, W_fin_3, e_Loiter); 
 
 fprintf('The Endurance of the aircraft during Cruise 1 is %f hours.\n',E1);
 fprintf('The Endurance of the aircraft during Cruise 2 is %f hours.\n',E2);
@@ -741,5 +741,13 @@ plot(altitude, ROC_max, '-xr')
 ylabel('Maximum Rate of Climb (feet/minute)');
 xlabel('Altitude (feet)');
 
+%{
+% Finding out some parameters during cruise
+beta_thrust_ratio_cruise = ThrustLapseModel(0.8, 35000, 0.8, 35000);
+T_cruise = T_dummy * beta_thrust_ratio_cruise; 
+
+[L_over_D_max, Vs_Cruise, V_LDmax, V_max, V_min] = Cruise_leg_calculations(CD_min(2),...
+    0.7853, ARwing, e_Cruise, rho_cruise, W_cruise, SWing, CL_max_clean, 1, T_cruise);
+%}
 KnOff
 toc
