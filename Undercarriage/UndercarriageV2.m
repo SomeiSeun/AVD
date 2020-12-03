@@ -18,8 +18,8 @@ close all
 load('../Initial Sizing/InitialSizing.mat', 'W0', 'WF1', 'WF2', 'WF3', 'WF4', 'WF5', 'WF6')
 
 % Wing design / aerodynamics
-x_wingroot = 29;
-z_wingroot = -2.1354937213;
+x_wingroot = 19.0871 + 0.25*7.4505;
+z_wingroot = -1.6703;
 length_rootchord = 7.4505;
 theta_setting = 2.28;
 theta_sweeprearspar = 24.3048;
@@ -36,13 +36,13 @@ height_mgmax = 1.5;
 length_mgmax = 3;
 
 % Weight and balance
-x_cgmin = 28;
-x_cgmax = 29;
-z_cg = 0.1;
+x_cgmin = 25.2956;
+x_cgmax = 26.2956;
+z_cg = -0.963;
 
 % Engine
-y_enginestrike = 8.1824;
-z_enginestrike = -5.5591;
+y_enginestrike = 8.191632126476897;
+z_enginestrike = -5.310869165676975;
 grc_engine_min = 6*0.0254; % adding 6 inches of clearance. This should be the value that we have when standing still (loaded tire and oleo)
 
 % Undercarriage assumptions
