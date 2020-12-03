@@ -608,8 +608,8 @@ for i = 1:length(components)
     sumBalance_MTOW = sumBalance_MTOW + components(i).weight.*components(i).cog;
     sumWeight_MTOW = sumWeight_MTOW + components(i).weight;
 end
-
-CGmtow = sumBalance_MTOW./sumWeight_MTOW;
+CGfull = sumBalance_MTOW./sumWeight_MTOW;
+%CGmtow = sumBalance_MTOW./sumWeight_MTOW;
 % CGfull = [CGmtow, CGcstart, CGcend, CGland];
 
 
