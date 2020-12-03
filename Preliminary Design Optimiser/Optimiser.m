@@ -564,7 +564,7 @@ components(17).cog = [0.5*totalLength; 0; 0];
 components(18).cog = [frontLength + 3; 0; -0.5*fusDiamOuter];
 components(19).cog = [frontLength + 0.6*mainLength; 0; 0]; 
 components(20).cog = [0.5*totalLength;0;0];
-components(21).cog = wingRootLE+0.5*cRootWing;
+components(21).cog = [wingRootLE(1)+0.5*cRootWing;0;0];
 
 components(22).cog = [frontLength + 0.55*mainLength; 0; 0]; 
 components(23).cog = [frontLength + 0.5*mainLength; 0; 0];
@@ -579,7 +579,7 @@ for i = 1:(length(components)-4)
     sumWeight_empty = sumWeight_empty + components(i).weight;
 end
 
-CGempty = sumBalance_empty./sumWeight_empty;
+CG_empty = sumBalance_empty./sumWeight_empty;
 
 %calculating CG fuel no pax no cargo
 sumBalance_fuel = sumBalance_empty;
@@ -589,17 +589,7 @@ i = 25;
 sumBalance_fuel = sumBalance_fuel + components(i).weight.*components(i).cog;
 sumWeight_fuel = sumWeight_fuel + components(i).weight;
 
-CGfuel = sumBalance_fuel./sumWeight_fuel;
-
-%calculating CG fuel no pax with cargo
-sumBalance_frontLoad = [0;0;0];
-sumWeight_frontLoad = sumWeight_fuel;
-for i = 1:(length(components)-4)
-    sumBalance_frontLoad = sumBalance_frontLoad + components(i).weight.*components(i).cog;
-    sumWeight_frontLoad = sumWeight_frontLoad + components(i).weight;
-end
-
-CGnopax = sumBalance_frontLoad./sumWeight_frontLoad;
+CG_fuel = sumBalance_fuel./sumWeight_fuel;
 
 %calculating CG MTOW
 sumBalance_MTOW = [0;0;0];
@@ -608,9 +598,43 @@ for i = 1:length(components)
     sumBalance_MTOW = sumBalance_MTOW + components(i).weight.*components(i).cog;
     sumWeight_MTOW = sumWeight_MTOW + components(i).weight;
 end
-CGfull = sumBalance_MTOW./sumWeight_MTOW;
-%CGmtow = sumBalance_MTOW./sumWeight_MTOW;
-% CGfull = [CGmtow, CGcstart, CGcend, CGland];
+CG_mtow = sumBalance_MTOW./sumWeight_MTOW;
+
+%calculating CG cruise start
+sumBalance_start = [0;0;0];
+sumWeight_start = 0;
+for i = 1:(length(components)-1)
+    sumBalance_start = sumBalance_start + components(i).weight.*components(i).cog;
+    sumWeight_start = sumWeight_start + components(i).weight;
+end
+sumWeight_start = sumWeight_start + components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4);
+sumBalance_start = sumBalance_start + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4)).*components(25).cog;
+CG_start = sumBalance_start./sumWeight_start;
+
+%calculating CG cruise end
+sumBalance_end = [0;0;0];
+sumWeight_end = 0;
+for i = 1:(length(components)-1)
+    sumBalance_end = sumBalance_end + components(i).weight.*components(i).cog;
+    sumWeight_end = sumWeight_end + components(i).weight;
+end
+sumWeight_end = sumWeight_end + components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5);
+sumBalance_end = sumBalance_end + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5)).*components(25).cog;
+CG_end = sumBalance_end./sumWeight_end;
+
+%calculating CG landing
+sumBalance_land = [0;0;0];
+sumWeight_land = 0;
+for i = 1:(length(components)-1)
+    sumBalance_land = sumBalance_land + components(i).weight.*components(i).cog;
+    sumWeight_land = sumWeight_land + components(i).weight;
+end
+sumWeight_land = sumWeight_land + components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5*WF6);
+sumBalance_land = sumBalance_land + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5*WF6)).*components(25).cog;
+CG_land = sumBalance_land./sumWeight_land;
+
+
+CG_all = [CG_mtow, CG_start, CG_end, CG_land];
 
 
 %% STABILTIY ANALYSIS
@@ -629,18 +653,18 @@ downwash = downwash(lHoriz, hHoriz, spanWing, sweepWingQC, ARwing, taperWing, CL
 
 %neutral point and static margin
 [xNPOff, KnOff, xNPOn, KnOn] =...
-    staticStability(CGfull, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
+    staticStability(CG_all, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
 
 
 %% Ground clearance checker (temporary)
 theta_maxground = 15;
 Bruhg1 = tand(theta_maxground - 90);
-Bruhc1 = CGfull(3) - Bruhg1*CGfull(1);
+Bruhc1 = CG_all(3) - Bruhg1*CG_all(1);
 Bruhg2 = tand(theta_maxground);
 Bruhc2 = -fusDiamOuter/2 - Bruhg2*(frontLength + mainLength);
 Bruhxmin = (Bruhc2-Bruhc1)/(Bruhg1-Bruhg2);
 
-tailplanePlot2(Bruhxmin-1.5, xNPOff, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
+tailplanePlot2(Bruhxmin-1.5, xNPOff, CG_all, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 
 %% TRIM ANALYSIS 
@@ -659,7 +683,7 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
 
 %determine iH and AoA for trimmed flight
 [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
-    trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+    trimAnalysis(CG_all, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
     CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
 
 
@@ -669,9 +693,9 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
 x_firsttailstrike = frontLength + mainLength;
 height_mgmax = 1.5;
 length_mgmax = 3;
-x_cgmin = CGempty(1);
-x_cgmax = CGempty(1);
-z_cg = CGfull(3);
+x_cgmin = CG_empty(1);
+x_cgmax = CG_empty(1);
+z_cg = CG_all(3);
 
 [MainOleo, NoseOleo, LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
     LengthMainGearRetracted, LengthNoseGearDeployed, LengthNoseGearRetracted, ...
@@ -786,7 +810,7 @@ T_cruise = T_dummy * beta_thrust_ratio_cruise;
     0.7853, ARwing, e_Cruise, rho_cruise, W_cruise, SWing, CL_max_clean, 1, T_cruise);
 %}
 
-CGfull 
+CG_all 
 xNPOff 
 KnOff
 LocationNoseGearJoint
