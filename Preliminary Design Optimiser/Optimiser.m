@@ -204,7 +204,7 @@ Sweep_rearSpar = sweepConverter(sweepWingLE, 0, rearSparPercent, ARwing, taperWi
 
 %wing incidence
 i_w_root=2.3;
-i_w_tip=i_w_root-twistWing;
+i_w_tip=i_w_root+twistWing;
 
 %HLDs
 CLmax_required=2.2;
@@ -391,8 +391,8 @@ CD_0_Loiter=CD_Parasitic_Total_Loiter+0.0066;
 %% AILERON DESIGN
 
 Ixx = 8.716e6;
-starting_position = 0.61;
-ending_position = 0.89;
+aileron_starting_position = 0.61;
+aileron_ending_position = 0.89;
 
 [t, Max_ail_def, y1, y2, aileron_area] = aileron_sizing_new(spanWing, SWing, ARwing, taperWing,...
     CL_a_Total(3), V_Stall_Landing, Ixx, SWing, SHoriz, SVert, aileron_starting_position, aileron_ending_position, cRootWing);
@@ -658,8 +658,8 @@ CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC W
 
 %determine iH and AoA for trimmed flight
 [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
-   trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, cRootWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
-  CLtarget, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
+    trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+    CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
 
 
 %% UNDERCARRIAGE DESIGN
@@ -797,7 +797,7 @@ toc
 
 
 %% OUTPUTS
-
+%{
 designparams = readtable('designparams.csv');
 
 designparams(1,2) = {W0};
@@ -901,3 +901,4 @@ designparams{58,2} = "NACA 0012   ";
 designparams{14,2} = "NACA 64-215 ";
 
 writetable(designparams, 'designparams.csv')
+%}
