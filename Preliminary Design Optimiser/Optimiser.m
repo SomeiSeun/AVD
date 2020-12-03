@@ -365,7 +365,7 @@ xtocmax=[0.349,0,0,maxThicknessLocationHoriz,maxThicknessLocationVert];
 ttoc=[thicknessRatioWing,0,0,thicknessRatioHoriz,thicknessRatioVert];
 theta_max=[sweepWingMT,0,0,sweepHorizMT,sweepVertMT];
 S_wet_all=[S_wetted,totalArea,SnacelleWetted,SHorizWetted,SVertWetted];
-Area_ucfrontal = 8.37;
+Area_ucfrontal =6;
 A_eff=1.7;
 %Aerodynamics: Lift
 [CL_a,CL_max_clean,alpha_zero_takeoff,alpha_zero_landing,delta_CL_max,CL_max_takeoff,CL_max_landing,takeoff_factor,landing_factor,zeroAlphaLCT]=WingLift(ARwing,S_exposed,SWing,fusDiamOuter,spanWing,M,sweepWingMT,flap_deflection,Cl_wing_airfoil,Sflapped_over_Sref,sweepWingQC,sweepWingTE);

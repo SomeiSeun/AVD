@@ -8,6 +8,7 @@ Re=(rho.*v.*l)./nu;
 % %Define the skin roughness value for each component-depends of polish on
 % %plane:eg. smooth paint: 2.08*10^-5
 k=2.08*10^-5;
+
 %Determine the Cut-off Reynolds number for each component;
 Re_cutoff=38.21*((distdim(l,'m','ft'))/k).^1.053;
 %Take cut-off Reynolds number if RE>cutoff Re
