@@ -76,13 +76,13 @@ for i = 1:length(y_mgjoint)
     x_ng_maxload_less = (x_cgmin + (WNGRmax-1)*x_mgjoint)/WNGRmax;
     
     % Find minimum ground clearance from tailstrike constraint
-    grc_min_tailstrike = (x_firsttailstrike - x_mgjoint)*tand(theta_maxground) - z_firsttailstrike - radius_fuselage;
+    grc_min_tailstrike = (x_firsttailstrike - x_mgjoint - 1.5)*tand(theta_maxground) - z_firsttailstrike - radius_fuselage; %Fudge factor
     
     % Find minimum ground clearance from engine clearance constraint
     grc_min_engine = grc_engine_min - radius_fuselage - z_enginestrike;
     
     % Find maximum ground clearance from tipback constraint
-    grc_max_tipback = ((x_mgjoint - x_cgmax)/(tand(theta_maxground))) - radius_fuselage - z_cg;
+    grc_max_tipback = ((x_mgjoint + 1.5 - x_cgmax)/(tand(theta_maxground))) - radius_fuselage - z_cg; %Fudge factor
     
     % Find maximum ground clearance from undercarriage max length
     grc_max_undercarriage_length = y_mgjoint(i) - z_mgjoint - radius_fuselage;

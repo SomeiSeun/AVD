@@ -87,7 +87,7 @@ for i = 1:length(y_mgjoint)
     disp(['Max nose gear load constraint: nose gear xpos less than ', num2str(x_ng_maxload_less)])
     
     % Find minimum ground clearance from tailstrike constraint
-    grc_min_tailstrike = (x_firsttailstrike - x_mgjoint)*tand(theta_maxground) - z_firsttailstrike - radius_fuselage;
+    grc_min_tailstrike = (x_firsttailstrike - x_mgjoint-1.5)*tand(theta_maxground) - z_firsttailstrike - radius_fuselage;
     disp(['Tailstrike constraint: min ground clearance ', num2str(grc_min_tailstrike)])
     
     % Find minimum ground clearance from engine clearance constraint
@@ -95,7 +95,7 @@ for i = 1:length(y_mgjoint)
     disp(['Engine constraint: min ground clearance ', num2str(grc_min_engine)])
     
     % Find maximum ground clearance from tipback constraint
-    grc_max_tipback = ((x_mgjoint - x_cgmax)/(tand(theta_maxground))) - radius_fuselage - z_cg;
+    grc_max_tipback = ((x_mgjoint+1.5 - x_cgmax)/(tand(theta_maxground))) - radius_fuselage - z_cg;
     disp(['Tipback constraint: max ground clearance ', num2str(grc_max_tipback)])
     
     % Find maximum ground clearance from undercarriage max length
