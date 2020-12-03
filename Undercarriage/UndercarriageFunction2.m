@@ -1,3 +1,13 @@
+function [LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
+    LengthMainGearRetracted, LengthNoseGearDeployed, LengthNoseGearRetracted, ...
+    GroundClearanceFuselage, GroundClearanceEngine, NoseGearLoadRatio, LandingLoadRatio, ...
+    AngleTailstrike, AngleTipback, AngleOverturn, NoseWheel, MainWheel, FrontalAreaNoseGear, FrontalAreaMainGear] ...
+    = UndercarriageFunction2(W0, WFCumulative6, x_wingroot, z_wingroot, length_rootchord, ...
+    theta_setting, theta_sweeprearspar, theta_dihedral, ...
+    theta_maxground, chord_rearspar, length_aircraft, radius_fuselage, ...
+    x_firsttailstrike, z_firsttailstrike, height_mgmax, length_mgmax, x_cgmin, x_cgmax, ...
+    z_cg, y_enginestrike, z_enginestrike)
+
 %% Undercarriage v2
 
 %{
@@ -7,42 +17,6 @@ various different geometries and output (or warn the impossibility of) an
 undercarriage that passes each constraint applied on it.
 %}
 
-%% Housekeeping
-clear
-clc
-close all
-
-%% Request inputs
-
-% Initial sizing code
-load('../Initial Sizing/InitialSizing.mat', 'W0', 'WF1', 'WF2', 'WF3', 'WF4', 'WF5', 'WF6')
-
-% Wing design / aerodynamics
-x_wingroot = 19.0871 + 0.25*7.4505;
-z_wingroot = -1.6703;
-length_rootchord = 7.4505;
-theta_setting = 2.28;
-theta_sweeprearspar = 24.3048;
-theta_dihedral = 5;
-theta_maxground = 15;
-chord_rearspar = 0.60;
-
-% Fuselage
-length_aircraft = 60;
-radius_fuselage = 2.0879;
-x_firsttailstrike = 42.38;
-z_firsttailstrike = -2.0879;
-height_mgmax = 1.5;
-length_mgmax = 3;
-
-% Weight and balance
-x_cgmin = 25.2956;
-x_cgmax = 26.2956;
-z_cg = -0.963;
-
-% Engine
-y_enginestrike = 8.191632126476897;
-z_enginestrike = -5.310869165676975;
 grc_engine_min = 6*0.0254; % adding 6 inches of clearance. This should be the value that we have when standing still (loaded tire and oleo)
 
 % Undercarriage assumptions
@@ -245,8 +219,8 @@ for i = 1:length(y_mgjoint)
                     Stroke_tire_main = ((MainWheel.InflatedOuterDiamMinINCH/2) - MainWheel.StaticLoadedRadiusINCH)/12; %ft
                     Stroke_tire_nose = ((NoseWheel.InflatedOuterDiamMinINCH/2) - NoseWheel.StaticLoadedRadiusINCH)/12; %ft
                     
-                    MainOleo = GimmeAnOleo(V_Vertical, eta_oleo, eta_tire, N_g, Stroke_tire_main, W0*WF1*WF2*WF3*WF4*WF4*WF5*WF6, 2, 1-( (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint) )); %ft %OUTPUT
-                    NoseOleo = GimmeAnOleo(V_Vertical, eta_oleo, eta_tire, N_g, Stroke_tire_nose, W0*WF1*WF2*WF3*WF4*WF4*WF5*WF6, 1, ( (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint) )); %ft %OUTPUT
+                    MainOleo = GimmeAnOleo(V_Vertical, eta_oleo, eta_tire, N_g, Stroke_tire_main, W0*WFCumulative6, 2, 1-( (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint) )); %ft %OUTPUT
+                    NoseOleo = GimmeAnOleo(V_Vertical, eta_oleo, eta_tire, N_g, Stroke_tire_nose, W0*WFCumulative6, 1, ( (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint) )); %ft %OUTPUT
                     
                     disp(['Nose gear oleo has length ', num2str(NoseOleo.TotalLength)])
                     disp(['Main gear oleo has length ', num2str(MainOleo.TotalLength)])
@@ -314,7 +288,7 @@ for i = 1:length(y_mgjoint)
                     end
                     
                 end
-                clc
+                
             end
             %% \Loop 2: Picking nose gear longitudinal positions
             % You will enter this region of code if:
@@ -326,7 +300,7 @@ for i = 1:length(y_mgjoint)
                 % this particular y_mg. 
             % Lets add a quick checkpoint here
             if haveUndercarriage == 0;
-                clc
+                
                 disp('Your search for a working x_ng for this value of y_mg failed')
             end
         end
@@ -337,7 +311,7 @@ for i = 1:length(y_mgjoint)
             % 0)
         % Lets add another quick checkpoint here
         if haveUndercarriage == 0;
-            clc
+            
             disp('You were not able to place a nose gear')
         end
     end
@@ -348,13 +322,14 @@ for i = 1:length(y_mgjoint)
         % 0)
     % Lets add yet another quick checkpoint here
     if haveUndercarriage == 0;
-        clc
+        
         disp('Your ground clearances were not possible')
         disp(' ')
     else haveUndercarriage == 1;
         disp('Final undercarriage placement successful')  
         break
     end
+    pause(0.05)
     clc
 end
 %% \Loop 1: Picking lateral positions of landing gears
@@ -372,31 +347,61 @@ else haveUndercarriage == 1;
     disp('Now proceeding towards making a good usable set of outputs')
 end
 
-%% Shenanigans
-%COMFAAInput = 'COMFAAaircraft.Ext'
-%cmd = ['COMFAA.exe < ' COMFAAInput]
-%!COMFAA.exe
-%unix command check it out
-
-%% Outputs
-
-%Height_LGs = grc_chosen + radius_fuselage + z_mgjoint;
-%NoseGearJoint = [x_ng(ii), 0, h_cg - Height_LGs]';
-%MainGearJoint = [x_mgjoint, y_mgjoint(i), z_mgjoint]';
-%disp(MainGearJoint)
-%disp(NoseGearJoint)
-
 %% Outputs required
 
-NoseGearJointPosition = [x_ng(ii), 0, 'SOMETHING']';
-NoseGearLengthDeployed = 'SOMETHING';
-NoseGearLengthRetracted = 'SOMETHING';
+if haveUndercarriage == 0
+    
+    LocationMainGearJoint = 0;
+    LocationNoseGearJoint = 0;
+    
+    LengthMainGearDeployed = 0;
+    LengthMainGearRetracted = 0;
+    LengthNoseGearDeployed = 0;
+    LengthNoseGearRetracted = 0;
+    
+    GroundClearanceFuselage = 0;
+    GroundClearanceEngine = 0;
+    
+    NoseGearLoadRatio = 0;
+    LandingLoadRatio = 0;
+    
+    AngleTailstrike = 0;
+    AngleTipback = 0;
+    AngleOverturn = 0;
+    
+    FrontalAreaNoseGear = 0;
+    FrontalAreaMainGear = 0;
+    NoseWheel = 0;
+    MainWheel = 0;
+    
+    disp('Undercarriage was not possible using current inputs')
+    disp('Bruh')
 
-MainGearJointPosition = [x_mgjoint, y_mgjoint(i), z_mgjoint]';
-%MainGearLengthDeployed = 
-
-
-
+else
+    %% Outputs
+    LocationMainGearJoint = [x_mgjoint, y_mgjoint(i), z_mgjoint]';
+    LocationNoseGearJoint = [x_ng(ii), 0, z_mgjoint]';
+    
+    LengthMainGearDeployed = mg_deployed_total_length;
+    LengthMainGearRetracted = mg_retracted_total_length;
+    LengthNoseGearDeployed = mg_deployed_total_length;
+    LengthNoseGearRetracted = mg_retracted_total_length;
+    
+    GroundClearanceFuselage = grc_chosen;
+    GroundClearanceEngine = grc_engine_actual;
+    
+    NoseGearLoadRatio = WNGR_actual;
+    LandingLoadRatio = N_g;
+    
+    AngleTailstrike = theta_tailstrike_actual;
+    AngleTipback = theta_tipback_actual;
+    AngleOverturn = theta_overturn_actual;
+    
+    FrontalAreaNoseGear = (NoseOleo.Diameter*0.0254*mg_retracted_total_length) + ...
+        2*(NoseWheel.InflatedOuterDiamMaxINCH*0.0254*NoseWheel.SectionWidthMaxINCH*0.0254);
+    FrontalAreaMainGear = (MainOleo.Diameter*0.0254*mg_retracted_total_length) + ...
+        2*(MainWheel.InflatedOuterDiamMaxINCH*0.0254*MainWheel.SectionWidthMaxINCH*0.0254);
+end
 
 %% Workspace cleanup
 % clear a b c chord_rearspar eta_oleo eta_tire grc_engine_min grc_max_tipback
@@ -410,10 +415,4 @@ MainGearJointPosition = [x_mgjoint, y_mgjoint(i), z_mgjoint]';
 % clear y_mgjoint y_outer y_tire_dist_max z_cg z_enginestrike 
 % clear z_firsttailstrike z_rearspar z_wingroot grc_max_most_constraining grc_min_most_constraining
 
-
-
-
-
-
-
-
+end
