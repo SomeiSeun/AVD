@@ -812,7 +812,7 @@ T_cruise = T_dummy * beta_thrust_ratio_cruise;
     0.7853, ARwing, e_Cruise, rho_cruise, W_cruise, SWing, CL_max_clean, 1, T_cruise);
 %}
 
-<<<<<<< HEAD
+%<<<<<<< HEAD
 
 h = (0:100:60000);              % Height in feet
 height_metres = h*0.3048;       % Height in metres
@@ -855,9 +855,9 @@ legend('Specific Excess Energy', 'Stall Boundary')
 
 CGfull 
 xNPOff 
-=======
+%=======
 CG_all 
->>>>>>> main
+%>>>>>>> main
 KnOff
 LocationNoseGearJoint
 LocationMainGearJoint

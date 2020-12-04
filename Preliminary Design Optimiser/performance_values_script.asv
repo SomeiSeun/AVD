@@ -142,7 +142,7 @@ for i = 1 : length(h)
     end
     
     vstall(i) = sqrt((2 * W_ini_1 / Sref) / (rho * CL_max_clean)) / a;   % Stall speed to be plotted in Mach
-    M_max(i) = (2 * T_dummy) / (rho * Sref * CD_Total * a^2); 
+    M_max(i) = (2 * T_Takeoff) / (rho * Sref * CD_Total * a^2); 
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
