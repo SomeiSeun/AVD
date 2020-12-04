@@ -569,9 +569,10 @@ components(20).cog = [0.5*totalLength;0;0];
 components(21).cog = [wingRootLE(1)+0.5*cRootWing;0;0];
 
 components(22).cog = [frontLength + 0.55*mainLength; 0; 0]; 
-components(23).cog = [frontLength + 0.5*mainLength; 0; 0];
+components(23).cog = [frontLength + 0.5*mainLength; 0; -1];
 components(24).cog = [0;0;0];
 components(25).cog = [fuelXVal; 0; (fuelZVal+wingRootLE(3))/2];
+
 
 %calculating CG empty
 sumBalance_empty = [0;0;0];
@@ -583,15 +584,7 @@ end
 
 CG_empty = sumBalance_empty./sumWeight_empty;
 
-%calculating CG fuel no pax no cargo
-sumBalance_fuel = sumBalance_empty;
-sumWeight_fuel = sumWeight_empty;
-
-i = 25;
-sumBalance_fuel = sumBalance_fuel + components(i).weight.*components(i).cog;
-sumWeight_fuel = sumWeight_fuel + components(i).weight;
-
-CG_fuel = sumBalance_fuel./sumWeight_fuel;
+% REGULAR OPERATION
 
 %calculating CG MTOW
 sumBalance_MTOW = [0;0;0];
@@ -635,8 +628,59 @@ sumWeight_land = sumWeight_land + components(25).weight - (W0 - W0*WF1*WF2*WF3*W
 sumBalance_land = sumBalance_land + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5*WF6)).*components(25).cog;
 CG_land = sumBalance_land./sumWeight_land;
 
-
+weight_all = [sumWeight_MTOW, sumWeight_start, sumWeight_end, sumWeight_land];
 CG_all = [CG_mtow, CG_start, CG_end, CG_land]; 
+
+
+% FERRY OPERATION
+
+
+%calculating CG fuel no pax no cargo
+sumBalance_fuel = sumBalance_empty;
+sumWeight_fuel = sumWeight_empty;
+
+sumBalance_fuel = sumBalance_fuel + components(25).weight.*components(25).cog;
+sumWeight_fuel = sumWeight_fuel + components(25).weight;
+
+CG_fuel = sumBalance_fuel./sumWeight_fuel;
+
+%calculating CG cruise start no payload
+sumBalance_start_noPay = sumBalance_empty;
+sumWeight_start_noPay = sumWeight_empty;
+
+sumWeight_start_noPay = sumWeight_start_noPay + components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4);
+sumBalance_start_noPay = sumBalance_start_noPay + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4)).*components(25).cog;
+
+CG_start_noPay = sumBalance_start_noPay./sumWeight_start_noPay;
+
+%calculating CG cruise end no payload
+sumBalance_end_noPay = sumBalance_empty;
+sumWeight_end_noPay = sumWeight_empty;
+
+sumWeight_end_noPay = sumWeight_end_noPay + components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5);
+sumBalance_end_noPay = sumBalance_end_noPay + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5)).*components(25).cog;
+
+CG_end_noPay = sumBalance_end_noPay./sumWeight_end_noPay;
+
+%calculating CG landing no payload
+sumBalance_land_noPay = sumBalance_empty;
+sumWeight_land_noPay = sumWeight_empty;
+
+sumWeight_land_noPay = sumWeight_land_noPay + components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5*WF6);
+sumBalance_land_noPay = sumBalance_land_noPay + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5*WF6)).*components(25).cog;
+
+CG_land_noPay = sumBalance_land_noPay./sumWeight_end_noPay;
+
+weight_all_noPay = [sumWeight_fuel, sumWeight_start_noPay, sumWeight_end_noPay, sumWeight_land_noPay];
+CG_all_noPay = [CG_fuel, CG_start_noPay, CG_end_noPay, CG_land_noPay]; 
+
+
+% PLOTTING ENVELOPE
+x_coords        = [CG_empty(1), CG_all(1,:),CG_empty(1)]/totalLength;
+x_coords_noPay  = [CG_empty(1), CG_all_noPay(1,1:3),CG_empty(1)]/totalLength;
+
+y_coords        = [sumWeight_empty, weight_all, sumWeight_empty];
+y_coords_noPay  = [sumWeight_empty, weight_all_noPay(1:3), sumWeight_empty];
 
 
 %% STABILTIY ANALYSIS
@@ -655,9 +699,38 @@ downwash = downwash(lHoriz, hHoriz, spanWing, sweepWingQC, ARwing, taperWing, CL
 %neutral point and static margin
 [xNPOff, KnOff, xNPOn, KnOn] =...
    staticStability(CG_all, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
+[xNPOff_noPay, KnOff_noPay, xNPOn_noPay, KnOn_noPay] =...
+   staticStability(CG_all_noPay, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
 
+
+fig3 = figure(7);
+hold on
+grid on
+box on
+grid minor
+
+plot(x_coords,y_coords, 'r-', 'LineWidth', 1.2)
+plot(x_coords_noPay,y_coords_noPay, 'b--', 'LineWidth', 1.2)
+plot([xNPOff(1)/totalLength,xNPOff(1)/totalLength],[5*10^5,13*10^5],'g:', 'LineWidth', 2)
+plot([xNPOff(4)/totalLength,xNPOff(4)/totalLength],[5*10^5,13*10^5],'m-.', 'LineWidth', 1.2)
+legend('MTOW envelope',...
+    'No payload envelope',...
+    'x_{np} Take-off ','x_{np} Landing',...
+    'Location','northwest','FontSize', 10);
+title('CG envelope and Static Margin position across flight')
+axis([0.4465 0.461 5*10^5 13*10^5])
+xlabel('CG Position along Total Length [x/L]')
+ylabel('Weight [N]')
+%
+
+fig3.Units = 'inches';   
+fig3.Position(3) = 8;
+fig3.Position(4) = 3;
+set(fig3.Children, 'FontName', 'Arial', 'FontSize', 10);
+print('CG_envelope', '-depsc')
+hold off
 %% TRIM ANALYSIS 
-
+%{
 %wing aerofoil parameters
 CMoAerofoilW = -0.03; %Sforza and -0.04 according to airfoiltools (xfoil)
 alpha0W = [alpha_zero_takeoff, -1.8, alpha_zero_landing]; %degrees
@@ -981,4 +1054,5 @@ designparams{58,2} = "NACA 0012   ";
 designparams{14,2} = "NACA 64-215 ";
 %}
 writetable(designparams, 'designparams.csv')
+%}
 %}
