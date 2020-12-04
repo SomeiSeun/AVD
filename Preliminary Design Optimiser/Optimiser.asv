@@ -855,7 +855,7 @@ hold on
 plot(vstall, h, '-r')
 plot(0.8, 35000, 'xb', 'MarkerSize', 12)
 plot(M,abs_ceiling,'--m')
-plot(M,Cruise_altitude,'--c')
+plot(M,cruise_altitude,'--c')
 legend({'Specific Excess Energy','Stall Line','Cruise Point','Absolute Ceiling','Cruise Altitude'}...
     ,'Location','North west')
 
