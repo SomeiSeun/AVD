@@ -18,7 +18,7 @@ plot(horizPlanform(1,:), horizPlanform(2,:), 'b-') %starboard horizontal stabili
 plot(horizPlanform(1,:), [horizPlanform(2,1), -horizPlanform(2,2), -horizPlanform(2,3), horizPlanform(2,4)], 'b-') %port horizontal stabiliser
 plot(wingPlanform(1,:), wingPlanform(2,:), 'k-') %staring wing
 plot(wingPlanform(1,:), [wingPlanform(2,1), -wingPlanform(2,2), -wingPlanform(2,3), wingPlanform(2,4)], 'k-') %port wing
-plot(vertPlanform(1,:), vertPlanform(2,:), 'ro-') %vertical tail
+plot(vertPlanform(1,:), vertPlanform(2,:), 'r-') %vertical tail
 plot(CG(1),CG(2),'go')
 plot(xnp(1),CG(2),'ro')
 grid minor
@@ -38,8 +38,8 @@ plot([frontLength, frontLength+mainLength], [-fusDiamOuter/2, -fusDiamOuter/2], 
 plot([frontLength+mainLength, totalLength, totalLength, frontLength+mainLength],...
     [fusDiamOuter/2, fusDiamOuter/2, fusDiamOuter/2-aftDiameter, -fusDiamOuter/2], 'k-'); %fuselage aft
 plot(frontLength - frontCoords(1,:), frontCoords(2,:), 'k-') %fuselage front
-plot(horizPlanform(1,:), horizPlanform(3,:), 'bo-') %wing
-plot(wingPlanform(1,:), wingPlanform(3,:), 'ko-') %horizontal stabiliser
+plot(horizPlanform(1,:), horizPlanform(3,:), 'b-') %wing
+plot(wingPlanform(1,:), wingPlanform(3,:), 'k-') %horizontal stabiliser
 plot(vertPlanform(1,:), vertPlanform(3,:), 'r-') %vertical tail
 plot([horizPlanform(1,1), horizPlanform(1,1)+10*cosd(60)], [horizPlanform(3,1), horizPlanform(3,1)+10*sind(60)], 'm:') %60 degree line
 %plot([horizPlanform(1,4), horizPlanform(1,4)+10*cosd(30)], [horizPlanform(3,4), horizPlanform(3,4)+10*sind(30)], 'm:') %30 degree line
