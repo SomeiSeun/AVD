@@ -121,12 +121,7 @@ Ixx = 8.716*10^6;
     TaperRatio, CL_a_Total(3), VS0, Ixx, Sref, SHoriz, SVert, 0.61, 0.89, root_chord);
 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Specific Excess Energy plot
-%[] = specific_energy_plot(W0, Sref, CL_max_clean);
-% ^ How does one output the graph from a function? 
-% ^ NEED AN EQUATION FOR THRUST VARIATION WITH ALTITUDE AND MACH NUMBER
-% ^ NEED AN EQUATION FOR CD VARIATION WITH ALTITUDE 
-% ^ ALSO ADD A COMPRESSIBILITY CORRECTION
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Climb rate during OEI
 climb_rate = tan(asin((0.5 * (ThrustToWeightTakeOff)) - (CD_Total(1) / CL_max_takeoff))); 

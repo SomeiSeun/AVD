@@ -686,12 +686,13 @@ z_cg = CGfull(3);
 
 
 %% PERFORMANCE ANALYSIS
-
-V_S1 = sqrt((2 * W0) / (1.225 * SWing * CLmax_clean));              % Finding out the stall speed in clean config
-V_stall_takeoff = sqrt((2 * W0) / (1.225 * SWing* CL_max_takeoff)); % Stall speed in take off config
+W_ini_1 = W0 * WF1 * WF2 * WF3 * WF4;       % Weight at start of cruise 1 in Newtons
+V_S1 = sqrt((2 * W_ini_1) / (1.225 * SWing * CLmax_clean));         % Finding out the stall speed in clean config
+CL_MAX_TAKEOFF = CL_max_takeoff + (SHoriz / SWing) * CL_ah(1); 
+V_stall_takeoff = sqrt((2 * W0) / (1.225 * SWing* CL_MAX_TAKEOFF)); % Stall speed in take off config
 
 beta_thrust_ratio_takeoff = ThrustLapseModel(0, 0, 0.8, 35000); % Finding out Beta value during takeoff
-L_over_D_transition = CL_max_takeoff/CD_Total(1);               % Lift to drag ratio at Transition phase
+L_over_D_transition = CL_MAX_TAKEOFF/0.2995;  % Lift to drag ratio at Transition phase. Denominator is CD_Total
 T_dummy = W0 * ThrustToWeightTakeOff;      
 T_Takeoff = T_dummy * beta_thrust_ratio_takeoff; % Finding out the Takeoff Thrust
 
@@ -704,35 +705,35 @@ S_to = Take_off_distance(V_stall_takeoff, V_S1, T_Takeoff, W0,...
 W_L = W0 * WF8 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF9 * WF10;
 % ^ Weight of the flight at start of landing phase
 
-VS0 = sqrt((2 * W_L) / (1.225 * SWing * CL_max_landing)); % Stall speed in Landing config
+CL_MAX_LANDING = CL_max_landing + (SHoriz / SWing) * CL_ah(3);
+VS0 = sqrt((2 * W_L) / (1.225 * SWing * CL_MAX_LANDING)); % Stall speed in Landing config
 L_over_D_landing = sqrt((pi * ARwing * e_Cruise) / (4 * CD_0_Total(3)));  % Lift to drag ratio in landing config
-landing_velocity = 1.1 * VS0;                            % Landing velocity
+landing_velocity = 1.1 * VS0;                             % Landing velocity
 landing_velocity_mach = landing_velocity / sqrt(1.4 * 287 * 288.051); % Mach number for landing velocity
 
 beta_thrust_ratio_landing = ThrustLapseModel(landing_velocity_mach,...
-    50, 0.8, 35000);                                     % Beta value for landing
-T_L = T_dummy * beta_thrust_ratio_landing;               % Thrust during landing in Newtons
+    50, 0.8, 35000);                                      % Beta value for landing
+T_L = T_dummy * beta_thrust_ratio_landing;                % Thrust during landing in Newtons
 
 % This equation gives the Landing distance in metres
-S_L = Landing_distance(zeroAlphaLCT, V_S1, W_L, VS0,...
+S_L = Landing_distance(0.7859, V_S1, W_L, VS0,...
     T_L, L_over_D_landing, SWing, ARwing, e_Cruise, CD_0_Total(3));
 
 
-D2 = 0.5 * 1.225 * SWing * 1.44 * V_stall_takeoff^2 * CD_Total(1);
+D2 = 0.5 * 1.225 * SWing * 1.44 * V_stall_takeoff^2 * 0.2995;  % The last value is CD_Total
 T_oei = 0.5 * T_Takeoff;
-T_takeoff_static = T_dummy; 
+T_takeoff_static = T_dummy;
 
 % This equation gives the Balanced Field Length in metres
-BFL = Balanced_Field_Length(W0, SWing, CL_max_takeoff,...
-    T_oei, D2, 10, CL_max_landing, T_takeoff_static);
+BFL = Balanced_Field_Length(W0, SWing, CL_MAX_TAKEOFF,...
+    T_oei, D2, 10, CL_MAX_LANDING, T_takeoff_static);
 
 
 
-W_ini_1 = W0 * WF1 * WF2 * WF3 * WF4;       % Weight at start of cruise 1 in Newtons
 W_fin_1 = W0 * WF1 * WF2 * WF3 * WF4 * WF5; % Weight at end of cruise 1 in Newtons
 c_t1 = 14.10 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 1 in 1/second
 [E1, R1, FC1] = Range(W_ini_1, rho_cruise, V_Cruise, SWing,...
-    CD_0_Total(2), c_t1, ARwing, W_fin_1, e_Cruise); 
+    CD_0_Total(2), c_t1, ARwing, W_fin_1, e_Cruise);
 
 W_ini_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7;        % Weight at start of cruise 2
 W_fin_2 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF8;  % Weight at end of cruise 2
@@ -740,7 +741,7 @@ rho_cruise_2 = 0.849137;                                       % Density of air 
 c_t2 = 11.55 * 9.81 / 1000000;              % Thrust Specific Fuel Consumption for Cruise 2 in 1/second
 
 [E2, R2, FC2] = Range(W_ini_2, rho_cruise_2, V_Divert, SWing,...
-    CD_0_Total(2), c_t2, ARwing, W_fin_2, e_Cruise); 
+    0.0186, c_t2, ARwing, W_fin_2, e_Cruise);
 
 W_ini_3 = W_fin_2;                                                  % Weight of aircraft at start of Loiter
 W_fin_3 = W0 * WF1 * WF2 * WF3 * WF4 * WF5 * WF6 * WF7 * WF8 * WF9; % Weight of aircraft at end of Loiter
@@ -748,7 +749,7 @@ rho_cruise_3 = 1.05555;                                             % Density of
 c_t3 = 11.30 * 9.81 / 1000000;             % Thrust Specific Fuel Consumption for Loiter in 1/second
 
 [E3, R3, FC3] = Range(W_ini_3, rho_cruise_3, V_Loiter, SWing,...
-    CD_0_Total(2), c_t3, ARwing, W_fin_3, e_Loiter); 
+    0.0202, c_t3, ARwing, W_fin_3, e_Loiter); 
 
 fprintf('The Endurance of the aircraft during Cruise 1 is %f hours.\n',E1);
 fprintf('The Endurance of the aircraft during Cruise 2 is %f hours.\n',E2);
@@ -785,6 +786,46 @@ T_cruise = T_dummy * beta_thrust_ratio_cruise;
 [L_over_D_max, Vs_Cruise, V_LDmax, V_max, V_min] = Cruise_leg_calculations(CD_min(2),...
     0.7853, ARwing, e_Cruise, rho_cruise, W_cruise, SWing, CL_max_clean, 1, T_cruise);
 %}
+
+
+h = (0:100:60000);              % Height in feet
+height_metres = h*0.3048;       % Height in metres
+M = (0:(1/(length(h) - 1)):1);  % Mach number
+vals = (0:1:length(h));
+K=0.04096652332;
+
+for i = 1 : length(h)
+    alt = height_metres(i);     % Converting altitude from feet to metres to do temp/pressure calculations
+    [T, a, P, rho] = atmosisa(alt);
+    
+    for j = 1 : length(h)
+        velocity = M(j) * a;                                   % Finding out the velocity
+        beta_thrust_ratio_cruise = ThrustLapseModel(M(j), alt/0.3048, 0.8, 35000);
+        Thrust = W0 * ThrustToWeightTakeOff * beta_thrust_ratio_cruise; 
+        CL_Cruise = W_cruise / (0.5 * rho * velocity^2 * SWing);
+        CD_Total = CD_0_Total(2) + (K * (CL_Cruise)^2);
+        D = 0.5 * rho * SWing * velocity^2 * CD_Total;
+        Ps(i,j) = (velocity / W0) * (Thrust - D);              % Finding out specific excess power
+    end
+    
+    vstall(i) = sqrt((2 * W_cruise / SWing) / (rho * CL_max_clean)) / a;   % Stall speed to be plotted in Mach
+    
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Plotting the Contour plot
+figure
+[cl,hl] = contour(M,height_metres,Ps,vals);
+clabel(cl,hl)
+title('Specific Excess Power')
+xlabel('Mach number')
+ylabel('Altitude (feet)')
+hold on
+plot(vstall, height_metres, '-r')
+legend('Specific Excess Energy', 'Stall Boundary')
+
+
 
 CGfull 
 xNPOff 
