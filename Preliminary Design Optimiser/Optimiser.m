@@ -665,10 +665,18 @@ alpha0W = [alpha_zero_takeoff, -1.8, alpha_zero_landing]; %degrees
 %wing zero-lift pitching moment coefficient
 CMoW = zeroLiftPitchingMoment(CMoAerofoilW, ARwing, sweepWingQC, twistWing, CL_a_Total, CL_a_M0);
 
+%finding thrust coefficients for takeoff and landing
+
+thrustTakeoff = 2*Engine_SeaLevelThrust*ThrustLapseModel(1.2*sqrt((2 * W0) / (1.225 * SWing* CL_max_takeoff))/340.2941, 0, 0.8, 35000);
+thrustLanding = 0.25*2*Engine_SeaLevelThrust*ThrustLapseModel(1.3*V_Stall_Landing/340.2941, 0, 0.8, 35000);
+
+CTtakeoff = thrustTakeoff/(SWing*0.5*1.225*(1.2*sqrt((2 * W0) / (1.225 * SWing* CL_max_takeoff)))^2);
+CTlanding = thrustLanding/(SWing*0.5*1.225*(1.3*V_Stall_Landing)^2);
+
 %determine iH, AoA, AoA_h, AoA_w, CL_w, and CL_h for trimmed flight
 [iH_trim, iW_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
    trimAnalysis(CG_all, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
-   CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH);
+   CL_Target, [CTtakeoff, CD_Total(2), CTlanding], CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH);
 
 %drawing aircraft
 sweepVertRudder = sweepConverter(sweepVertLE, 0, 0.8, 2*ARvert, taperVert);
