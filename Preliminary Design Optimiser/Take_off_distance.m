@@ -38,7 +38,7 @@ if h_obs >= h_TR
         * ((T/W_to) - (1/(L_over_D)));                % This gives the Transition distance in metres
 else
     S_C = 0;                                          % Climb distance in alternate scenario in metres
-    S_TR = sqrt(R^2 - (R^2 - h_obs^2));               % Transition distance in alternate scenario in metres
+    S_TR = sqrt(R^2 - (R - h_obs)^2);               % Transition distance in alternate scenario in metres
 end
 fprintf('The Climb Distance is %f m. \n',S_C);
 fprintf('The Transition Distance is %f m. \n',S_TR);

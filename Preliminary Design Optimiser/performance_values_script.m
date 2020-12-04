@@ -112,14 +112,14 @@ ylabel('Maximum Rate of Climb (feet/minute)');
 xlabel('Altitude (feet)');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
+%}
 Ixx = 8.716*10^6; 
 
 % The equation below gives the Maximum aileron deflection and the time 
 % taken by the aircraft to achieve the max bank angle
 [t, Max_ail_def, y1, y2] = aileron_sizing_new(b, Sref, AspectRatio,...
     TaperRatio, CL_a_Total(3), VS0, Ixx, Sref, SHoriz, SVert, 0.61, 0.89, root_chord);
-%}
+%{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 h = (0:100:60000);              % Height in feet
 height_metres = h*0.3048;       % Height in metres
@@ -172,5 +172,5 @@ filename = 'Performance_and_control_surface_values.mat' ;
 save(filename, 'S_to', 'S_L', 'BFL', 'E1', 'R1', 'FC1',...
     'E2', 'R2', 'EC2', 't', 'Max_ail_def', 'L_over_D_max',...
     'Vs_cruise', 'V_LDmax', 'V_max', 'V_min', 'y1', 'y2');
-
+%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -52,7 +52,7 @@ plot([vertRootLE(1) + cRootVert + 0.05*heightVert*tand(sweepVertTE),...
     [vertRootLE(3) + 0.05*heightVert, vertRootLE(3) + 0.05*heightVert,...
     vertRootLE(3) + 0.95*heightVert, vertRootLE(3) + 0.95*heightVert], 'k-')
 grid minor
-title('Reference Lifting Surfaces - Side View')
+%title('Reference Lifting Surfaces - Side View')
 xlabel('x-direction (m)')
 ylabel('z-direction (m)')
 fig2.Units = 'normalized';

@@ -834,7 +834,14 @@ for i = 1 : length(h)
         D = 0.5 * rho * SWing * velocity^2 * CD_Total;
         Ps(i,j) = (velocity / W0) * (Thrust - D);              % Finding out specific excess power
     end
-    
+    v_climb = 0.8 * a; 
+    beta_thrust_ratio_climb = ThrustLapseModel(0.8, alt/0.3048, 0.8, 35000);
+    Thrust_climb = W0 * ThrustToWeightTakeOff * beta_thrust_ratio_climb; 
+    CL_cruise_climb = W_cruise / (0.5 * rho * v_climb^2 * SWing);
+    CD_Total_climb = CD_0_Total(2) + (K * (CL_cruise_climb^2));
+    D_climb = 0.5 * rho * SWing * v_climb^2 * CD_Total_climb; 
+    climb_angle = asin((Thrust_climb - D_climb) / W0);
+    V_Y(i) = v_climb * sin(climb_angle) * 60 * (1/0.3048);
     vstall(i) = sqrt((2 * W_cruise / SWing) / (rho * CL_max_clean)) / a;   % Stall speed to be plotted in Mach
     
 end
@@ -848,7 +855,6 @@ Cruise_altitude = ones(1,length(h))*35000;
 figure
 [cl,hl] = contour(M,h,Ps,vals);
 clabel(cl,hl)
-title('Specific Excess Power')
 xlabel('Mach number')
 ylabel('Altitude (feet)')
 hold on
@@ -856,7 +862,7 @@ plot(vstall, h, '-r')
 plot(0.8, 35000, 'xb', 'MarkerSize', 12)
 plot(M,abs_ceiling,'--m')
 plot(M,Cruise_altitude,'--c')
-legend({'Specific Excess Energy','Stall Line','Cruise Point','Absolute Ceiling','Cruise Altitude'}...
+legend({'Specific Excess Power','Stall Line','Cruise Point','Absolute Ceiling','Cruise Altitude'}...
     ,'Location','North west')
 
 

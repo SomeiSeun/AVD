@@ -38,15 +38,15 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Plotting the Contour plot
-figure(1)
-[cl,hl] = contour(M,height_metres,Ps,vals);
-clabel(cl,hl)
-title('Specific Excess Power')
-xlabel('Mach number')
-ylabel('Altitude (feet)')
-hold on
-plot(vstall, height_metres, '-r')
-legend('Specific Excess Energy', 'Stall Boundary')
+% % Plotting the Contour plot
+% figure(1)
+% [cl,hl] = contour(M,height_metres,Ps,vals);
+% clabel(cl,hl)
+% title('Specific Excess Power')
+% xlabel('Mach number')
+% ylabel('Altitude (feet)')
+% hold on
+% plot(vstall, height_metres, '-r')
+% legend('Specific Excess Energy', 'Stall Boundary')
 
 end

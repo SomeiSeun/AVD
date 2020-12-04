@@ -40,11 +40,11 @@ fprintf('The Free Roll Distance is %f m. \n',S_FR);
 
 rho = 1.225;                         % Density of air in kg/m^3
 V2 = 0;                              % Velocity when the plane has stopped
-V1 = 1.1 * VS0;                      % Touchdown velocity
+V1 = 1.1 * VS0                      % Touchdown velocity
 mu = 0.05;                           % Friction coefficient of tarmac
-K_T = (T_L / W_L) - mu;              % A constant
+K_T = (T_L / W_L) - mu              % A constant
 C_LTO = Cl0;                         % Lift coefficient during Landing
-K_A = (rho / (2*W_L/S)) * ((mu * C_LTO) - CD0 - ((C_LTO)^2 / (pi * AR * e)));
+K_A = (rho / (2*W_L/S)) * ((mu * C_LTO) - CD0 - ((C_LTO)^2 / (pi * AR * e)))
 
 S_B = abs((1 / (2 * g * K_A)) * log((K_T + (K_A * V2^2)) / (K_T + (K_A * V1^2)))); % This gives the braking distance
 fprintf('The Braking Distance is %f m. \n',S_B);
