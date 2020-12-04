@@ -5,7 +5,7 @@ function [L, D_f,Capture_radius, Engine_SeaLevelThrust, Engine_TSFC, Thrustline_
 %% How much thrust is required
 InstalledThrustTotalReq = ThrustToWeight * W0;
 SystemsLossFactor = 1.08;
-NacelleLossFactor = 1.02;
+NacelleLossFactor = 1.00;
 UninstalledThrustTotalReq = InstalledThrustTotalReq * SystemsLossFactor * NacelleLossFactor;
 UninstalledThrustPerEngineReq = UninstalledThrustTotalReq/2;
 
@@ -15,14 +15,14 @@ Engine_Radius = 1.899; %m
 Engine_Diameter = 2 * Engine_Radius; %m
 Engine_Mass_Dry = 6033; %kg
 %Engine_Takeoff_Thrust_5min = 307.8; %kN
-Engine_MaxContThrust = 287.9; %kN
-%Engine_EquivalentBareEngine_TakeoffThrust = 310.9; %kN
+%Engine_MaxContThrust = 287.9; %kN
+Engine_EquivalentBareEngine_TakeoffThrust = 310.9; %kN
 %Engine_EquivalentBareEngine_MaxContinuous = 290.8; %kN
 Engine_BPR = 10;
 Engine_TSFC = 14.34; %g/kN/s
 
 %% Rubber sizing selected engine to match requirements
-SF = UninstalledThrustPerEngineReq/(Engine_MaxContThrust*1000);
+SF = UninstalledThrustPerEngineReq/(Engine_EquivalentBareEngine_TakeoffThrust*1000);
 L = Engine_Length * (SF^0.4);
 D_e = Engine_Diameter * (SF^0.5);
 D_f = 2.85 * (SF^0.5);

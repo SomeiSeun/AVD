@@ -111,8 +111,10 @@ for i = 1:length(y_mgjoint)
         x_ng_overturn_less = min(x_ng1, x_ng2);
         
         % Check if nose gear positioning is possible
+        %clc
         x_ng_least = max(x_ng_minload_more, x_ng_place_more);
         x_ng_most = min([x_ng_tricycle_less, x_ng_maxload_less, x_ng_overturn_less]);
+        %pause(0.05)
         
         %% Condition 2: Check if nose gear placement is possible
         
@@ -122,7 +124,7 @@ for i = 1:length(y_mgjoint)
             
         else
             
-            x_ng = x_ng_least:0.1:x_ng_least+1; % technically goes to x_ng_most but not much point
+            x_ng = x_ng_least:0.1:x_ng_most; % technically goes to x_ng_most but not much point
             
             %% Loop 2: Picking nose gear longitudinal positions
             

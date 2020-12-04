@@ -1,4 +1,4 @@
-function tailplanePlot2(Bruhxmin, xnp, CG, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
+function tailplanePlot2(Bruhxmin, xnp, CGempty, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 totalLength = aftLength + mainLength + frontLength;
 
@@ -20,8 +20,10 @@ plot(horizPlanform(1,:), [horizPlanform(2,1), -horizPlanform(2,2), -horizPlanfor
 plot(wingPlanform(1,:), wingPlanform(2,:), 'k-') %staring wing
 plot(wingPlanform(1,:), [wingPlanform(2,1), -wingPlanform(2,2), -wingPlanform(2,3), wingPlanform(2,4)], 'k-') %port wing
 plot(vertPlanform(1,:), vertPlanform(2,:), 'ro-') %vertical tail
-plot(CG(1),CG(2),'go')
-plot(xnp(1),CG(2),'ro')
+plot(CGfull(1),CGfull(2),'go')
+plot(CGempty(1),CGempty(2),'k+', 'MarkerSize', 10)
+plot(CGempty(1),CGempty(2),'ko','MarkerSize', 10)
+plot(xnp(1),CGfull(2),'ro')
 plot(Bruhxmin, Bruhy, 'xk', 'LineWidth', 0.1) % x min for ground clearance being possible
 grid minor
 title('Reference Lifting Surfaces - Top View')
@@ -45,8 +47,8 @@ plot(wingPlanform(1,:), wingPlanform(3,:), 'ko-') %horizontal stabiliser
 plot(vertPlanform(1,:), vertPlanform(3,:), 'r-') %vertical tail
 plot([horizPlanform(1,1), horizPlanform(1,1)+10*cosd(60)], [horizPlanform(3,1), horizPlanform(3,1)+10*sind(60)], 'm:') %60 degree line
 %plot([horizPlanform(1,4), horizPlanform(1,4)+10*cosd(30)], [horizPlanform(3,4), horizPlanform(3,4)+10*sind(30)], 'm:') %30 degree line
-plot(CG(1),CG(3),'go')
-plot(xnp(1),CG(3),'ro')
+plot(CGfull(1),CGfull(3),'go')
+plot(xnp(1),CGfull(3),'ro')
 grid minor
 title('Reference Lifting Surfaces - Side View')
 xlabel('x-direction (m)')
@@ -65,7 +67,7 @@ plot([horizPlanform(2,1), -horizPlanform(2,2), -horizPlanform(2,3), horizPlanfor
 plot(wingPlanform(2,:), wingPlanform(3,:), 'k-') %staring wing
 plot([wingPlanform(2,1), -wingPlanform(2,2), -wingPlanform(2,3), wingPlanform(2,4)], wingPlanform(3,:), 'k-') %port wing
 plot(vertPlanform(2,:), vertPlanform(3,:), 'r-') %vertical tail
-plot(CG(2),CG(3),'go')
+plot(CGfull(2),CGfull(3),'go')
 grid minor
 title('Reference Lifting Surfaces - Front View')
 xlabel('y-direction (m)')

@@ -1,8 +1,8 @@
-function [LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
+function [MainOleo, NoseOleo, LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
     LengthMainGearRetracted, LengthNoseGearDeployed, LengthNoseGearRetracted, ...
     GroundClearanceFuselage, GroundClearanceEngine, NoseGearLoadRatio, LandingLoadRatio, ...
     AngleTailstrike, AngleTipback, AngleOverturn, NoseWheel, MainWheel, FrontalAreaNoseGear, FrontalAreaMainGear] ...
-    = UndercarriageFunction2(W0, WFCumulative6, x_wingroot, z_wingroot, length_rootchord, ...
+    = UndercarriageFunction2(fudge, W0, WFCumulative6, x_wingroot, z_wingroot, length_rootchord, ...
     theta_setting, theta_sweeprearspar, theta_dihedral, ...
     theta_maxground, chord_rearspar, length_aircraft, radius_fuselage, ...
     x_firsttailstrike, z_firsttailstrike, height_mgmax, length_mgmax, x_cgmin, x_cgmax, ...
@@ -24,7 +24,7 @@ WNGRmin = 0.05;
 WNGRmax = 0.20;
 
 %% Initialise variables and arrays
-x_ng = 0:0.001:length_aircraft;
+x_ng = 0:0.01:length_aircraft;
 y_mgjoint = 0:0.01:10;
 haveUndercarriage = 0;
 
@@ -41,6 +41,7 @@ for i = 1:length(y_mgjoint)
     z_rearspar = z_wingroot - length_rootchord*(chord_rearspar - 0.25)*sind(theta_setting);
     x_mgjoint = x_rearspar + y_mgjoint(i)*( tand(theta_sweeprearspar)*cosd(theta_setting) + tand(theta_dihedral)*sind(theta_setting) );
     z_mgjoint = z_rearspar + y_mgjoint(i)*( -tand(theta_sweeprearspar)*sind(theta_setting) + tand(theta_dihedral)*cosd(theta_setting) );
+    disp(['CG taken as ', num2str(x_cgmin)])
     disp(['Main gear joint xpos is therefore ', num2str(x_mgjoint)])
     disp(' ')
     
@@ -61,7 +62,7 @@ for i = 1:length(y_mgjoint)
     disp(['Max nose gear load constraint: nose gear xpos less than ', num2str(x_ng_maxload_less)])
     
     % Find minimum ground clearance from tailstrike constraint
-    grc_min_tailstrike = (x_firsttailstrike - x_mgjoint - 1.5)*tand(theta_maxground) - z_firsttailstrike - radius_fuselage;
+    grc_min_tailstrike = (x_firsttailstrike - x_mgjoint-fudge)*tand(theta_maxground) - z_firsttailstrike - radius_fuselage; %FUDGE DETAIL
     disp(['Tailstrike constraint: min ground clearance ', num2str(grc_min_tailstrike)])
     
     % Find minimum ground clearance from engine clearance constraint
@@ -69,7 +70,7 @@ for i = 1:length(y_mgjoint)
     disp(['Engine constraint: min ground clearance ', num2str(grc_min_engine)])
     
     % Find maximum ground clearance from tipback constraint
-    grc_max_tipback = ((x_mgjoint + 1.5 - x_cgmax)/(tand(theta_maxground))) - radius_fuselage - z_cg;
+    grc_max_tipback = ((x_mgjoint+fudge - x_cgmax)/(tand(theta_maxground))) - radius_fuselage - z_cg; %FUDGE DETAIL
     disp(['Tipback constraint: max ground clearance ', num2str(grc_max_tipback)])
     
     % Find maximum ground clearance from undercarriage max length
@@ -109,8 +110,8 @@ for i = 1:length(y_mgjoint)
         grc_chosen = grc_max_most_constraining; %OUTPUT
         h_cg = grc_chosen + radius_fuselage + z_cg; %OUTPUT
         a = (y_mgjoint(i)^2 * tand(63)^2) - (h_cg^2);
-        b = (-2*x_cgmin*(y_mgjoint(i)^2)*(tand(63)^2)) - (-2*x_mgjoint*h_cg^2);
-        c = (x_cgmin^2*y_mgjoint(i)^2*tand(63)^2) - (h_cg^2*(y_mgjoint(i)^2+x_mgjoint^2));
+        b = (-2*x_cgmin*(y_mgjoint(i)^2)*(tand(63)^2)) - (-2*(x_mgjoint-fudge)*h_cg^2); % FUDGE
+        c = (x_cgmin^2*y_mgjoint(i)^2*tand(63)^2) - (h_cg^2*(y_mgjoint(i)^2+(x_mgjoint-fudge)^2)); %FUDGE
         x_ng1 = (-b+sqrt(b^2-4*a*c))/(2*a);
         x_ng2 = (-b-sqrt(b^2-4*a*c))/(2*a);
         x_ng_overturn_less = min(x_ng1, x_ng2);
@@ -131,7 +132,7 @@ for i = 1:length(y_mgjoint)
             
         else
             
-            x_ng = x_ng_least:0.1:x_ng_least+1; % technically goes to x_ng_most but not much point
+            x_ng = x_ng_least:0.1:x_ng_most; % technically goes to x_ng_most but not much point
             
             %% Loop 2: Picking nose gear longitudinal positions
             
@@ -157,12 +158,12 @@ for i = 1:length(y_mgjoint)
                 disp('Verifying placement selection:')
                 WNGR_actual = (((x_cgmax+x_cgmin)/2) - x_mgjoint)/(x_ng(ii)-x_mgjoint); %OUTPUT
                 disp(['Nose gear load ratio is ', num2str(WNGR_actual)])
-                theta_tailstrike_actual = atand( (grc_chosen + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint) ); %OUTPUT
+                theta_tailstrike_actual = atand( (grc_chosen + radius_fuselage + z_firsttailstrike) / (x_firsttailstrike - x_mgjoint-fudge) ); %OUTPUT FUDGE FACTOR
                 disp(['Tailstrike angle is ', num2str(theta_tailstrike_actual) ])
-                theta_tipback_actual = atand( (x_mgjoint-x_cgmax)/h_cg ); %OUTPUT
+                theta_tipback_actual = atand( (x_mgjoint+fudge-x_cgmax)/h_cg ); %OUTPUT FUDGE FACTOR
                 disp(['Tipback angle is ', num2str(theta_tipback_actual)])
                 disp(['Ground clearance is ', num2str(grc_chosen)])
-                theta_overturn_actual = atand( (h_cg*sqrt(y_mgjoint(i)^2+(x_mgjoint-x_ng(ii))^2))/(y_mgjoint(i)*(x_cgmin-x_ng(ii)))); %OUTPUT
+                theta_overturn_actual = atand( (h_cg*sqrt(y_mgjoint(i)^2+(x_mgjoint-fudge-x_ng(ii))^2))/(y_mgjoint(i)*(x_cgmin-x_ng(ii)))); %OUTPUT
                 disp(['Overturn angle is ', num2str(theta_overturn_actual) ])
                 disp(' ')
                 
@@ -178,7 +179,7 @@ for i = 1:length(y_mgjoint)
                 disp(['Static load on main gear is approx ', num2str(round(LbsReqMainGear)), ' lbs'])
                 
                 % Pick tires
-                [NoseWheel] = GimmeTires(LbsReqNoseGearStatic+LbsReqNoseGearDynamic, 200, 40); %OUTPUT
+                [NoseWheel] = GimmeTires(LbsReqNoseGearStatic+LbsReqNoseGearDynamic, 300, 60); %OUTPUT
                 [MainWheel] = GimmeTires(LbsReqMainGear, 200, length_mgmax*39.3700787/2); %OUTPUT
                 disp(' ')
                 disp('Nose wheel selected: ')
@@ -329,7 +330,7 @@ for i = 1:length(y_mgjoint)
         disp('Final undercarriage placement successful')  
         break
     end
-    pause(0.05)
+    %pause(0.005)
     clc
 end
 %% \Loop 1: Picking lateral positions of landing gears
@@ -351,8 +352,8 @@ end
 
 if haveUndercarriage == 0
     
-    LocationMainGearJoint = 0;
-    LocationNoseGearJoint = 0;
+    LocationMainGearJoint = [100,100,100]';
+    LocationNoseGearJoint = [100,100,100]';
     
     LengthMainGearDeployed = 0;
     LengthMainGearRetracted = 0;

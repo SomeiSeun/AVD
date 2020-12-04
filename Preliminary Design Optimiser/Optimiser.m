@@ -200,6 +200,8 @@ S_wetted= S_exposed*(1.997+0.52*thicknessRatioWing);            %check--> depend
 %Structure (Palash just added another sweepConverter output)
 frontSparPercent = 0.25;    % Between 12-18 percent
 rearSparPercent = 0.70;     % Between 55-70 percent
+UCSparPercent = 0.8;
+Sweep_UCspar = sweepConverter(sweepWingLE, 0, UCSparPercent, ARwing, taperWing);
 Sweep_rearSpar = sweepConverter(sweepWingLE, 0, rearSparPercent, ARwing, taperWing);
 
 %wing incidence
@@ -250,7 +252,7 @@ maxThicknessLocationVert = 0.3;
 alpha0H = 0;
 
 %tailplane parameters to optimse8
-ARhoriz = 3.13; %typically 3-5 where AR = b^2/Sh and b is the tail span 
+ARhoriz = 3.1; %typically 3-5 where AR = b^2/Sh and b is the tail span 
 ARvert = 1.5; %typically 1.3-2 where AR = h^2/Sv and h is the tail height 
 taperHoriz = 0.5; %typically 0.3 - 0.5 
 taperVert = 0.5; %typically 0.3 - 0.5 
@@ -319,7 +321,7 @@ end
 clear VbarH_target VbarV_target
 
 %exposed and wetted areas
-SHorizExposed = SHoriz - 10; %approximation
+SHorizExposed = SHoriz - 7; %approximation
 SHorizWetted = SHorizExposed*(1.977 + 0.52*thicknessRatioHoriz);
 SVertExposed = SVert;
 SVertWetted = SVertExposed*(1.977 + 0.52*thicknessRatioVert);
@@ -343,7 +345,7 @@ rudder_area = rudder_span * rudder_avg_chord * 2;           % Total area of the 
 
 %% ENGINE DESIGN
 
-y_engine_ref = 8;
+y_engine_ref = 10; %DO NOT go below 8
 
 [engine_uninstalled_length, D_f, Capture_radius, Engine_SeaLevelThrust, Engine_TSFC, Thrustline_position, Engine_Weight,...
     Engine_BPR, lengthNacelle, nacelleRadius, SnacelleWetted, y_engine_strike, z_engine_strike, Engine_CG, Nacelle_CG] = ...
@@ -564,7 +566,7 @@ components(17).cog = [0.5*totalLength; 0; 0];
 components(18).cog = [frontLength + 3; 0; -0.5*fusDiamOuter];
 components(19).cog = [frontLength + 0.6*mainLength; 0; 0]; 
 components(20).cog = [0.5*totalLength;0;0];
-components(21).cog = wingRootLE+0.5*cRootWing;
+components(21).cog = [wingRootLE(1)+0.5*cRootWing;0;0];
 
 components(22).cog = [frontLength + 0.55*mainLength; 0; 0]; 
 components(23).cog = [frontLength + 0.5*mainLength; 0; 0];
@@ -579,7 +581,7 @@ for i = 1:(length(components)-4)
     sumWeight_empty = sumWeight_empty + components(i).weight;
 end
 
-CGempty = sumBalance_empty./sumWeight_empty;
+CG_empty = sumBalance_empty./sumWeight_empty;
 
 %calculating CG fuel no pax no cargo
 sumBalance_fuel = sumBalance_empty;
@@ -589,17 +591,7 @@ i = 25;
 sumBalance_fuel = sumBalance_fuel + components(i).weight.*components(i).cog;
 sumWeight_fuel = sumWeight_fuel + components(i).weight;
 
-CGfuel = sumBalance_fuel./sumWeight_fuel;
-
-%calculating CG fuel no pax with cargo
-sumBalance_frontLoad = [0;0;0];
-sumWeight_frontLoad = sumWeight_fuel;
-for i = 1:(length(components)-4)
-    sumBalance_frontLoad = sumBalance_frontLoad + components(i).weight.*components(i).cog;
-    sumWeight_frontLoad = sumWeight_frontLoad + components(i).weight;
-end
-
-CGnopax = sumBalance_frontLoad./sumWeight_frontLoad;
+CG_fuel = sumBalance_fuel./sumWeight_fuel;
 
 %calculating CG MTOW
 sumBalance_MTOW = [0;0;0];
@@ -608,9 +600,43 @@ for i = 1:length(components)
     sumBalance_MTOW = sumBalance_MTOW + components(i).weight.*components(i).cog;
     sumWeight_MTOW = sumWeight_MTOW + components(i).weight;
 end
-CGfull = sumBalance_MTOW./sumWeight_MTOW;
-%CGmtow = sumBalance_MTOW./sumWeight_MTOW;
-% CGfull = [CGmtow, CGcstart, CGcend, CGland];
+CG_mtow = sumBalance_MTOW./sumWeight_MTOW;
+
+%calculating CG cruise start
+sumBalance_start = [0;0;0];
+sumWeight_start = 0;
+for i = 1:(length(components)-1)
+    sumBalance_start = sumBalance_start + components(i).weight.*components(i).cog;
+    sumWeight_start = sumWeight_start + components(i).weight;
+end
+sumWeight_start = sumWeight_start + components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4);
+sumBalance_start = sumBalance_start + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4)).*components(25).cog;
+CG_start = sumBalance_start./sumWeight_start;
+
+%calculating CG cruise end
+sumBalance_end = [0;0;0];
+sumWeight_end = 0;
+for i = 1:(length(components)-1)
+    sumBalance_end = sumBalance_end + components(i).weight.*components(i).cog;
+    sumWeight_end = sumWeight_end + components(i).weight;
+end
+sumWeight_end = sumWeight_end + components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5);
+sumBalance_end = sumBalance_end + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5)).*components(25).cog;
+CG_end = sumBalance_end./sumWeight_end;
+
+%calculating CG landing
+sumBalance_land = [0;0;0];
+sumWeight_land = 0;
+for i = 1:(length(components)-1)
+    sumBalance_land = sumBalance_land + components(i).weight.*components(i).cog;
+    sumWeight_land = sumWeight_land + components(i).weight;
+end
+sumWeight_land = sumWeight_land + components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5*WF6);
+sumBalance_land = sumBalance_land + (components(25).weight - (W0 - W0*WF1*WF2*WF3*WF4*WF5*WF6)).*components(25).cog;
+CG_land = sumBalance_land./sumWeight_land;
+
+
+CG_all = [CG_mtow, CG_start, CG_end, CG_land]; 
 
 
 %% STABILTIY ANALYSIS
@@ -620,7 +646,6 @@ wingPlanform = wingRootLE + tailplanePlanform(spanWing, sweepWingLE, cRootWing, 
 horizPlanform = horizRootLE + tailplanePlanform(spanHoriz, sweepHorizLE, cRootHoriz, cTipHoriz, dihedralHoriz, false);
 vertPlanform = vertRootLE + tailplanePlanform(2*heightVert, sweepVertLE, cRootVert, cTipVert, dihedralVert, true);
 
-
 %aircraft fuselage pitching moment contribution
 CMalphaF = fuselagePitchingMoment(totalLength, fusDiamOuter, cBarWing, SWing, wingRootLE(1) + 0.25*cRootWing);
 
@@ -629,61 +654,61 @@ downwash = downwash(lHoriz, hHoriz, spanWing, sweepWingQC, ARwing, taperWing, CL
 
 %neutral point and static margin
 [xNPOff, KnOff, xNPOn, KnOn] =...
-    staticStability(CGfull, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
-
-
-%% Ground clearance checker (temporary)
-theta_maxground = 15;
-Bruhg1 = tand(theta_maxground - 90);
-Bruhc1 = CGfull(3) - Bruhg1*CGfull(1);
-Bruhg2 = tand(theta_maxground);
-Bruhc2 = -fusDiamOuter/2 - Bruhg2*(frontLength + mainLength);
-Bruhxmin = (Bruhc2-Bruhc1)/(Bruhg1-Bruhg2);
-
-tailplanePlot2(Bruhxmin-1.5, xNPOff, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
-
+   staticStability(CG_all, SWing, SHoriz, wingAC(1), horizAC(1), cBarWing, CL_ah, CL_a_Total, CMalphaF, downwash, etaH);
 
 %% TRIM ANALYSIS 
 
 %wing aerofoil parameters
 CMoAerofoilW = -0.03; %Sforza and -0.04 according to airfoiltools (xfoil)
-alpha0W = -1.6; %degrees
+alpha0W = [alpha_zero_takeoff, -1.8, alpha_zero_landing]; %degrees
 
 %wing zero-lift pitching moment coefficient
 CMoW = zeroLiftPitchingMoment(CMoAerofoilW, ARwing, sweepWingQC, twistWing, CL_a_Total, CL_a_M0);
 
-%required lift coefficient and drag at cruise 
-[~,~,~,rhoCruise]= atmosisa(distdim(35000,'ft','m'));
-CLtarget(1:3) = WingLoading/(0.5*rhoCruise*V_Cruise^2); %CHANGE IT TO SPECIFIC WEIGHT, RHO, AND VELOCITY AT EACH SEGMENT
-
-
-%determine iH and AoA for trimmed flight
+%determine iH, AoA, AoA_h, AoA_w, CL_w, and CL_h for trimmed flight
 [iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
-    trimAnalysis(CGfull, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
-    CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
+   trimAnalysis(CG_all, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
+   CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
 
+tailplanePlot(xNPOff, CG_mtow, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
+
+% Ground clearance checker ( DO NOT DELETE )
+
+%         Bruhg1 = tand(theta_maxground - 90);
+%         Bruhc1 = CG_full(3) - Bruhg1*CGfull(1);
+%         Bruhg2 = tand(theta_maxground);
+%         Bruhc2 = -fusDiamOuter/2 - Bruhg2*(frontLength + mainLength);
+%         Bruhxmin = (Bruhc2-Bruhc1)/(Bruhg1-Bruhg2);
+%         Bruhxmin = Bruhxmin - 1.5; % FUDGE factor to allow more ground clearance options
+
+%tailplanePlot2(Bruhxmin, xNPOff, CGempty, CGfull, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 %% UNDERCARRIAGE DESIGN
 
 %theta_maxground = 15;
+theta_maxground = 16;
 x_firsttailstrike = frontLength + mainLength;
 height_mgmax = 1.5;
 length_mgmax = 3;
-x_cgmin = CGempty(1);
-x_cgmax = CGempty(1);
-z_cg = CGfull(3);
+x_cgmin = CG_empty(1); % FUDGE factor to move ground CG forward
+x_cgmax = CG_empty(1); % FUDGE factor to move ground CG forward
+z_cg = CG_all(3,1);
+fudge = 0.4;
 
 [MainOleo, NoseOleo, LocationMainGearJoint, LocationNoseGearJoint, LengthMainGearDeployed, ...
     LengthMainGearRetracted, LengthNoseGearDeployed, LengthNoseGearRetracted, ...
     GroundClearanceFuselage, GroundClearanceEngine, NoseGearLoadRatio, LandingLoadRatio, ...
     AngleTailstrike, AngleTipback, AngleOverturn, NoseWheel, MainWheel, FrontalAreaNoseGear, FrontalAreaMainGear] ...
-    = UndercarriageFunction(W0, WF1*WF2*WF3*WF4*WF5*WF6, wingRootLE(1) + 0.25*cBarWing, wingRootLE(3), cRootWing, ...
-    i_w_root, Sweep_rearSpar, dihedralWing, ...
-    theta_maxground, rearSparPercent, totalLength, fusDiamOuter/2, ...
+    = UndercarriageFunction2(fudge, W0, WF1*WF2*WF3*WF4*WF5*WF6, wingRootLE(1) + 0.25*cBarWing, wingRootLE(3), cRootWing, ...
+    i_w_root, Sweep_UCspar, dihedralWing, ...
+    theta_maxground, UCSparPercent, totalLength, fusDiamOuter/2, ...
     x_firsttailstrike, -fusDiamOuter/2, height_mgmax, length_mgmax, x_cgmin, x_cgmax, ...
     z_cg, y_engine_strike, z_engine_strike);
 
 
+        
+        
+        
 
 %% PERFORMANCE ANALYSIS
 W_ini_1 = W0 * WF1 * WF2 * WF3 * WF4;       % Weight at start of cruise 1 in Newtons
@@ -787,6 +812,7 @@ T_cruise = T_dummy * beta_thrust_ratio_cruise;
     0.7853, ARwing, e_Cruise, rho_cruise, W_cruise, SWing, CL_max_clean, 1, T_cruise);
 %}
 
+<<<<<<< HEAD
 
 h = (0:100:60000);              % Height in feet
 height_metres = h*0.3048;       % Height in metres
@@ -829,12 +855,12 @@ legend('Specific Excess Energy', 'Stall Boundary')
 
 CGfull 
 xNPOff 
+=======
+CG_all 
+>>>>>>> main
 KnOff
 LocationNoseGearJoint
 LocationMainGearJoint
-AngleOverturn
-AngleTailstrike
-AngleTipback
 toc
 
 
@@ -858,7 +884,7 @@ designparams(12,2) = {wingRootLE(1)};
 designparams(13,2) = {wingRootLE(3)};
 designparams(15,2) = {thicknessRatioWing};
 designparams(16,2) = {5.73}; %wing aerofoil lift curve slope
-designparams(17,2) = {alpha0W};
+designparams(17,2) = {-1.6};
 designparams(18,2) = {1.6}; %wing aerofoil max CL
 designparams(19,2) = {SWing};
 designparams(20,2) = {taperWing};
