@@ -295,8 +295,8 @@ while abs(VbarH_target - VbarH) > 1e-6 || abs(VbarV_target - VbarV) > 1e-6
 
     %root chord root chord leading edge positions [x-coord, y-coord, z-coord]
     wingRootLE = [0.3*totalLength; 0; -0.8*fusDiamOuter/2]; 
-    horizRootLE = [totalLength - 1.4*cRootHoriz; 0; 0.8*fusDiamOuter/2]; 
-    vertRootLE = [horizRootLE(1) - 0.8*cRootVert; 0; fusDiamOuter/2]; 
+    horizRootLE = [totalLength - 1.3*cRootHoriz; 0; 0.8*fusDiamOuter/2]; 
+    vertRootLE = [horizRootLE(1) - 0.77*cRootVert; 0; fusDiamOuter/2]; 
 
     %aerodynamic centre positions (1/4-chord of MAC) of wing and horizontal tailplane
     wingAC = wingRootLE + aerodynamicCentre(cBarWing, spanWing, taperWing, sweepWingLE, dihedralWing);
@@ -666,11 +666,13 @@ alpha0W = [alpha_zero_takeoff, -1.8, alpha_zero_landing]; %degrees
 CMoW = zeroLiftPitchingMoment(CMoAerofoilW, ARwing, sweepWingQC, twistWing, CL_a_Total, CL_a_M0);
 
 %determine iH, AoA, AoA_h, AoA_w, CL_w, and CL_h for trimmed flight
-[iH_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
+[iH_trim, iW_trim, AoA_trim, AoA_trimWings, AoA_trimHoriz, CL_trimWings, CL_trimHoriz] =...
    trimAnalysis(CG_all, wingAC, horizAC, Thrustline_position, y_MAC, spanWing, cBarWing, SWing, SHoriz, CMoW, CMalphaF,...
-   CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, i_w_root, alpha0W, alpha0H, downwash, etaH);
+   CL_Target, CD_Total, CL_a_Total, CL_ah, twistWing, alpha0W, alpha0H, downwash, etaH);
 
-tailplanePlot(xNPOff, CG_mtow, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
+%drawing aircraft
+sweepVertRudder = sweepConverter(sweepVertLE, 0, 0.8, 2*ARvert, taperVert);
+tailplanePlot(vertRootLE, cRootVert, xNPOff, sweepVertRudder, sweepVertTE, heightVert, CG_mtow, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
 
 % Ground clearance checker ( DO NOT DELETE )
 
@@ -812,7 +814,6 @@ T_cruise = T_dummy * beta_thrust_ratio_cruise;
     0.7853, ARwing, e_Cruise, rho_cruise, W_cruise, SWing, CL_max_clean, 1, T_cruise);
 %}
 
-<<<<<<< HEAD
 
 h = (0:100:60000);              % Height in feet
 height_metres = h*0.3048;       % Height in metres
@@ -853,11 +854,7 @@ legend('Specific Excess Energy', 'Stall Boundary')
 
 
 
-CGfull 
-xNPOff 
-=======
-CG_all 
->>>>>>> main
+
 KnOff
 LocationNoseGearJoint
 LocationMainGearJoint
