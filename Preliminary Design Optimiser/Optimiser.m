@@ -902,8 +902,8 @@ designparams(26,2) = {frontSparPercent};
 designparams(27,2) = {rearSparPercent};
 designparams(29,2) = {0.2}; %TE device chord ratio c' = cf + c
 designparams(30,2) = {flap_deflection}; %TE device extension ratio
-designparams(31,2) = {0.0844}; %TE device start position
-designparams(32,2) = {0.493}; %TE device end position
+designparams(31,2) = {0.14}; %TE device start position
+designparams(32,2) = {0.548}; %TE device end position
 designparams(38,2) = {0.2}; %aileron chord ratio
 designparams(39,2) = {aileron_starting_position};
 designparams(40,2) = {aileron_ending_position};

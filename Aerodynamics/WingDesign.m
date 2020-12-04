@@ -49,20 +49,16 @@ fuselage_diameter= 4.175556; %from Structures
 c_fuselage = root_chord - fuselage_diameter*( tand(Sweep_LE) - tand(Sweep_TE));
 WingArea_fuselage=0.5*fuselage_diameter*(root_chord+c_fuselage);
 S_exposed= Sref-WingArea_fuselage;
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 S_wetted= S_exposed*(1.997+0.52*Airfoil_ThicknessRatio_used);            %check--> depends on t/c of airfoil
 
 %% Structure (Palash just added another sweepConverter output
 frontSparPercent = 0.14;    % Between 12-18 percent
 rearSparPercent = 0.60;     % Between 55-70 percent
 Sweep_rearSpar = sweepConverter(Sweep_LE, 0, rearSparPercent, AspectRatio, TaperRatio);
-=======
+
 S_wetted= S_exposed*(1.997+0.52*Airfoil_ThicknessRatio_used);            
->>>>>>> main
-=======
 S_wetted= S_exposed*(1.977+0.52*Airfoil_ThicknessRatio_used);            
->>>>>>> main
 
 %% wing incidence
 i_w_root=2.3;
