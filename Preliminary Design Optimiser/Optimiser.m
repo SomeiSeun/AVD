@@ -729,6 +729,9 @@ fig3.Position(4) = 3;
 set(fig3.Children, 'FontName', 'Arial', 'FontSize', 10);
 print('CG_envelope', '-depsc')
 hold off
+
+save('ConceptualDesign.mat')
+
 %% TRIM ANALYSIS 
 %{
 %wing aerofoil parameters
