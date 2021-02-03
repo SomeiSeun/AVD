@@ -31,22 +31,45 @@ TO DO LIST:
 load('WingDistributions.mat')
 
 % Initialise
-tw1 = zeros(1,length(wing.lift));
-tw2 = zeros(1,length(wing.lift));
+tw1 = zeros(1,length(wing.span));
+tw2 = zeros(1,length(wing.span));
+q1 = zeros(1,length(wing.span));
+q0 = zeros(1,length(wing.span));
 
 % This loop is used to find multiple variables
-for i = 1:length(wing.lift)
+for i = 1:length(wing.span)
     h = 0.12 * wing.chord(i);                                                    % Approx height of the spars
     pitchingmoment = 0.5 * rho * V^2 * wing.chord(i)^2 * cm0;                    % Pitching moment for this aerofoil
     wing.torque(i) = (wing.lift(i) * abs(flex_ax - b1) * wing.chord(i)) +...
         (n * wing.selfWeight(i) * abs(flex_ax - cg))- pitchingmoment;            % Torque distribution along the wing
-    wing.sparwebarea = abs(b1 - b2) * wing.chord(i) * h;                         % Area of spar web approximately
-    q1 = wing.shearForce(i) / (2 * h);                                           % q1 shear flow component
-    q0 = wing.torque(i) / (2 * wing.sparwebarea);                                % q0 shear flow component
-    qweb1 = q1 + q0;                                                             % Front spar shear flow
-    qweb2 = q1 - q0;                                                             % Rear spar shear flow
+    wing.sparwebarea(i) = abs(b1 - b2) * wing.chord(i) * h;                      % Area of spar web approximately
+    q1(i) = wing.shearForce(i) / (2 * h);                                        % q1 shear flow component
+    q0(i) = wing.torque(i) / (2 * wing.sparwebarea(i));                          % q0 shear flow component
+    qweb1 = q1(i) + q0(i);                                                       % Front spar shear flow
+    qweb2 = q1(i) - q0(i);                                                       % Rear spar shear flow
     x1 = (qweb1 * h^2)/ (K_s * E);                                               % Value to be cube rooted for front spar
     x2 = (qweb2 * h^2)/ (K_s * E);                                               % Value to be cube rooted for rear spar
     tw1(i) = nthroot(x1,3);                                                      % Thickness for front spar
     tw2(i) = nthroot(x2,3);                                                      % Thickness for rear spar
 end
+
+% Plotting the torque distribution
+figure 
+plot(wing.span,wing.torque,'-xr')
+xlabel('Wing span (m)')
+ylabel('Torque (Nm)')
+
+% Plotting wingbox area variation
+figure
+plot(wing.span,wing.sparwebarea,'-xb')
+xlabel('Wing span (m)')
+ylabel('Area (m^2)')
+
+% Plotting shear flow term variation
+figure
+plot(wing.span,q1,'-xr')
+hold on
+plot(wing.span,q0,'-xb')
+xlabel('Wing span (m)')
+ylabel('Shear flow (N/m)')
+legend({'q1','q0'},'Location','northwest')
