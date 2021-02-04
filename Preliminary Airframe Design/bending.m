@@ -38,7 +38,7 @@ wing.fuseWeight = zeros(1, numSections);
 [~,I1] = min(abs(wing.span - fuseWingWidth));
 I2 = numSections;
 wing.fuseWeight(I1:I2) = Nz*0.5*(W0 - components(1).weight - components(7).weight - components(5).weight -...
-    components(8).weight - components(25).weight)/(wing.span(I1) - wing.span(I2));
+    components(8).weight - fuelInTank*components(25).weight)/(wing.span(I1) - wing.span(I2));
 
 % Overall Wing Loading
 wing.loading = wing.lift - wing.selfWeight - wing.engineWeight - wing.ucWeight...

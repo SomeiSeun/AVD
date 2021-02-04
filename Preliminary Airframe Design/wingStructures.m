@@ -8,18 +8,18 @@ load('ConceptualDesign.mat', 'W0', 'components', 'spanWing', 'cRootWing', 'taper
 % Loading Parameters
 numSections = 1e4;
 Nz = 1.5*2.5;
-fuelInTank = 1;
+fuelInTank = 0;
 
 % Evaluating weight and lift distributions, shear force, and bending
 % moments along the wing
 wing = bending(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing, taperWing, Thrustline_position);
 
 % Defining wing structural parameters
-frontSparLocation = 0.25; % chordwise location
-rearSparLocation = 0.7; % chordwise location
-frontSparHeight = 0.12; %as a fraction
-rearSparHeight = 0.07; %as a fraction
-flexuralAxis = 0.5; % chordwise location
+frontSparLocation = 0.25;   % chordwise location
+rearSparLocation = 0.7;     % chordwise location
+frontSparHeight = 0.12;     % as a fraction of chord
+rearSparHeight = 0.07;      % as a fraction of chord
+flexuralAxis = 0.5;         % chordwise location
 neutralAxisLocation = 0.01; % above airfoil chord-line datum
 
 K_s = 8.1;
@@ -31,7 +31,9 @@ cg = 0.6;
 
 
 
-% % Plotting Results
+
+
+% Plotting Results
 % fig1 = figure(1);
 % hold on
 % plot(wing.span, wing.lift, '--')

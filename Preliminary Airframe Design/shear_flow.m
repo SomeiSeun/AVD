@@ -44,8 +44,8 @@ qweb2 = zeros(1,length(wing.span));
 for i = 1:length(wing.span)
     h(i) = 0.12 * wing.chord(i);                                              % Approx height of the spars
     pitchingmoment(i) = 0.5 * rho * V^2 * wing.chord(i)^2 * cm0;              % Pitching moment for this aerofoil
-    wing.torque(i) = (wing.lift(i) * abs(flex_ax - b1) * wing.chord(i)) +...
-        (n * wing.selfWeight(i) * abs(flex_ax - cg))- pitchingmoment(i);      % Torque distribution along the wing
+    wing.torque(i) = (wing.lift(i) * (flex_ax - b1) * wing.chord(i)) +...
+        (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) - pitchingmoment(i);      % Torque distribution along the wing
     wing.sparwebarea(i) = abs(b1 - b2) * wing.chord(i) * h(i);                % Area of spar web approximately
     q1(i) = -wing.shearForce(i) / (2 * h(i));                                 % q1 shear flow component
     q0(i) = wing.torque(i) / (2 * wing.sparwebarea(i));                       % q0 shear flow component

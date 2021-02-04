@@ -5,16 +5,17 @@ function [frontSpar, rearSpar] = sparSizing(NACA, wing, SparMaterial, frontSparL
 % loading material parameters and wing momment distribution
 numSections = length(wing.span);
 E = [SparMaterial.YM]';
+TYS = [SparMaterial.TYS]';
 
 % loading NACA aerofoil for visualisation
 fileID = fopen(NACA, 'r');
 NACA = fscanf(fileID, '%f %f', [2 Inf]);
 
-% normalised chord-wise locations of front and rear spars
-
-
+% chord-wise locations of front and rear spars
 frontSpar.height = frontSparHeight*wing.chord;
 rearSpar.height = rearSparHeight*wing.chord;
+
+
 
 fig1 = figure(1);
 hold on
