@@ -2,9 +2,10 @@
 
 clear
 clc
+close all
 
 load('ConceptualDesign.mat','rho_cruise','V_Cruise')
-n = 1;
+n = 3.75;
 K_s = 8.1;
 rho = rho_cruise;
 V = V_Cruise;
