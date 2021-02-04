@@ -1,3 +1,5 @@
+% This script calculates the bending moment and shear force distributions
+% along the wing, assuming a simply supported beam and symmetric flight.
 clear
 clc
 close all
@@ -9,8 +11,9 @@ numSections = 1e4;
 wing.chord = linspace(cTipWing, cRootWing, numSections);
 wing.span = linspace(spanWing/2, 0, numSections);
 
+fuelInTank = 1; % FRACTION OF FUEL LEFT IN WING TANKS (0-1)
 Nz = 1.5*2.5; % ULTIMATE LOAD FACTOR
-Nz = 1;
+
 % Wing Lift (assuming no tail lift)
 wing.lift = Nz*4*W0/(pi*spanWing)*sqrt(1 - (2*wing.span/spanWing).^2);
 
@@ -22,14 +25,14 @@ fuseWingWidth = 1.5; %m
 wing.fuelWeight = zeros(1, numSections);
 [M1,I1] = min(abs(wing.span - 0.75*0.5*spanWing));
 [M2,I2] = min(abs(wing.span - fuseWingWidth));
-wing.fuelWeight(I1:I2) = Nz*0.5*components(25).weight/(wing.span(I1) - wing.span(I2));
+wing.fuelWeight(I1:I2) = fuelInTank*Nz*0.5*components(25).weight/(wing.span(I1) - wing.span(I2));
 
-% Wing Engine Weight
+% Wing Engine + Nacelle Weight
 enginePylonWidth = 0.5; %m
 wing.engineWeight = zeros(1, numSections);
 [M1,I1] = min(abs(wing.span - Thrustline_position(2) - 0.5*enginePylonWidth));
 [M2,I2] = min(abs(wing.span - Thrustline_position(2) + 0.5*enginePylonWidth));
-wing.engineWeight(I1:I2) = Nz*0.5*components(7).weight/(wing.span(I1) - wing.span(I2));
+wing.engineWeight(I1:I2) = Nz*0.5*(components(7).weight + components(8).weight)/(wing.span(I1) - wing.span(I2));
 
 % Wing Undercarriage Weight (currently assuming u/c @ y=5m)
 ucSupportWidth = 1; %m
@@ -43,7 +46,7 @@ wing.fuseWeight = zeros(1, numSections);
 [M1,I1] = min(abs(wing.span - fuseWingWidth));
 I2 = numSections;
 wing.fuseWeight(I1:I2) = Nz*0.5*(W0 - components(1).weight - components(7).weight - components(5).weight -...
-    components(25).weight)/(wing.span(I1) - wing.span(I2));
+    components(8).weight - components(25).weight)/(wing.span(I1) - wing.span(I2));
 
 % Overall Wing Loading
 wing.loading = wing.lift - wing.selfWeight - wing.engineWeight - wing.ucWeight...
@@ -80,7 +83,7 @@ fig1.Position = [0 0.3 1/3 0.5];
 
 fig2 = figure(2);
 hold on
-plot(wing.span, -wing.shearForce)
+plot(wing.span, wing.shearForce)
 ylabel('Shear Force (N)')
 xlabel('Wing Spanwise Coordinate y (m)')
 title('Wing Vertical Shear Force Distribution')
