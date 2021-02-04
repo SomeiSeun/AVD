@@ -733,7 +733,7 @@ hold off
 save('ConceptualDesign.mat')
 
 %% TRIM ANALYSIS 
-%{
+
 %wing aerofoil parameters
 CMoAerofoilW = -0.03; %Sforza and -0.04 according to airfoiltools (xfoil)
 alpha0W = [alpha_zero_takeoff, -1.8, alpha_zero_landing]; %degrees
@@ -757,7 +757,7 @@ CTlanding = thrustLanding/(SWing*0.5*1.225*(1.3*V_Stall_Landing)^2);
 %drawing aircraft
 sweepVertRudder = sweepConverter(sweepVertLE, 0, 0.8, 2*ARvert, taperVert);
 tailplanePlot(vertRootLE, cRootVert, xNPOff, sweepVertRudder, sweepVertTE, heightVert, CG_mtow, wingPlanform, horizPlanform, vertPlanform, aftLength, mainLength, frontLength, fusDiamOuter, aftDiameter)
-
+%{
 % Ground clearance checker ( DO NOT DELETE )
 
 %         Bruhg1 = tand(theta_maxground - 90);
