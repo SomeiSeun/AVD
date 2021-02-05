@@ -3,7 +3,6 @@ function [frontsparweb,rearsparweb] = shear_flow(K_s, rho, V, E, b1, b2, flex_ax
 % This function is used to find the thicknesses for the spar web
 
 % The inputs are:
-% n = load factor
 % K_s = buckling coefficient
 % rho = density of air in kg/m^3
 % V = velocity in m/s
@@ -15,8 +14,8 @@ function [frontsparweb,rearsparweb] = shear_flow(K_s, rho, V, E, b1, b2, flex_ax
 % cg = centre of gravity for the aerofoil used
 
 % The outputs are:
-% tw1 = array of thicknesses for front spar
-% tw2 = array of thicknesses for rear spar
+% frontsparweb = structure with all the required values for the front spar web
+% rearsparweb = structure with all the required values for rear spar web
 
 %{
 TO DO LIST:
