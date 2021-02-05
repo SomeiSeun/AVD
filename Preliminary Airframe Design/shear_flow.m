@@ -1,4 +1,4 @@
-function [frontsparweb,rearsparweb] = shear_flow(K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
+function [frontsparweb,rearsparweb] = shear_flow(wing, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
 
 % This function is used to find the thicknesses for the spar web
 
@@ -24,12 +24,9 @@ TO DO LIST:
 3. Find the overall twist (Need skin thicknesses for that)
 %}
 
-% Loading in the .mat file to get the required variables
-load('WingDistributions.mat')
-
 % Initialising the matrices
-frontsparweb.tw1 = zeros(1,length(wing.span));
-rearsparweb.tw1 = zeros(1,length(wing.span));
+frontsparweb.tw = zeros(1,length(wing.span));
+rearsparweb.tw = zeros(1,length(wing.span));
 q1 = zeros(1,length(wing.span));
 q0 = zeros(1,length(wing.span));
 frontsparweb.h = zeros(1,length(wing.span));
@@ -43,7 +40,7 @@ for i = 1:length(wing.span)
     frontsparweb.h(i) = 0.12 * wing.chord(i);                                       % Approx height of front spar
     rearsparweb.h(i) = 0.07 * wing.chord(i);                                        % Approx height of rear spar
     pitchingmoment(i) = 0.5 * rho * V^2 * wing.chord(i)^2 * cm0;                    % Pitching moment for this aerofoil
-    wing.torque(i) = (wing.lift(i) * (flex_ax - b1) * wing.chord(i)) +...
+    wing.torque(i) = (wing.lift(i) * (flex_ax - 0.25) * wing.chord(i)) +...
         (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) - pitchingmoment(i);  % Torque distribution along the wing
     wing.sparwebarea(i) = abs(b1 - b2) * wing.chord(i) * 0.5 *...
         (frontsparweb.h(i) + rearsparweb.h(i));                                     % Approx area of central wing box
@@ -53,15 +50,15 @@ for i = 1:length(wing.span)
     rearsparweb.qweb(i) = abs(q1(i) - q0(i));                                       % Rear spar shear flow
     x1 = (frontsparweb.qweb(i) * frontsparweb.h(i)^2)/ (K_s * E);                   % Value to be cube rooted for front spar
     x2 = (rearsparweb.qweb(i) * rearsparweb.h(i)^2)/ (K_s * E);                     % Value to be cube rooted for rear spar
-    frontsparweb.tw1(i) = nthroot(x1,3);                                            % Thickness for front spar
-    rearsparweb.tw1(i) = nthroot(x2,3);                                             % Thickness for rear spar
-    frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw1(i);       % Front spar shear stress
-    rearsparweb.shearstress(i) = rearsparweb.qweb(i) / rearsparweb.tw1(i);          % Rear spar shear stress
+    frontsparweb.tw(i) = nthroot(x1,3);                                            % Thickness for front spar
+    rearsparweb.tw(i) = nthroot(x2,3);                                             % Thickness for rear spar
+    frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw(i);       % Front spar shear stress
+    rearsparweb.shearstress(i) = rearsparweb.qweb(i) / rearsparweb.tw(i);          % Rear spar shear stress
 end
 
 % Converting the thicknesses to mm
-frontsparweb.tw1 = frontsparweb.tw1 * 1000;
-rearsparweb.tw1 = rearsparweb.tw1 * 1000;
+% frontsparweb.tw1 = frontsparweb.tw1 * 1000;
+% rearsparweb.tw1 = rearsparweb.tw1 * 1000;
 
 % Plotting the torque distribution
 figure 
@@ -92,9 +89,9 @@ title('Shear flow component spanwise distribution')
 
 % Plotting the thickness variations
 figure
-plot(wing.span,frontsparweb.tw1,'.r')
+plot(wing.span,frontsparweb.tw,'.r')
 hold on
-plot(wing.span,rearsparweb.tw1,'.b')
+plot(wing.span,rearsparweb.tw,'.b')
 grid on
 xlabel('Wing span (m)')
 ylabel('Thickness (mm)')
