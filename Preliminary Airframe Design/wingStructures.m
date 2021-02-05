@@ -28,7 +28,7 @@ E = 73*10^9;
 Cm0 = -0.2;
 cg = 0.6;
 
-% [frontSpar.tWeb,rearSpar.tWeb] = shear_flow(Nz, K_s, rho_cruise, V_Cruise, E, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+[frontSpar,rearSpar] = shear_flow(K_s, rho_cruise, V_Cruise, E, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
 neutralAxisLocation = 0.01; % above airfoil chord-line datum
 

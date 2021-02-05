@@ -3,6 +3,7 @@ function [frontsparweb,rearsparweb] = shear_flow(K_s, rho, V, E, b1, b2, flex_ax
 % This function is used to find the thicknesses for the spar web
 
 % The inputs are:
+% n = load factor
 % K_s = buckling coefficient
 % rho = density of air in kg/m^3
 % V = velocity in m/s
@@ -14,14 +15,15 @@ function [frontsparweb,rearsparweb] = shear_flow(K_s, rho, V, E, b1, b2, flex_ax
 % cg = centre of gravity for the aerofoil used
 
 % The outputs are:
-% frontsparweb = structure with all the required values for the front spar web
-% rearsparweb = structure with all the required values for rear spar web
+% tw1 = array of thicknesses for front spar
+% tw2 = array of thicknesses for rear spar
 
 %{
 TO DO LIST:
 1. Need the CG value for NACA 64-215
 2. Need to take into account the torque due to the engine
-3. Find the overall twist (Need skin thicknesses for that)
+3. Area calculation needs to be done
+5. Find the overall twist (Need skin thicknesses for that)
 %}
 
 % Loading in the .mat file to get the required variables
@@ -47,12 +49,12 @@ for i = 1:length(wing.span)
         (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) - pitchingmoment(i);  % Torque distribution along the wing
     wing.sparwebarea(i) = abs(b1 - b2) * wing.chord(i) * 0.5 *...
         (frontsparweb.h(i) + rearsparweb.h(i));                                     % Approx area of central wing box
-    q1(i) = -wing.shearForce(i) / (2 * frontsparweb.h(i));                          % q1 shear flow component
+    q1(i) = -wing.shearForce(i) / (2 * h(i));                                       % q1 shear flow component
     q0(i) = wing.torque(i) / (2 * wing.sparwebarea(i));                             % q0 shear flow component
     frontsparweb.qweb(i) = abs(q1(i) + q0(i));                                      % Front spar shear flow
     rearsparweb.qweb(i) = abs(q1(i) - q0(i));                                       % Rear spar shear flow
-    x1 = (frontsparweb.qweb(i) * frontsparweb.h(i)^2)/ (K_s * E);                   % Value to be cube rooted for front spar
-    x2 = (rearsparweb.qweb(i) * rearsparweb.h(i)^2)/ (K_s * E);                     % Value to be cube rooted for rear spar
+    x1 = (frontsparweb.qweb(i) * h(i)^2)/ (K_s * E);                                % Value to be cube rooted for front spar
+    x2 = (rearsparweb.qweb(i) * h(i)^2)/ (K_s * E);                                 % Value to be cube rooted for rear spar
     frontsparweb.tw1(i) = nthroot(x1,3);                                            % Thickness for front spar
     rearsparweb.tw1(i) = nthroot(x2,3);                                             % Thickness for rear spar
     frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw1(i);       % Front spar shear stress
