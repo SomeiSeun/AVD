@@ -1,5 +1,5 @@
 function [frontSpar, rearSpar] = sparSizing(NACA, wing, SparMaterial, frontSparLocation, rearSparLocation,...
-    neutralAxisLocation, frontSparHeight, rearSparHeight)
+    neutralAxisLocation, frontSpar, rearSpar)
 
 
 % loading material parameters and wing momment distribution
@@ -11,12 +11,15 @@ TYS = [SparMaterial.TYS]';
 fileID = fopen(NACA, 'r');
 NACA = fscanf(fileID, '%f %f', [2 Inf]);
 
-% chord-wise locations of front and rear spars
-frontSpar.height = frontSparHeight*wing.chord;
-rearSpar.height = rearSparHeight*wing.chord;
+% Determining required Ixx values for front and rear spars for each spar
+% material TYS available
+frontSpar.Ixx = wing.bendingMoment.*frontSpar.height./(2*TYS);
+frontSpar.Ixx = wing.bendingMoment.*frontSpar.height./(2*TYS);
 
 
 
+
+% Plotting figures
 fig1 = figure(1);
 hold on
 plot(NACA(1,1:26), NACA(2,1:26), 'b')
