@@ -9,7 +9,7 @@ load('Materials.mat', 'SparMaterial')
 % Loading Parameters
 numSections = 100;
 Nz = 1.5*2.5;
-fuelInTank = 0;
+fuelInTank = 1;
 
 % Evaluating weight and lift distributions, shear force, and bending
 % moments along the wing
