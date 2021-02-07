@@ -4,35 +4,47 @@ close all
 
 load('ConceptualDesign.mat', 'W0', 'components', 'spanWing', 'cRootWing', 'taperWing', 'Thrustline_position',...
     'rho_cruise', 'V_Cruise')
+load('Materials.mat', 'SparMaterial')
 
 % Loading Parameters
-numSections = 1e4;
+numSections = 100;
 Nz = 1.5*2.5;
-fuelInTank = 0;
+fuelInTank = 1;
 
 % Evaluating weight and lift distributions, shear force, and bending
 % moments along the wing
 wing = bending(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing, taperWing, Thrustline_position);
 
 % Defining wing structural parameters
-frontSparLocation = 0.25;   % chordwise location
-rearSparLocation = 0.7;     % chordwise location
+frontSparLocation = 0.25;
+rearSparLocation = 0.7;
+flexuralAxis = 0.5*(frontSparLocation + rearSparLocation);
+
 frontSparHeight = 0.12;     % as a fraction of chord
 rearSparHeight = 0.07;      % as a fraction of chord
-flexuralAxis = 0.5;         % chordwise location
-neutralAxisLocation = 0.01; % above airfoil chord-line datum
 
 K_s = 8.1;
 E = 73*10^9;
 Cm0 = -0.2;
 cg = 0.6;
 
+<<<<<<< HEAD
 [frontSpar,rearSpar] = shear_flow(K_s, rho_cruise, V_Cruise, E, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
+neutralAxisLocation = 0.01; % above airfoil chord-line datum
 
+% [frontSpar, rearSpar] = sparSizing('NACA 64125.txt', wing, SparMaterial, frontSparLocation, rearSparLocation,...
+%     neutralAxisLocation, frontSpar, rearSpar);
+=======
+[frontSpar,rearSpar] = shear_flow(wing, K_s, rho_cruise, V_Cruise, E, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
+[frontSpar, Ixx, Area] = sparSizing(wing, SparMaterial(1), frontSpar);
+>>>>>>> main
 
-
+figure(7)
+plot(wing.span, frontSpar.b)
+figure(8)
+plot(wing.span, frontSpar.tf)
 % Plotting Results
 % fig1 = figure(1);
 % hold on

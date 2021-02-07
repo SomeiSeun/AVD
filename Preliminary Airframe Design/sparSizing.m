@@ -1,27 +1,39 @@
-function [frontSpar, rearSpar] = sparSizing(NACA, wing, SparMaterial, frontSparLocation, rearSparLocation,...
-    neutralAxisLocation, frontSparHeight, rearSparHeight)
+function [spar, Ixx, Area] = sparSizing(wing, SparMaterial, spar)
 
-
-% loading material parameters and wing momment distribution
+n = 200;
 numSections = length(wing.span);
-E = [SparMaterial.YM]';
-TYS = [SparMaterial.TYS]';
 
-% loading NACA aerofoil for visualisation
-fileID = fopen(NACA, 'r');
-NACA = fscanf(fileID, '%f %f', [2 Inf]);
+% Determining target Ixx values for front and rear spars for each spar
+% material TYS available
+spar.Ixx = wing.bendingMoment.*spar.h./(2*SparMaterial.TYS);
 
-% chord-wise locations of front and rear spars
-frontSpar.height = frontSparHeight*wing.chord;
-rearSpar.height = rearSparHeight*wing.chord;
+% Defining range of values for flange thickness tf and flange breadth b (m)
+tf = linspace(0.001, 0.1, n)';
+b = linspace(0.001, 0.5, n);
+
+% Initialising arrays
+Ixx = zeros(n, n, numSections);
+Area = zeros(n, n, numSections);
+for i = 1:numSections
+    Ixx(:,:,i) = 1/6*b.*tf.^3 + 1/2*b.*tf.*(spar.h(i) - tf).^2 + 1/12*spar.tw(i).*(spar.h(i) - 2*tf).^3;
+    Area(:,:,i) = 2*b.*tf + spar.tw(i).*(spar.h(i) - 2*tf);  
+    
+    % Checking if calculated Ixx values meet minimum required Ixx
+    for j = 1:n
+        for k = 1:n
+            if Ixx(j,k,i) < spar.Ixx(i)
+                Ixx(j,k,i) = NaN;
+                Area(j,k,i) = NaN;
+            end
+        end
+    end
+    
+    [~,I] = min(Area(:,:,i),[],[1 2], 'linear', 'omitnan');
+    [I1(i), I2(i)] = ind2sub(size(Area(:,:,i)), I);
+    
+    spar.tf(i) = tf(I1(i));
+    spar.b(i) = b(I2(i));
+end
 
 
-
-fig1 = figure(1);
-hold on
-plot(NACA(1,1:26), NACA(2,1:26), 'b')
-plot(NACA(1,27:end), NACA(2,27:end), 'b')
-plot([frontSparLocation frontSparLocation], [neutralAxisLocation + frontSparHeight/2, neutralAxisLocation - frontSparHeight/2])
-plot([rearSparLocation rearSparLocation], [neutralAxisLocation + rearSparHeight/2, neutralAxisLocation - rearSparHeight/2])
-axis equal
-grid minor
+end
