@@ -1,4 +1,4 @@
-function [frontsparweb,rearsparweb] = shear_flow(wing, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
+function [frontsparweb,rearsparweb,wing] = shear_flow(wing, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
 
 % This function is used to find the thicknesses for the spar web
 
@@ -50,10 +50,11 @@ for i = 1:length(wing.span)
     rearsparweb.qweb(i) = abs(q1(i) - q0(i));                                       % Rear spar shear flow
     x1 = (frontsparweb.qweb(i) * frontsparweb.h(i)^2)/ (K_s * E);                   % Value to be cube rooted for front spar
     x2 = (rearsparweb.qweb(i) * rearsparweb.h(i)^2)/ (K_s * E);                     % Value to be cube rooted for rear spar
-    frontsparweb.tw(i) = nthroot(x1,3);                                            % Thickness for front spar
-    rearsparweb.tw(i) = nthroot(x2,3);                                             % Thickness for rear spar
-    frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw(i);       % Front spar shear stress
-    rearsparweb.shearstress(i) = rearsparweb.qweb(i) / rearsparweb.tw(i);          % Rear spar shear stress
+    frontsparweb.tw(i) = nthroot(x1,3);                                             % Thickness for front spar
+    rearsparweb.tw(i) = nthroot(x2,3);                                              % Thickness for rear spar
+    frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw(i);        % Front spar shear stress
+    rearsparweb.shearstress(i) = rearsparweb.qweb(i) / rearsparweb.tw(i);           % Rear spar shear stress
+    wing.wingboxlength(i) = abs(b1 - b2) * wing.chord(i);                           % Central wing box length
 end
 
 % Converting the thicknesses to mm
