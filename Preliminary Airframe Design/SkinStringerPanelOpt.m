@@ -4,9 +4,6 @@ clc
 close all 
 
 %% TO DO still: 
-% Enforce Boundary Conditions
-% Comparison for Weight Reduction
-% Compare FARRAR Ratio
 
 
 %% Load Data
@@ -17,7 +14,7 @@ load('skinStringerpanel.mat')
 
 %% Calculate Effective Area for a range of As_bt and ts_t values
 
-noStringersMax=100;                                                         % Note these values are not realistic and have simply been chosen to test the code
+noStringersMax=60;                                                         % Note these values are not realistic and have simply been chosen to test the code
 noPanelsMax=noStringersMax+1;
 K=4.163;                                                                    
 ESkin=71.8e9;
@@ -82,6 +79,7 @@ Optimum.AStoBT=stringerGeometry.AStoBT(min_x,min_y);
 Optimum.TStoT=stringerGeometry.TStoT(min_x,min_y);
 Optimum.tStringer=stringerGeometry.tStringer(min_x,min_y);
 Optimum.aEffective=stringerGeometry.aEffective(min_x,min_y);
+Optimum.numberStringer=stringerGeometry.numberStringer(min_x,min_y);
 disp(Optimum)
 
 
