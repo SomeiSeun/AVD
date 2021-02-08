@@ -34,4 +34,4 @@ for i=1:numSections
     end
 end
 
-save('b2', 'c_alongSpan', 'N_alongSpan')
+save('skinStringerpanel','b2', 'c_alongSpan', 'N_alongSpan')
