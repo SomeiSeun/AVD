@@ -25,7 +25,7 @@ flexuralAxis = 0.5*(frontSparLocation + rearSparLocation);
 
 K_s = 8.1;
 Cm0 = -0.2;
-cg = 0.4;
+cg = 0.6;
 
 % Evaluating shear stresses and spar web thicknesses
 [frontSpar,rearSpar,wing] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
