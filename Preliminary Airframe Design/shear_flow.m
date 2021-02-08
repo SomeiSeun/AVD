@@ -1,4 +1,4 @@
-function [frontsparweb,rearsparweb,wing] = shear_flow(wing, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
+function [frontsparweb,rearsparweb,wing] = shear_flow(wing, frontsparweb, rearsparweb, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
 
 % This function is used to find the thicknesses for the spar web
 
@@ -42,8 +42,6 @@ for i = 1:length(wing.span)
     pitchingmoment(i) = 0.5 * rho * V^2 * wing.chord(i)^2 * cm0;                    % Pitching moment for this aerofoil
     wing.torque(i) = (wing.lift(i) * (flex_ax - 0.25) * wing.chord(i)) +...
         (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) - pitchingmoment(i);  % Torque distribution along the wing
-    wing.boxArea(i) = abs(b1 - b2) * wing.chord(i) * 0.5 *...
-        (frontsparweb.h(i) + rearsparweb.h(i));                                     % Approx area of central wing box
     q1(i) = -wing.shearForce(i) / (2 * frontsparweb.h(i));                          % q1 shear flow component
     q0(i) = wing.torque(i) / (2 * wing.boxArea(i));                             % q0 shear flow component
     frontsparweb.qweb(i) = abs(q1(i) + q0(i));                                      % Front spar shear flow
@@ -54,7 +52,6 @@ for i = 1:length(wing.span)
     rearsparweb.tw(i) = nthroot(x2,3);                                              % Thickness for rear spar
     frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw(i);        % Front spar shear stress
     rearsparweb.shearstress(i) = rearsparweb.qweb(i) / rearsparweb.tw(i);           % Rear spar shear stress
-    wing.wingboxlength(i) = abs(b1 - b2) * wing.chord(i);                           % Central wing box length
 end
 
 % Converting the thicknesses to mm

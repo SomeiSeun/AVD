@@ -2,12 +2,12 @@ clear
 clc
 close all
 
-load('ConceptualDesign.mat', 'W0', 'components', 'spanWing', 'cRootWing', 'taperWing', 'Thrustline_position',...
+load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'taperWing', 'Thrustline_position',...
     'rho_cruise', 'V_Cruise')
 load('Materials.mat', 'SparMaterial')
 
 % Loading Parameters
-numSections = 5e2;
+numSections = 1e3;
 Nz = 1.5*2.5;
 fuelInTank = 0;
 
@@ -19,19 +19,18 @@ wing = bending(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing,
 frontSparLocation = 0.25;
 rearSparLocation = 0.7;
 flexuralAxis = 0.5*(frontSparLocation + rearSparLocation);
+neutralAxis = 0.01;
 
-frontSparHeight = 0.12;     % as a fraction of chord
-rearSparHeight = 0.07;      % as a fraction of chord
+[wing, frontSpar, rearSpar] = analyseWingBox('NACA 64215.txt', wing, frontSparLocation, rearSparLocation);
 
 K_s = 8.1;
 Cm0 = -0.2;
 cg = 0.6;
 
-[frontSpar,rearSpar,wing] = shear_flow(wing, K_s, rho_cruise, V_Cruise, SparMaterial(1).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+[frontSpar,rearSpar,wing] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(1).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
 [frontSpar] = sparSizing(wing, SparMaterial(1), frontSpar);
 [rearSpar] = sparSizing(wing, SparMaterial(1), rearSpar);
-
 
 %% Plotting Results
 
