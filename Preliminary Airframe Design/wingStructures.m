@@ -28,7 +28,7 @@ Cm0 = -0.2;
 cg = 0.4;
 
 % Evaluating shear stresses and spar web thicknesses
-[frontSpar,rearSpar,wing] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+[frontSpar,rearSpar] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
 % Evaluating spar flange dimensions
 [frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar);

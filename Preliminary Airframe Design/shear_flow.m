@@ -1,4 +1,4 @@
-function [frontsparweb,rearsparweb,wing] = shear_flow(wing, frontsparweb, rearsparweb, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
+function [frontsparweb,rearsparweb] = shear_flow(wing, frontsparweb, rearsparweb, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
 
 % This function is used to find the thicknesses for the spar web
 
@@ -20,11 +20,6 @@ function [frontsparweb,rearsparweb,wing] = shear_flow(wing, frontsparweb, rearsp
 % frontsparweb = structure with all the required values for the front spar web
 % rearsparweb = structure with all the required values for rear spar web
 
-%{
-TO DO LIST:
-1. Need to take into account the torque due to the engine
-%}
-
 % Initialising the matrices
 frontsparweb.tw = zeros(1,length(wing.span));
 rearsparweb.tw = zeros(1,length(wing.span));
@@ -42,7 +37,8 @@ for i = 1:length(wing.span)
     rearsparweb.h(i) = 0.07 * wing.chord(i);                                        % Approx height of rear spar
     pitchingmoment(i) = 0.5 * rho * V^2 * wing.chord(i)^2 * cm0;                    % Pitching moment for this aerofoil
     wing.torque(i) = (wing.lift(i) * (flex_ax - 0.25) * wing.chord(i)) +...
-        (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) - pitchingmoment(i);  % Torque distribution along the wing
+        (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) -...
+        pitchingmoment(i) + (wing.engineWeight(i) * (0.5 * wing.chord(i) + 3));     % Torque distribution along the wing
     q1(i) = -wing.shearForce(i) / (2 * frontsparweb.h(i));                          % q1 shear flow component
     q0(i) = wing.torque(i) / (2 * wing.boxArea(i));                                 % q0 shear flow component
     frontsparweb.qweb(i) = abs(q1(i) + q0(i));                                      % Front spar shear flow
