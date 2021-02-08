@@ -6,31 +6,33 @@ load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'tape
     'rho_cruise', 'V_Cruise')
 load('Materials.mat', 'SparMaterial')
 
-% Loading Parameters
+% Defining Parameters
 numSections = 1e3;
 Nz = 1.5*2.5;
 fuelInTank = 0;
+numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
 
-% Evaluating weight and lift distributions, shear force, and bending
-% moments along the wing
+% Evaluating dift and deight distributions
 wing = bending(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing, taperWing, Thrustline_position);
 
 % Defining wing structural parameters
 frontSparLocation = 0.25;
 rearSparLocation = 0.7;
 flexuralAxis = 0.5*(frontSparLocation + rearSparLocation);
-neutralAxis = 0.01;
 
+% Evaluating basic wing box parameters
 [wing, frontSpar, rearSpar] = analyseWingBox('NACA 64215.txt', wing, frontSparLocation, rearSparLocation);
 
 K_s = 8.1;
 Cm0 = -0.2;
 cg = 0.6;
 
-[frontSpar,rearSpar,wing] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(1).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+% Evaluating shear stresses and spar web thicknesses
+[frontSpar,rearSpar,wing] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
-[frontSpar] = sparSizing(wing, SparMaterial(1), frontSpar);
-[rearSpar] = sparSizing(wing, SparMaterial(1), rearSpar);
+% Evaluating spar flange dimensions
+[frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar);
+[rearSpar] = sparSizing(wing, SparMaterial(numMaterial), rearSpar);
 
 %% Plotting Results
 
