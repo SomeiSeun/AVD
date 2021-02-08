@@ -27,10 +27,10 @@ K_s = 8.1;
 Cm0 = -0.2;
 cg = 0.6;
 
-[frontSpar,rearSpar,wing] = shear_flow(wing, K_s, rho_cruise, V_Cruise, SparMaterial(4).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+[frontSpar,rearSpar,wing] = shear_flow(wing, K_s, rho_cruise, V_Cruise, SparMaterial(1).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
-[frontSpar] = sparSizing(wing, SparMaterial(4), frontSpar);
-[rearSpar] = sparSizing(wing, SparMaterial(4), rearSpar);
+[frontSpar] = sparSizing(wing, SparMaterial(1), frontSpar);
+[rearSpar] = sparSizing(wing, SparMaterial(1), rearSpar);
 
 
 %% Plotting Results

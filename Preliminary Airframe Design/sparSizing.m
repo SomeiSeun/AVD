@@ -13,7 +13,8 @@ for i = 2:numSections
     spar.curvature(i) = spar.curvature(i-1) + trapz(wing.span(i-1:i), 2*SparMaterial.TYS./(SparMaterial.YM*spar.h(i-1:i)));
     spar.displacement(i) = spar.displacement(i-1) + trapz(wing.span(i-1:i), spar.curvature(i-1:i));
 end
-spar.curvature = spar.curvature - spar.curvature
+spar.curvature = spar.curvature - spar.curvature(end);
+spar.displacement = spar.displacement(end) - spar.displacement;
 
 % Defining range of values for flange thickness tf and flange breadth b (m)
 tf = linspace(1e-3, 0.5, n)';
