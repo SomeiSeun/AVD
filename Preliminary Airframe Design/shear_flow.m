@@ -3,6 +3,7 @@ function [frontsparweb,rearsparweb,wing] = shear_flow(wing, K_s, rho, V, E, b1, 
 % This function is used to find the thicknesses for the spar web
 
 % The inputs are:
+% wing = structure with all the relevant variables needed
 % K_s = buckling coefficient
 % rho = density of air in kg/m^3
 % V = velocity in m/s
@@ -12,10 +13,13 @@ function [frontsparweb,rearsparweb,wing] = shear_flow(wing, K_s, rho, V, E, b1, 
 % flex_ax = position of flexural axis non-dimensionalised
 % cm0 = Aerofoil zero AOA pitching moment
 % cg = centre of gravity for the aerofoil used
+% x = array of x coordinates of the aerofoil used
+% y = array of y coordinates of the aerofoil used
 
 % The outputs are:
 % frontsparweb = structure with all the required values for the front spar web
 % rearsparweb = structure with all the required values for rear spar web
+% wing = structure with an additional variable
 
 %{
 TO DO LIST:
@@ -23,6 +27,7 @@ TO DO LIST:
 2. Need to take into account the torque due to the engine
 3. Find the overall twist (Need skin thicknesses for that)
 %}
+
 
 % Initialising the matrices
 frontsparweb.tw = zeros(1,length(wing.span));
@@ -60,7 +65,19 @@ end
 % Converting the thicknesses to mm
 % frontsparweb.tw1 = frontsparweb.tw1 * 1000;
 % rearsparweb.tw1 = rearsparweb.tw1 * 1000;
-
+%{
+% Plotting the aerofoil with the relevant points
+figure
+plot(x,y,'r')
+grid on
+axis equal
+hold on
+plot(b1,0,'xb')
+plot(b2,0,'xg')
+plot(flex_ax,0,'xm')
+title('Aerofoil with relevant points of interest')
+legend({'Aerofoil','Front spar','Rear spar','Flexural Axis'},'Location','Northeast')
+%}
 % Plotting the torque distribution
 figure 
 plot(wing.span,wing.torque,'.r')
@@ -95,7 +112,7 @@ hold on
 plot(wing.span,rearsparweb.tw,'.b')
 grid on
 xlabel('Wing span (m)')
-ylabel('Thickness (mm)')
+ylabel('Thickness (m)')
 legend({'Front spar','Rear spar'},'Location','Northeast')
 title('Thickness of spars spanwise distribution')
 

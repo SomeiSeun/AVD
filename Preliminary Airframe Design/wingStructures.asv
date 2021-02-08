@@ -5,7 +5,9 @@ close all
 load('ConceptualDesign.mat', 'W0', 'components', 'spanWing', 'cRootWing', 'taperWing', 'Thrustline_position',...
     'rho_cruise', 'V_Cruise')
 load('Materials.mat', 'SparMaterial')
-
+load('NACA 64215.txt')
+x_coordinates = NACA_64215(:,1);
+y_coordinates = NACA_64215(:,2);
 
 % Loading Parameters
 numSections = 100;
@@ -29,18 +31,18 @@ E = 73*10^9;
 Cm0 = -0.2;
 cg = 0.6;
 
-<<<<<<< HEAD
-[frontSpar,rearSpar] = shear_flow(wing, K_s, rho_cruise, V_Cruise, E, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+%<<<<<<< HEAD
+[frontSpar,rearSpar,wing] = shear_flow(wing, K_s, rho_cruise, V_Cruise, E, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg, x_coordinates, y_coordinates);
 
 neutralAxisLocation = 0.01; % above airfoil chord-line datum
 
 % [frontSpar, rearSpar] = sparSizing('NACA 64125.txt', wing, SparMaterial, frontSparLocation, rearSparLocation,...
 %     neutralAxisLocation, frontSpar, rearSpar);
-=======
+%=======
 [frontSpar,rearSpar] = shear_flow(wing, K_s, rho_cruise, V_Cruise, E, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
 [frontSpar, Ixx, Area] = sparSizing(wing, SparMaterial(1), frontSpar);
->>>>>>> main
+%>>>>>>> main
 
 figure(7)
 plot(wing.span, frontSpar.b)
