@@ -1,6 +1,6 @@
 function [spar] = sparSizing(wing, SparMaterial, spar)
 
-n = 5e2;
+n = 500;
 numSections = length(wing.span);
 
 % Determining target Ixx values for front and rear spars for each spar

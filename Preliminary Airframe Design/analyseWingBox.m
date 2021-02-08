@@ -40,8 +40,10 @@ lowerRear(2,1) = NACA.lower(2,i-1) + (rearSparLocation - NACA.lower(1,i-1))*(NAC
 boxUpper = [upperFront, NACA.upper(:,NACA.upper(1,:) > frontSparLocation & NACA.upper(1,:) < rearSparLocation), upperRear];
 boxLower = [lowerFront, NACA.lower(:,NACA.lower(1,:) > frontSparLocation & NACA.lower(1,:) < rearSparLocation), lowerRear];
 
+% Evaluating wingbox area for unit chord aerofoil
 wingBoxArea = trapz(boxUpper(1,:), boxUpper(2,:)) - trapz(boxLower(1,:), boxLower(2,:));
 
+% Scaling wingbox area and length along the span
 wing.boxArea = wingBoxArea*wing.chord.^2;
 wing.boxLength = (rearSparLocation - frontSparLocation)*wing.chord;
 frontSpar.h = (upperFront(2,1) - lowerFront(2,1))*wing.chord;
