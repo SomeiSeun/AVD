@@ -33,12 +33,12 @@ rearsparweb.qweb = zeros(1,length(wing.span));
 
 % This loop is used to find multiple variables
 for i = 1:length(wing.span)
-    frontsparweb.h(i) = 0.12 * wing.chord(i);                                       % Approx height of front spar
-    rearsparweb.h(i) = 0.07 * wing.chord(i);                                        % Approx height of rear spar
+    frontsparweb.h(i) = 0.14 * wing.chord(i);                                       % Approx height of front spar
+    rearsparweb.h(i) = 0.08 * wing.chord(i);                                        % Approx height of rear spar
     pitchingmoment(i) = 0.5 * rho * V^2 * wing.chord(i)^2 * cm0;                    % Pitching moment for this aerofoil
     wing.torque(i) = (wing.lift(i) * (flex_ax - 0.25) * wing.chord(i)) +...
         (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) -...
-        pitchingmoment(i) + (wing.engineWeight(i) * (0.5 * wing.chord(i) + 3));     % Torque distribution along the wing
+        pitchingmoment(i) + (wing.engineWeight(i) * ((0.5 * wing.chord(i)) + 3));   % Torque distribution along the wing
     q1(i) = -wing.shearForce(i) / (2 * frontsparweb.h(i));                          % q1 shear flow component
     q0(i) = wing.torque(i) / (2 * wing.boxArea(i));                                 % q0 shear flow component
     frontsparweb.qweb(i) = abs(q1(i) + q0(i));                                      % Front spar shear flow
