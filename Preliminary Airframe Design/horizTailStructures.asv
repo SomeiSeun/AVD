@@ -13,11 +13,11 @@ fuelInTank = 0; % value between 0 and 1
 numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
 
 % Evaluating lift and weight distributions
-horiztail = bending(Nz, fuelInTank, numSections, W0, components, spanHoriz, cRootHoriz, taperHoriz, Thrustline_position);
+horiztail = bending(Nz, fuelInTank, numSections, W0, components, spanHoriz, cRootWing, taperHoriz, Thrustline_position);
 
-% Defining horizontal tail box structural parameters
+% Defining wing structural parameters
 frontSparLocation = 0.25;
-rearSparLocation = 0.75;
+rearSparLocation = 0.7;
 flexuralAxis = 0.5*(frontSparLocation + rearSparLocation);
 
 % Evaluating basic wing box parameters
