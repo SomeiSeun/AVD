@@ -78,14 +78,14 @@ fig3.Units = 'normalized';
 fig3.Position = [0.5 0.5 0.25 0.4];
 
 % Plotting the torque distribution
-fig4 = figure(4);
-plot(wing.span, wing.torque)
-xlabel('Wing Spanwise Coordinate y (m)')
-ylabel('Torque Distribution (N)')
-title('Wing Torque Distribution')
-grid minor
-fig4.Units = 'normalized';
-fig4.Position = [0.75 0.5 0.25 0.4];
+% fig4 = figure(4);
+% plot(wing.span, wing.torque)
+% xlabel('Wing Spanwise Coordinate y (m)')
+% ylabel('Torque Distribution (N)')
+% title('Wing Torque Distribution')
+% grid minor
+% fig4.Units = 'normalized';
+% fig4.Position = [0.75 0.5 0.25 0.4];
 
 % % Plotting wingbox area variation
 % figure
@@ -167,3 +167,5 @@ legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
+
+[c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial.YM);
