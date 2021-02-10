@@ -2,10 +2,9 @@ clear
 clc
 close all
 
-load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'taperWing', 'Thrustline_position',...
+load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'taperHoriz ', 'Thrustline_position',...
     'rho_cruise', 'V_Cruise')
-load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
-load('skinStringerpanel.mat')
+load('Materials.mat', 'SparMaterial')
 
 % Defining Parameters
 numSections = 1e3;
@@ -37,7 +36,7 @@ cg = 0.4;
 
 
 
-% Plotting Results
+%% Plotting Results
 
 % Plotting Loading Distribution
 fig1 = figure(1);
@@ -90,9 +89,9 @@ grid minor
 fig4.Units = 'normalized';
 fig4.Position = [0.75 0.5 0.25 0.4];
 
-% Plotting wingbox area variation
+% % Plotting wingbox area variation
 % figure
-% plot(wing.span,wing.boxArea,'.b')
+% plot(wing.span,wing.sparwebarea,'.b')
 % grid on
 % xlabel('Wing Span (m)')
 % ylabel('Wingbox Area (m^2)')
@@ -111,7 +110,7 @@ grid minor
 fig5.Units = 'normalized';
 fig5.Position = [0 0.05 0.25 0.4];
 
-% Plotting the front and rear spar shear flow
+% % Plotting the front and rear spar shear flow
 % figure
 % plot(wing.span,frontSpar.qweb,'.r')
 % hold on
@@ -136,6 +135,7 @@ fig6.Units = 'normalized';
 fig6.Position = [0.25 0.05 0.25 0.4];
 
 % Plotting front and Rear Spar flange dimensions
+
 fig7 = figure(7);
 hold on
 yyaxis left
@@ -175,7 +175,3 @@ hold on
 plot(wing.span, rearSpar.Ixx)
 plot(wing.span, rearSpar.IxxMax)
 legend('Ixx', 'Ixx Max')
-
- [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial(numMaterial));
-%% Skin Stringer Panel Sizing 
-[Optimum]=SSPOptimum(c_alongSpan,N_alongSpan,b2);

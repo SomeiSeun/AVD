@@ -1,17 +1,4 @@
-%% Optimisation of Skin Stringer Panels
-clear
-clc
-close all 
-
-
-%% Load Data
-% load('WingDistributions.mat')
-load('Materials.mat')
-load('skinStringerpanel.mat')  % Load Load per unit width distribution across span
-
-
-%% Calculate Effective Area for a range of As/bt and Ts/t ratios to find optimum 
-
+function[Optimum]=SSPOptimum(c_alongSpan,N_alongSpan,b2)
 noStringersMax=100;                                                         
 noPanelsMax=noStringersMax+1;
 K=4.2;                                                                    
@@ -23,7 +10,6 @@ tSkin=length(noPanelsMax);
 aSkin=length(noPanelsMax);
 aEffective=length(noPanelsMax);
 numberofStringers=1:noPanelsMax-1;
-
 
 %% Effective Area Calculations for a number of different 
 x=1;
@@ -108,7 +94,7 @@ save('SkinStringerPanelOpt.mat','Optimum')
 % Using Optimum As/bt and Ts/t ratio, use Catchpole diagram to find
 % correction factor and find optimum number of stringers
 
-K=4.16;
+K=4.2;
 for j=1:noPanelsMax
             b(j)=c_alongSpan(10000)/j; 
              tSkin(j)= ((N_alongSpan(10000)*(b(j))^2)/(K*ESkin))^(1/3);
@@ -129,12 +115,4 @@ for j=1:noPanelsMax
 end
 disp('The Optimum Skin-Stringer Parameters are:')
 disp(Optimum)
-
-
-%% Determine Skin Thickness for different panel sizes
-% for i=1:noPanelsMax
-%              b(i)=c_alongSpan(10000)/i; 
-%              tSkin(i)= ((N_alongSpan(10000)*(b(i))^2)/(K*ESkin))^(1/3);
-%              aSkin(i)=c_alongSpan(10000)*tSkin(i);
-% end 
-
+end 

@@ -50,12 +50,12 @@ for i = 1:length(wing.span)
     frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw(i);        % Front spar shear stress
     rearsparweb.shearstress(i) = rearsparweb.qweb(i) / rearsparweb.tw(i);           % Rear spar shear stress
     
-    if frontsparweb.tw(i) < 1
-        frontsparweb.tw(i) = 1;               % Minimum thickness condition for the front spar web
+    if frontsparweb.tw(i) < 0.001
+        frontsparweb.tw(i) = 0.001;               % Minimum thickness condition for the front spar web
     end
     
-    if rearsparweb.tw(i) < 1
-        rearsparweb.tw(i) = 1;                % Minimum thickness condition for the rear spar web
+    if rearsparweb.tw(i) < 0.001
+        rearsparweb.tw(i) = 0.001;                % Minimum thickness condition for the rear spar web
     end
     
 end
