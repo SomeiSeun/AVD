@@ -1,4 +1,4 @@
-function [frontsparweb,rearsparweb] = shear_flow(wing, frontsparweb, rearsparweb, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
+function [wing,frontsparweb,rearsparweb] = shear_flow(wing, frontsparweb, rearsparweb, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
 
 % This function is used to find the thicknesses for the spar web
 
@@ -25,20 +25,20 @@ frontsparweb.tw = zeros(1,length(wing.span));
 rearsparweb.tw = zeros(1,length(wing.span));
 q1 = zeros(1,length(wing.span));
 q0 = zeros(1,length(wing.span));
-frontsparweb.h = zeros(1,length(wing.span));
-rearsparweb.h = zeros(1,length(wing.span));
+% frontsparweb.h = zeros(1,length(wing.span));
+% rearsparweb.h = zeros(1,length(wing.span));
 pitchingmoment = zeros(1,length(wing.span));
 frontsparweb.qweb = zeros(1,length(wing.span));
 rearsparweb.qweb = zeros(1,length(wing.span));
 
 % This loop is used to find multiple variables
 for i = 1:length(wing.span)
-    frontsparweb.h(i) = 0.14 * wing.chord(i);                                       % Approx height of front spar
-    rearsparweb.h(i) = 0.08 * wing.chord(i);                                        % Approx height of rear spar
+%     frontsparweb.h(i) = 0.14 * wing.chord(i);                                       % Approx height of front spar
+%     rearsparweb.h(i) = 0.08 * wing.chord(i);                                        % Approx height of rear spar
     pitchingmoment(i) = 0.5 * rho * V^2 * wing.chord(i)^2 * cm0;                    % Pitching moment for this aerofoil
     wing.torque(i) = (wing.lift(i) * (flex_ax - 0.25) * wing.chord(i)) +...
-        (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) -...
-        pitchingmoment(i) + (wing.engineWeight(i) * ((0.5 * wing.chord(i)) + 3));   % Torque distribution along the wing
+        (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) +...
+        pitchingmoment(i) - (wing.engineWeight(i) * ((0.5 * wing.chord(i)) + 3));   % Torque distribution along the wing
     q1(i) = -wing.shearForce(i) / (2 * frontsparweb.h(i));                          % q1 shear flow component
     q0(i) = wing.torque(i) / (2 * wing.boxArea(i));                                 % q0 shear flow component
     frontsparweb.qweb(i) = abs(q1(i) + q0(i));                                      % Front spar shear flow
@@ -49,6 +49,15 @@ for i = 1:length(wing.span)
     rearsparweb.tw(i) = nthroot(x2,3);                                              % Thickness for rear spar
     frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw(i);        % Front spar shear stress
     rearsparweb.shearstress(i) = rearsparweb.qweb(i) / rearsparweb.tw(i);           % Rear spar shear stress
+    
+    if frontsparweb.tw(i) < 1
+        frontsparweb.tw(i) = 1;               % Minimum thickness condition for the front spar web
+    end
+    
+    if rearsparweb.tw(i) < 1
+        rearsparweb.tw(i) = 1;                % Minimum thickness condition for the rear spar web
+    end
+    
 end
 
 % Converting the thicknesses to mm
