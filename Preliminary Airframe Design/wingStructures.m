@@ -8,8 +8,8 @@ load('Materials.mat', 'SparMaterial')
 
 % Defining Parameters
 numSections = 1e3;
-Nz = 1.5*2.5;
-fuelInTank = 0;
+Nz = 1.5*2.5; % ultimate load factor
+fuelInTank = 0; % value between 0 and 1
 numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
 
 % Evaluating dift and deight distributions
@@ -28,11 +28,13 @@ Cm0 = -0.2;
 cg = 0.4;
 
 % Evaluating shear stresses and spar web thicknesses
-[frontSpar,rearSpar] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+[wing,frontSpar,rearSpar] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
 % Evaluating spar flange dimensions
 [frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar);
 [rearSpar] = sparSizing(wing, SparMaterial(numMaterial), rearSpar);
+
+
 
 %% Plotting Results
 
@@ -167,3 +169,9 @@ legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
+
+figure
+hold on
+plot(wing.span, rearSpar.Ixx)
+plot(wing.span, rearSpar.IxxMax)
+legend('Ixx', 'Ixx Max')
