@@ -4,7 +4,7 @@ close all
 
 load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'taperWing', 'Thrustline_position',...
     'rho_cruise', 'V_Cruise')
-load('Materials.mat', 'SparMaterial')
+load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
 load('skinStringerpanel.mat')
 
 % Defining Parameters
@@ -176,5 +176,6 @@ plot(wing.span, rearSpar.Ixx)
 plot(wing.span, rearSpar.IxxMax)
 legend('Ixx', 'Ixx Max')
 
+ [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial(numMaterial));
 %% Skin Stringer Panel Sizing 
 [Optimum]=SSPOptimum(c_alongSpan,N_alongSpan,b2);
