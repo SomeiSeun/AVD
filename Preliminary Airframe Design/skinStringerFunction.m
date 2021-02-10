@@ -1,12 +1,5 @@
-%code to optimise the skin stringer panel(ch3)--> (new one version 2.5)
-%Anudi Bandara, 03/02/21
-
-%housekeeping
-clear
-clc
-
-%number of sections must be compatible with that in prev codes
-numSections=500;
+function [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,YM)
+    
 
 %load material data
 load('WingDistributions.mat')
@@ -35,4 +28,3 @@ for i=1:numSections
 end
 
 sigma=N_alongSpan/t2_alongSpan/1000;
-save('skinStringerpanel','b2', 'c_alongSpan', 'N_alongSpan', 'sigma')
