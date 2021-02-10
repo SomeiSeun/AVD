@@ -6,31 +6,31 @@ load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'tape
     'rho_cruise', 'V_Cruise')
 load('Materials.mat', 'SparMaterial')
 
-Defining Parameters
+% Defining Parameters
 numSections = 1e3;
 Nz = 1.5*2.5; % ultimate load factor
 fuelInTank = 0; % value between 0 and 1
 numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
 
-Evaluating dift and deight distributions
+% Evaluating dift and deight distributions
 wing = bending(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing, taperWing, Thrustline_position);
 
-Defining wing structural parameters
+% Defining wing structural parameters
 frontSparLocation = 0.25;
 rearSparLocation = 0.7;
 flexuralAxis = 0.5*(frontSparLocation + rearSparLocation);
 
-Evaluating basic wing box parameters
+% Evaluating basic wing box parameters
 [wing, frontSpar, rearSpar] = analyseWingBox('NACA 64215.txt', wing, frontSparLocation, rearSparLocation);
 
 K_s = 8.1;
 Cm0 = -0.2;
 cg = 0.4;
 
-Evaluating shear stresses and spar web thicknesses
+% Evaluating shear stresses and spar web thicknesses
 [wing,frontSpar,rearSpar] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
-Evaluating spar flange dimensions
+% Evaluating spar flange dimensions
 [frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar);
 [rearSpar] = sparSizing(wing, SparMaterial(numMaterial), rearSpar);
 
@@ -38,7 +38,7 @@ Evaluating spar flange dimensions
 
 % Plotting Results
 
-Plotting Loading Distribution
+% Plotting Loading Distribution
 fig1 = figure(1);
 hold on
 plot(wing.span, wing.lift, '.')
@@ -57,7 +57,7 @@ grid minor
 fig1.Units = 'normalized';
 fig1.Position = [0 0.5 0.25 0.4];
 
-Plotting Shear Force
+% Plotting Shear Force
 fig2 = figure(2);
 hold on
 plot(wing.span, wing.shearForce)
@@ -68,7 +68,7 @@ grid minor
 fig2.Units = 'normalized';
 fig2.Position = [0.25 0.5 0.25 0.4];
 
-Plotting Bending Moment
+% Plotting Bending Moment
 fig3 = figure(3);
 hold on
 plot(wing.span, wing.bendingMoment)
@@ -79,7 +79,7 @@ grid minor
 fig3.Units = 'normalized';
 fig3.Position = [0.5 0.5 0.25 0.4];
 
-Plotting the torque distribution
+% Plotting the torque distribution
 fig4 = figure(4);
 plot(wing.span, wing.torque)
 xlabel('Wing Spanwise Coordinate y (m)')
@@ -90,14 +90,14 @@ fig4.Units = 'normalized';
 fig4.Position = [0.75 0.5 0.25 0.4];
 
 % Plotting wingbox area variation
-figure
-plot(wing.span,wing.sparwebarea,'.b')
-grid on
-xlabel('Wing Span (m)')
-ylabel('Wingbox Area (m^2)')
-title('Wingbox Area Distribution')
+% figure
+% plot(wing.span,wing.boxArea,'.b')
+% grid on
+% xlabel('Wing Span (m)')
+% ylabel('Wingbox Area (m^2)')
+% title('Wingbox Area Distribution')
 
-Plotting the thickness variations
+% Plotting the thickness variations
 fig5 = figure(5);
 hold on
 plot(wing.span,1000*frontSpar.tw,'r')
@@ -111,17 +111,17 @@ fig5.Units = 'normalized';
 fig5.Position = [0 0.05 0.25 0.4];
 
 % Plotting the front and rear spar shear flow
-figure
-plot(wing.span,frontSpar.qweb,'.r')
-hold on
-plot(wing.span,rearSpar.qweb,'.b')
-grid on
-xlabel('Wing span (m)')
-ylabel('Shear flow (N/m)')
-legend({'Front spar','Rear spar'},'Location','Northeast')
-title('Sparhear flow spanwise distribution')
+% figure
+% plot(wing.span,frontSpar.qweb,'.r')
+% hold on
+% plot(wing.span,rearSpar.qweb,'.b')
+% grid on
+% xlabel('Wing span (m)')
+% ylabel('Shear flow (N/m)')
+% legend({'Front spar','Rear spar'},'Location','Northeast')
+% title('Sparhear flow spanwise distribution')
 
-Plotting front and rear spar shear stress
+% Plotting front and rear spar shear stress
 fig6 = figure(6);
 plot(wing.span,frontSpar.shearstress,'r')
 hold on
@@ -134,8 +134,7 @@ grid minor
 fig6.Units = 'normalized';
 fig6.Position = [0.25 0.05 0.25 0.4];
 
-Plotting front and Rear Spar flange dimensions
-
+% Plotting front and Rear Spar flange dimensions
 fig7 = figure(7);
 hold on
 yyaxis left
@@ -153,7 +152,7 @@ grid minor
 fig7.Units = 'normalized';
 fig7.Position = [0.5 0.05 0.25 0.4];
 
-Plotting spar areas and Ixx values
+% Plotting spar areas and Ixx values
 fig8 = figure(8);
 hold on
 yyaxis left
