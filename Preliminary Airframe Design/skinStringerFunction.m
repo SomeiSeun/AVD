@@ -1,9 +1,7 @@
 function [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,YM)
     
-
-%load material data
-load('WingDistributions.mat')
-load('Materials.mat')
+% load('WingDistributions.mat')
+% load('Materials.mat')
 
 %extract structure of materials
 YM_of_Materials=extractfield(UpperSkinMaterial,'YM');
@@ -28,3 +26,4 @@ for i=1:numSections
 end
 
 sigma=N_alongSpan/t2_alongSpan/1000;
+end
