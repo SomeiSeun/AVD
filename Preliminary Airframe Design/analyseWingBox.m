@@ -3,9 +3,10 @@ function [wing, frontSpar, rearSpar] = analyseWingBox(file, wing, frontSparLocat
 % Loading NACA aerofoil coorinates
 fID = fopen(file, 'r');
 NACA.coords = fscanf(fID, '%f %f', [2 Inf]);
+numPoints = length(NACA.coords);
 
-NACA.upper = NACA.coords(:,1:26);
-NACA.lower = NACA.coords(:,27:end);
+NACA.upper = NACA.coords(:,1:numPoints/2);
+NACA.lower = NACA.coords(:,numPoints/2+1:end);
 
 % Interpolating spar locations on upper surface
 i = 1;

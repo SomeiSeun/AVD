@@ -1,6 +1,7 @@
 function [spar] = sparSizing(wing, SparMaterial, spar)
 
 n = 500;
+m = 500;
 numSections = length(wing.span);
 
 % Determining target Ixx values for front and rear spars for each spar
@@ -30,8 +31,8 @@ for i = 1:numSections
     disp(['Progress: ' num2str(i) '/' num2str(numSections)])
 
     % Defining range of values for flange thickness tf and flange breadth b (m)
-    tf = linspace(5e-3, 0.5*spar.h(i), n)';
-    b = linspace(5e-3, 0.5*spar.h(i), n);
+    tf = linspace(1e-3, 0.05*spar.h(i), n)';
+    b = linspace(1e-3, 0.5*spar.h(i), m);
     
     Ixx = 1/6*b.*tf.^3 + 1/2*b.*tf.*(spar.h(i) - tf).^2 + 1/12*spar.tw(i).*(spar.h(i) - 2*tf).^3;
     Area = 2*b.*tf + spar.tw(i).*(spar.h(i) - 2*tf);  
