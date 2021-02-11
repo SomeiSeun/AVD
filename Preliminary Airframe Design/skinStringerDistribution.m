@@ -1,0 +1,10 @@
+function[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,lengthWingBox,Optimum)
+K=4.2;
+ESkin=71.8e9;
+stringerPitch=Optimum.stringerPitch;
+stringerThickness=Optimum.tStringer;
+noPanelsDist=(lengthWingBox/stringerPitch); 
+noStringersDist=noPanelsDist-1;
+skinThicknessDist=(((N_alongSpan*(stringerPitch)^2)/(K*ESkin)).^1/3);
+stringerThicknessDist=stringerThickness*ones(1,length(lengthWingBox));
+end 

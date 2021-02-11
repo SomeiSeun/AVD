@@ -39,16 +39,18 @@ for As_bt=0.5:0.005:1.0                                                     % Ru
         
         % Apply Boundary Conditions to ensure stringer dimensions obtained
         % are practical
-        boundaryCondition1=heightStringer<(0.1*b2(end));                  % height of the stringer must be less than 10% of the wingbox
-        boundaryCondition2=b>(8*depthStringer);                             % stringer pitch must be at least 8 times the depth of the stringer 
-        boundaryCondition3=heightStringer>0.0225;                           % stringer height must be more than 2 centimeters
-        
+        bC1=heightStringer<(0.1*b2(end));                                   % height of the stringer must be less than 10% of the wingbox
+        bC2=b>(8*depthStringer);                                            % stringer pitch must be at least 8 times the depth of the stringer 
+        bC3=heightStringer>0.0225;                                          % stringer height must be more than 2 centimeters
+        bC4=tSkin>0.00125;
+        bC5=tStringer>0.00125;
+       
 
-        stringerIndex=stringerIndex(boundaryCondition1 & boundaryCondition2 & boundaryCondition3);
-        heightStringer=heightStringer(boundaryCondition1 & boundaryCondition2 & boundaryCondition3);
-        tSkin=tSkin(boundaryCondition1 & boundaryCondition2 & boundaryCondition3);
-        tStringer=tStringer(boundaryCondition1 & boundaryCondition2 & boundaryCondition3);
-        aEffective=aEffective(boundaryCondition1 & boundaryCondition2 & boundaryCondition3);
+        stringerIndex=stringerIndex(bC1 & bC2 & bC3 & bC4 & bC5);
+        heightStringer=heightStringer(bC1 & bC2 & bC3 & bC4 & bC5);
+        tSkin=tSkin(bC1 & bC2 & bC3 & bC4 & bC5);
+        tStringer=tStringer(bC1 & bC2 & bC3 & bC4 & bC5);
+        aEffective=aEffective(bC1 & bC2 & bC3 & bC4 & bC5);
    
         %Store all passed values in structure
         if isempty(stringerIndex)                                           %
