@@ -1,7 +1,6 @@
 function [spar] = sparSizing(wing, SparMaterial, spar)
 
-n = 500;
-m = 500;
+n = 1e4;
 numSections = length(wing.span);
 
 % Determining target Ixx values for front and rear spars for each spar
@@ -18,10 +17,6 @@ end
 spar.curvature = spar.curvature - spar.curvature(end);
 spar.displacement = spar.displacement(end) - spar.displacement;
 
-% % Defining range of values for flange thickness tf and flange breadth b (m)
-% tf = linspace(1e-3, 0.5, n)';
-% b = linspace(1e-3, 0.5, n);
-
 spar.tf = zeros(1, numSections);
 spar.b = zeros(1, numSections);
 spar.Area = zeros(1, numSections);
@@ -30,25 +25,22 @@ for i = 1:numSections
     clc
     disp(['Progress: ' num2str(i) '/' num2str(numSections)])
 
-    % Defining range of values for flange thickness tf and flange breadth b (m)
-    tf = linspace(1e-3, 0.05*spar.h(i), n)';
-    b = linspace(1e-3, 0.5*spar.h(i), m);
+    % Defining range of values for flange thickness tf (m)
+    tf = linspace(1e-3, 0.5*spar.h(i), n);
+    b = (12*spar.Ixx(i) - spar.tw(i).*(spar.h(i) - 2*tf).^3)./(2*tf.^3 + 6*tf.*(spar.h(i) - tf).^2);
     
-    Ixx = 1/6*b.*tf.^3 + 1/2*b.*tf.*(spar.h(i) - tf).^2 + 1/12*spar.tw(i).*(spar.h(i) - 2*tf).^3;
-    Area = 2*b.*tf + spar.tw(i).*(spar.h(i) - 2*tf);  
-    
-    % Checking if calculated Ixx values meet minimum required Ixx
-    Ixx(Ixx < spar.Ixx(i)) = NaN;
-    Area(isnan(Ixx)) = NaN;
+    % Checking which flange breadth values (m) are manufacturable
+    b(b>0.5*spar.h(i)) = NaN;
+    b(b<0.001) = 0.001;
+    Area = 2*b.*tf + spar.tw(i).*(spar.h(i) - 2*tf);
     
     % Finding minimum combination of b and tf that meets Ixx requirement
-    [~,I] = min(Area,[],[1 2], 'linear');
-    [I1, I2] = ind2sub(size(Area), I);
+    [~,I] = min(Area);
     
     % Preparing function output
-    spar.tf(i) = tf(I1);
-    spar.b(i) = b(I2);
-    spar.Area(i) = Area(I1,I2);
+    spar.tf(i) = tf(I);
+    spar.b(i) = b(I);
+    spar.Area(i) = Area(I);
 end
 
 spar.mass = -1000*SparMaterial.Density*trapz(wing.span, spar.Area);
