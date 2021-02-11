@@ -47,8 +47,6 @@ for i = 1:length(wing.span)
     x2 = (rearsparweb.qweb(i) * rearsparweb.h(i)^2)/ (K_s * E);                     % Value to be cube rooted for rear spar
     frontsparweb.tw(i) = nthroot(x1,3);                                             % Thickness for front spar
     rearsparweb.tw(i) = nthroot(x2,3);                                              % Thickness for rear spar
-    frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw(i);        % Front spar shear stress
-    rearsparweb.shearstress(i) = rearsparweb.qweb(i) / rearsparweb.tw(i);           % Rear spar shear stress
     
     if frontsparweb.tw(i) < 0.001
         frontsparweb.tw(i) = 0.001;               % Minimum thickness condition for the front spar web
@@ -57,6 +55,9 @@ for i = 1:length(wing.span)
     if rearsparweb.tw(i) < 0.001
         rearsparweb.tw(i) = 0.001;                % Minimum thickness condition for the rear spar web
     end
+    
+    frontsparweb.shearstress(i) = frontsparweb.qweb(i) / frontsparweb.tw(i);        % Front spar shear stress
+    rearsparweb.shearstress(i) = rearsparweb.qweb(i) / rearsparweb.tw(i);           % Rear spar shear stress
     
 end
 
