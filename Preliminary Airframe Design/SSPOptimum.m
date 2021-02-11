@@ -17,9 +17,9 @@ for As_bt=0.5:0.005:1.0                                                     % Ru
     y=1;
     for ts_t=0.5:0.005:1.0                                                  % Runs through a range of different Stringer Thickness to Skin Thickness Ratios
         for i=1:noPanelsMax                                                 % Find the skin and stringer areas respectively for a number of different panel sizes
-             b(i)=c_alongSpan(10000)/i;                                     % Calculate stringer spacing           
-             tSkin(i)= ((N_alongSpan(10000)*(b(i))^2)/(K*ESkin))^(1/3);     % Thickness of the skin
-             aSkin(i)=c_alongSpan(10000)*tSkin(i);                          % Area of Skin 
+             b(i)=c_alongSpan(end)/i;                                     % Calculate stringer spacing           
+             tSkin(i)= ((N_alongSpan(end)*(b(i))^2)/(K*ESkin))^(1/3);     % Thickness of the skin
+             aSkin(i)=c_alongSpan(end)*tSkin(i);                          % Area of Skin 
              noStringers=i-1;
             if noStringers>=1   
                tStringer(i)=ts_t*tSkin(i);                                  % Thickness of stringer
@@ -39,7 +39,7 @@ for As_bt=0.5:0.005:1.0                                                     % Ru
         
         % Apply Boundary Conditions to ensure stringer dimensions obtained
         % are practical
-        boundaryCondition1=heightStringer<(0.1*b2(10000));                  % height of the stringer must be less than 10% of the wingbox
+        boundaryCondition1=heightStringer<(0.1*b2(end));                  % height of the stringer must be less than 10% of the wingbox
         boundaryCondition2=b>(8*depthStringer);                             % stringer pitch must be at least 8 times the depth of the stringer 
         boundaryCondition3=heightStringer>0.0225;                           % stringer height must be more than 2 centimeters
         
@@ -96,9 +96,9 @@ save('SkinStringerPanelOpt.mat','Optimum')
 
 K=4.2;
 for j=1:noPanelsMax
-            b(j)=c_alongSpan(10000)/j; 
-             tSkin(j)= ((N_alongSpan(10000)*(b(j))^2)/(K*ESkin))^(1/3);
-             aSkin(j)=c_alongSpan(10000)*tSkin(j);
+            b(j)=c_alongSpan(end)/j; 
+             tSkin(j)= ((N_alongSpan(end)*(b(j))^2)/(K*ESkin))^(1/3);
+             aSkin(j)=c_alongSpan(end)*tSkin(j);
              noStringers=j-1;
             if noStringers>=1
                tStringer(j)=0.75*tSkin(j);
@@ -113,6 +113,5 @@ for j=1:noPanelsMax
             end 
             aEffective(j)=aSkin(j)+aStringer(j);
 end
-disp('The Optimum Skin-Stringer Parameters are:')
-disp(Optimum)
+save('SkinStringerPanelOpt.mat','Optimum')
 end 
