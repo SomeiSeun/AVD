@@ -14,7 +14,7 @@ fuelInTank = 0; % value between 0 and 1
 numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
 
 % Evaluating dift and deight distributions
-wing = bending(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing, taperWing, Thrustline_position);
+wing = bendingWing(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing, taperWing, Thrustline_position);
 
 % Defining wing structural parameters
 frontSparLocation = 0.25;
@@ -36,6 +36,10 @@ cg = 0.4;
 [rearSpar] = sparSizing(wing, SparMaterial(numMaterial), rearSpar);
 
 
+% [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial(numMaterial));
+% 
+%  % Skin Stringer Panel Sizing 
+% [Optimum]=SSPOptimum(c_alongSpan,N_alongSpan,b2);
 
 % Plotting Results
 
@@ -176,7 +180,10 @@ plot(wing.span, rearSpar.Ixx)
 plot(wing.span, rearSpar.IxxMax)
 legend('Ixx', 'Ixx Max')
 
+<<<<<<< HEAD
 %% Ch3 code
  [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial(numMaterial));
 %% Skin Stringer Panel Sizing 
 [Optimum]=SSPOptimum(c_alongSpan,N_alongSpan,b2);
+=======
+>>>>>>> main

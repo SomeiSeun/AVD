@@ -2,18 +2,19 @@ clear
 clc
 close all
 
-load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'taperHoriz ', 'Thrustline_position',...
-    'rho_cruise', 'V_Cruise')
+load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'taperHoriz', 'Thrustline_position',...
+    'SHoriz', 'rho_cruise', 'V_Cruise')
 load('Materials.mat', 'SparMaterial')
 
 % Defining Parameters
 numSections = 1e3;
-Nz = 1.5*2.5; % ultimate load factor
-fuelInTank = 0; % value between 0 and 1
+Nz = 1; % limit load factor
 numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
 
 % Evaluating lift and weight distributions
-horiztail = bending(Nz, fuelInTank, numSections, W0, components, spanHoriz, cRootHoriz, taperHoriz, Thrustline_position);
+V_D = V_Cruise*0.82/0.8;
+liftReq = 0.5*0.308*rho_cruise*V_D^2*SHoriz;
+horizTail =  bendingTail(Nz, numSections, liftReq, components, spanHoriz, cRootHoriz, taperHoriz);
 
 % Defining horizontal tail box structural parameters
 frontSparLocation = 0.25;
@@ -21,18 +22,18 @@ rearSparLocation = 0.75;
 flexuralAxis = 0.5*(frontSparLocation + rearSparLocation);
 
 % Evaluating basic wing box parameters
-[horiztail, frontSpar, rearSpar] = analyseWingBox('NACA 0012.txt', horiztail, frontSparLocation, rearSparLocation);
+[horizTail, frontSpar, rearSpar] = analyseWingBox('NACA 0012.txt', horizTail, frontSparLocation, rearSparLocation);
 
 K_s = 8.1;
 Cm0 = 0;
 cg = 0.41;
 
 % Evaluating shear stresses and spar web thicknesses
-[horiztail,frontSpar,rearSpar] = shear_flow(horiztail, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+[horizTail,frontSpar,rearSpar] = shear_flow(horizTail, frontSpar, rearSpar, K_s, rho_cruise, V_D, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
 % Evaluating spar flange dimensions
-[frontSpar] = sparSizing(horiztail, SparMaterial(numMaterial), frontSpar);
-[rearSpar] = sparSizing(horiztail, SparMaterial(numMaterial), rearSpar);
+[frontSpar] = sparSizing(horizTail, SparMaterial(numMaterial), frontSpar);
+[rearSpar] = sparSizing(horizTail, SparMaterial(numMaterial), rearSpar);
 
 
 
@@ -41,15 +42,10 @@ cg = 0.41;
 % Plotting Loading Distribution
 fig1 = figure(1);
 hold on
-plot(horiztail.span, horiztail.lift, '.')
-plot(horiztail.span, -horiztail.selfWeight, '.')
-plot(horiztail.span, -horiztail.engineWeight, '.')
-plot(horiztail.span, -horiztail.ucWeight, '.')
-plot(horiztail.span, -horiztail.fuseWeight, '.')
-plot(horiztail.span, -horiztail.fuelWeight, '.')
-plot(horiztail.span, horiztail.loading, 'k-')
-legend('Lift', 'Self-weight', 'Engine Weight', 'Undercarriage Weight', 'Aircraft Weight',...
-    'Fuel Weight', 'Overall Loading Distribution', 'Location', ' Southeast')
+plot(horizTail.span, horizTail.lift, '.')
+plot(horizTail.span, -horizTail.selfWeight, '.')
+plot(horizTail.span, horizTail.loading, 'k-')
+legend('Lift', 'Self-weight', 'Overall Loading Distribution', 'Location', ' Southeast')
 ylabel('Loading Distribution (N/m)')
 xlabel('Wing Spanwise Coordinate y (m)')
 title('Wing Vertical Loading Distribution')
@@ -60,7 +56,7 @@ fig1.Position = [0 0.5 0.25 0.4];
 % Plotting Shear Force
 fig2 = figure(2);
 hold on
-plot(horiztail.span, horiztail.shearForce)
+plot(horizTail.span, horizTail.shearForce)
 ylabel('Shear Force (N)')
 xlabel('Wing Spanwise Coordinate y (m)')
 title('Wing Vertical Shear Force Distribution')
@@ -71,7 +67,7 @@ fig2.Position = [0.25 0.5 0.25 0.4];
 % Plotting Bending Moment
 fig3 = figure(3);
 hold on
-plot(horiztail.span, horiztail.bendingMoment)
+plot(horizTail.span, horizTail.bendingMoment)
 ylabel('Bending Moment (Nm)')
 xlabel('Wing Spanwise Coordinate y (m)')
 title('Wing Bending Moment Distribution')
@@ -81,7 +77,7 @@ fig3.Position = [0.5 0.5 0.25 0.4];
 
 % Plotting the torque distribution
 fig4 = figure(4);
-plot(horiztail.span, horiztail.torque)
+plot(horizTail.span, horizTail.torque)
 xlabel('Wing Spanwise Coordinate y (m)')
 ylabel('Torque Distribution (N)')
 title('Wing Torque Distribution')
@@ -100,8 +96,8 @@ fig4.Position = [0.75 0.5 0.25 0.4];
 % Plotting the thickness variations
 fig5 = figure(5);
 hold on
-plot(horiztail.span,1000*frontSpar.tw,'r')
-plot(horiztail.span,1000*rearSpar.tw,'b')
+plot(horizTail.span,1000*frontSpar.tw,'r')
+plot(horizTail.span,1000*rearSpar.tw,'b')
 xlabel('Wing span (m)')
 ylabel('Thickness (mm)')
 legend({'Front spar','Rear spar'},'Location','Northeast')
@@ -123,9 +119,9 @@ fig5.Position = [0 0.05 0.25 0.4];
 
 % Plotting front and rear spar shear stress
 fig6 = figure(6);
-plot(horiztail.span,frontSpar.shearstress,'r')
+plot(horizTail.span,frontSpar.shearstress,'r')
 hold on
-plot(horiztail.span,rearSpar.shearstress,'b')
+plot(horizTail.span,rearSpar.shearstress,'b')
 xlabel('Wing span (m)')
 ylabel('Shear stress (N/m^2)')
 legend({'Front Spar','Rear Spar'},'Location','Northeast')
@@ -139,13 +135,13 @@ fig6.Position = [0.25 0.05 0.25 0.4];
 fig7 = figure(7);
 hold on
 yyaxis left
-plot(horiztail.span, 1000*frontSpar.b, '-r')
-plot(horiztail.span, 1000*rearSpar.b, '-b')
+plot(horizTail.span, 1000*frontSpar.b, '-r')
+plot(horizTail.span, 1000*rearSpar.b, '-b')
 xlabel('Wing Spanwise Coordinate y (m)')
 ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
 yyaxis right
-plot(horiztail.span, 1000*frontSpar.tf, '--r')
-plot(horiztail.span, 1000*rearSpar.tf, '--b')
+plot(horizTail.span, 1000*frontSpar.tf, '--r')
+plot(horizTail.span, 1000*rearSpar.tf, '--b')
 ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
 legend('Front Spar Flange Breadth', 'Rear Spar Flange Breadth', 'Front Spar Flange Thickness', 'Rear Spar Flange Thickness')
 title('Wing Spar Flange Thickness and Breadth')
@@ -157,21 +153,15 @@ fig7.Position = [0.5 0.05 0.25 0.4];
 fig8 = figure(8);
 hold on
 yyaxis left
-plot(horiztail.span, frontSpar.Area, '-r')
-plot(horiztail.span, rearSpar.Area, '-b')
+plot(horizTail.span, frontSpar.Area, '-r')
+plot(horizTail.span, rearSpar.Area, '-b')
 xlabel('Wing Spanwise Coordinate y (m)')
 ylabel('Spar Cross-Sectional Area (m^2)', 'Color', 'k')
 yyaxis right
-plot(horiztail.span, frontSpar.Ixx, '--r')
-plot(horiztail.span, rearSpar.Ixx, '--b')
+plot(horizTail.span, frontSpar.Ixx, '--r')
+plot(horizTail.span, rearSpar.Ixx, '--b')
 ylabel('Second Moment of Area I_x_x (m^4)', 'Color', 'k')
 legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
-
-figure
-hold on
-plot(horiztail.span, rearSpar.Ixx)
-plot(horiztail.span, rearSpar.IxxMax)
-legend('Ixx', 'Ixx Max')

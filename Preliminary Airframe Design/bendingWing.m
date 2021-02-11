@@ -1,4 +1,4 @@
-function wing =  bending(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing, taperWing, Thrustline_position)
+function wing =  bendingWing(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing, taperWing, Thrustline_position, isWing)
 % This function calculates the bending moment and shear force distributions
 % along the wing, assuming a simply supported beam and symmetric flight.
 
