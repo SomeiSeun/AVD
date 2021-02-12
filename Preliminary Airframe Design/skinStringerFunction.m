@@ -1,16 +1,11 @@
-function [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wingchord,wingBM,E)
-
-%initialise FS and RS location
-FS_pos=0.25;
-RS_pos=0.7;
+function [N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing,E)
 
 %skin-stringer panel calculations
-b2=12*wingchord; %thickness of the aerofoil used as height of wing box
+boxHeight=0.15*wing.chord; %thickness of the aerofoil used as height of wing box
 
-%length of wing box at each station 
-c_alongSpan=(RS_pos-FS_pos)*wingchord; %length of wing box
-N_alongSpan=wingBM./(c_alongSpan.*b2); %bending moment per unit length at each station
-t2_alongSpan= ((((N_alongSpan.*(c_alongSpan.^2))./(3.62*E.YM)).^(1/3)))*1000;
+%c_alongSpan=(RS_pos-FS_pos)*wingchord; %length of wing box
+N_alongSpan=wing.bendingMoment./(wing.boxLength.*boxHeight); %bending moment per unit length at each station
+t2_alongSpan= ((((N_alongSpan.*(wing.boxLength.^2))./(3.62*E.YM)).^(1/3)))*1000;
 
 %enforce a minimum thickness of 1mm
 for i=1:numSections
