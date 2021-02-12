@@ -1,4 +1,4 @@
-function[Optimum]=SSPOptimum(c_alongSpan,N_alongSpan,b2)
+function[Optimum]=SSPOptimum(wing,N_alongSpan)
 noStringersMax=100;                                                         
 noPanelsMax=noStringersMax+1;
 K=3.62;                                                                    
@@ -10,16 +10,16 @@ tSkin=length(noPanelsMax);
 aSkin=length(noPanelsMax);
 aEffective=length(noPanelsMax);
 numberofStringers=1:noPanelsMax-1;
-
+boxHeight=0.15*wing.chord; 
 %% Effective Area Calculations for a number of different 
 x=1;
 for As_bt=0.5:0.005:1.0                                                     % Runs through a range of different Stringer Area to Skin Area Ratios
     y=1;
     for ts_t=0.5:0.005:1.0                                                  % Runs through a range of different Stringer Thickness to Skin Thickness Ratios
         for i=1:noPanelsMax                                                 % Find the skin and stringer areas respectively for a number of different panel sizes
-             b(i)=c_alongSpan(end)/i;                                     % Calculate stringer spacing           
-             tSkin(i)= ((N_alongSpan(end)*(b(i))^2)/(K*ESkin))^(1/3);     % Thickness of the skin
-             aSkin(i)=c_alongSpan(end)*tSkin(i);                          % Area of Skin 
+             b(i)=wing.boxLength(end)/i;                                    % Calculate stringer pitch           
+             tSkin(i)= ((N_alongSpan(end)*(b(i))^2)/(K*ESkin))^(1/3);       % Thickness of the skin
+             aSkin(i)=wing.boxLength(end)*tSkin(i);                            % Area of Skin 
              noStringers=i-1;
             if noStringers>=1   
                tStringer(i)=ts_t*tSkin(i);                                  % Thickness of stringer
@@ -39,7 +39,7 @@ for As_bt=0.5:0.005:1.0                                                     % Ru
         
         % Apply Boundary Conditions to ensure stringer dimensions obtained
         % are practical
-        bC1=heightStringer<(0.1*b2(end));                                   % height of the stringer must be less than 10% of the wingbox
+        bC1=heightStringer<(0.1*boxHeight(end));                            % height of the stringer must be less than 10% of the wingbox
         bC2=b>(8*depthStringer);                                            % stringer pitch must be at least 8 times the depth of the stringer 
         bC3=heightStringer>0.0225;                                          % stringer height must be more than 2 centimeters
         bC4=tSkin>0.00125;
@@ -50,8 +50,10 @@ for As_bt=0.5:0.005:1.0                                                     % Ru
         heightStringer=heightStringer(bC1 & bC2 & bC3 & bC4 & bC5);
         tSkin=tSkin(bC1 & bC2 & bC3 & bC4 & bC5);
         tStringer=tStringer(bC1 & bC2 & bC3 & bC4 & bC5);
+        aStringer=aStringer(bC1 & bC2 & bC3 & bC4 & bC5);
         aEffective=aEffective(bC1 & bC2 & bC3 & bC4 & bC5);
-   
+        b=b(bC1 & bC2 & bC3 & bC4 & bC5);
+        
         %Store all passed values in structure
         if isempty(stringerIndex)                                           %
         stringerGeometry.AStoBT(x,y)=NaN;
@@ -62,6 +64,7 @@ for As_bt=0.5:0.005:1.0                                                     % Ru
         stringerGeometry.stringerIndex(x,y)=NaN;
         stringerGeometry.tSkin(x,y)=NaN;
         stringerGeometry.heightStringer(x,y)=NaN;
+        stringerGeometry.b(x,y)=NaN;
 
 
         else 
@@ -73,6 +76,7 @@ for As_bt=0.5:0.005:1.0                                                     % Ru
         stringerGeometry.numberStringer(x,y)=stringerIndex(end);
         stringerGeometry.tSkin(x,y)=tSkin(end);
         stringerGeometry.heightStringer(x,y)=heightStringer(end);
+        stringerGeometry.b(x,y)=b(end);
         end
         y=y+1;
     end
@@ -90,7 +94,7 @@ Optimum.aStringer=stringerGeometry.aStringer(min_x,min_y);
 Optimum.aEffective=stringerGeometry.aEffective(min_x,min_y);
 Optimum.numberStringer=stringerGeometry.numberStringer(min_x,min_y);
 Optimum.heightStringer=stringerGeometry.heightStringer(min_x,min_y);
-Optimum.stringerPitch=min(b);
+Optimum.stringerPitch=stringerGeometry.b(min_x,min_y);
 
 
 save('SkinStringerPanelOpt.mat','Optimum')
@@ -101,9 +105,9 @@ save('SkinStringerPanelOpt.mat','Optimum')
 
 K=4.2;
 for j=1:noPanelsMax
-            b(j)=c_alongSpan(end)/j; 
+            b(j)=wing.boxLength (end)/j; 
              tSkin(j)= ((N_alongSpan(end)*(b(j))^2)/(K*ESkin))^(1/3);
-             aSkin(j)=c_alongSpan(end)*tSkin(j);
+             aSkin(j)=wing.boxLength (end)*tSkin(j);
              noStringers=j-1;
             if noStringers>=1
                tStringer(j)=0.75*tSkin(j);
