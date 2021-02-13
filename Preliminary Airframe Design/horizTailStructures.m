@@ -4,7 +4,7 @@ close all
 
 load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'taperHoriz', 'Thrustline_position',...
     'SHoriz', 'rho_cruise', 'V_Cruise')
-load('Materials.mat', 'SparMaterial')
+load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
 
 % Defining Parameters
 numSections = 1e3;
@@ -34,7 +34,6 @@ cg = 0.41;
 % Evaluating spar flange dimensions
 [frontSpar] = sparSizing(horizTail, SparMaterial(numMaterial), frontSpar);
 [rearSpar] = sparSizing(horizTail, SparMaterial(numMaterial), rearSpar);
-
 
 
 %% Plotting Results
@@ -165,3 +164,10 @@ legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
+
+%% Skin thickness sizing (ch3)
+[N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections,horizTail,UpperSkinMaterial(numMaterial));
+
+%% Skin Stringer Panel Sizing and Optimization
+[Optimum]=SSPOptimum(horizTail,N_alongSpan);
+[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,Optimum);

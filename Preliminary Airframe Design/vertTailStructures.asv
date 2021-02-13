@@ -36,7 +36,7 @@ cg = 0.41;
 [frontSpar] = sparSizing(vertTail, SparMaterial(numMaterial), frontSpar);
 [rearSpar] = sparSizing(vertTail, SparMaterial(numMaterial), rearSpar);
 
-%% Plotting Results
+% Plotting Results
 % Plotting Loading Distribution
 fig1 = figure(1);
 hold on
@@ -167,6 +167,7 @@ legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
+
 
 %% Skin thickness sizing (ch3)
 [N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections,vertTail,UpperSkinMaterial(numMaterial));
