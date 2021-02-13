@@ -4,7 +4,7 @@ close all
 
 load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'taperHoriz', 'Thrustline_position',...
     'SHoriz', 'rho_cruise', 'V_Cruise')
-load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
+load('Materials.mat', 'SparMaterial')
 
 % Defining Parameters
 numSections = 1e3;
@@ -34,6 +34,7 @@ cg = 0.41;
 % Evaluating spar flange dimensions
 [frontSpar] = sparSizing(horizTail, SparMaterial(numMaterial), frontSpar);
 [rearSpar] = sparSizing(horizTail, SparMaterial(numMaterial), rearSpar);
+
 
 
 %% Plotting Results
@@ -121,7 +122,7 @@ fig6 = figure(6);
 plot(horizTail.span,frontSpar.shearstress,'r')
 hold on
 plot(horizTail.span,rearSpar.shearstress,'b')
-xlabel('Horiz tail span (m)')
+xlabel('Horiz span (m)')
 ylabel('Shear stress (N/m^2)')
 legend({'Front Spar','Rear Spar'},'Location','Northeast')
 title('Spar Web Shear Stress Distribution')
@@ -136,14 +137,14 @@ hold on
 yyaxis left
 plot(horizTail.span, 1000*frontSpar.b, '-r')
 plot(horizTail.span, 1000*rearSpar.b, '-b')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
+xlabel('Wing Spanwise Coordinate y (m)')
 ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
 yyaxis right
 plot(horizTail.span, 1000*frontSpar.tf, '--r')
 plot(horizTail.span, 1000*rearSpar.tf, '--b')
 ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
 legend('Front Spar Flange Breadth', 'Rear Spar Flange Breadth', 'Front Spar Flange Thickness', 'Rear Spar Flange Thickness')
-title('Horiz tail Spar Flange Thickness and Breadth')
+title('Wing Spar Flange Thickness and Breadth')
 grid minor
 fig7.Units = 'normalized';
 fig7.Position = [0.5 0.05 0.25 0.4];
@@ -154,7 +155,7 @@ hold on
 yyaxis left
 plot(horizTail.span, frontSpar.Area, '-r')
 plot(horizTail.span, rearSpar.Area, '-b')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
+xlabel('Wing Spanwise Coordinate y (m)')
 ylabel('Spar Cross-Sectional Area (m^2)', 'Color', 'k')
 yyaxis right
 plot(horizTail.span, frontSpar.Ixx, '--r')
@@ -164,10 +165,3 @@ legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
-
-%% Skin thickness sizing (ch3)
-[N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections,horizTail,UpperSkinMaterial(numMaterial));
-
-%% Skin Stringer Panel Sizing and Optimization
-[Optimum]=SSPOptimum(horizTail,N_alongSpan);
-[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,Optimum);
