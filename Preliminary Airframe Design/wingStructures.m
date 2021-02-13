@@ -180,3 +180,10 @@ plot(wing.span, rearSpar.Ixx)
 plot(wing.span, rearSpar.IxxMax)
 legend('Ixx', 'Ixx Max')
 
+
+%% Skin thickness sizing (ch3)
+[N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing,UpperSkinMaterial(numMaterial));
+
+%% Skin Stringer Panel Sizing and Optimization
+[Optimum]=SSPOptimum(wing,N_alongSpan);
+[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,Optimum);
