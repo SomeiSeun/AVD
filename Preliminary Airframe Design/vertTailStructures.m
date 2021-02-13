@@ -2,53 +2,56 @@ clear
 clc
 close all
 
-load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'taperHoriz', 'Thrustline_position',...
-    'SHoriz', 'rho_cruise', 'V_Cruise')
+load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootVert', 'taperVert', 'Thrustline_position',...
+    'SVert', 'rho_cruise', 'V_Cruise')
 load('Materials.mat', 'SparMaterial')
 
 % Defining Parameters
 numSections = 1e3;
-Nz = 1; % limit load factor
-numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
+Nz = 1;          % Limit load factor
+numMaterial = 1; % From Materials.mat, must be integer between 1 and 4
 
 % Evaluating lift and weight distributions
 V_D = V_Cruise*0.82/0.8;
-liftReq = 0.5*0.308*rho_cruise*V_D^2*SHoriz;
-horizTail =  bendingTail(Nz, numSections, liftReq, components, spanHoriz, cRootHoriz, taperHoriz);
+liftReq = 0.5*0.308*rho_cruise*V_D^2*SVert;
+vertTail =  bendingTail(Nz, numSections, liftReq, components, spanHoriz, cRootHoriz, taperHoriz);
 
-% Defining horizontal tail box structural parameters
+% Defining vertical tail box structural parameters
 frontSparLocation = 0.25;
 rearSparLocation = 0.75;
 flexuralAxis = 0.5*(frontSparLocation + rearSparLocation);
 
 % Evaluating basic wing box parameters
-[horizTail, frontSpar, rearSpar] = analyseWingBox('NACA 0012.txt', horizTail, frontSparLocation, rearSparLocation);
+[vertTail, frontSpar, rearSpar] = analyseWingBox('NACA 0012.txt', vertTail, frontSparLocation, rearSparLocation);
 
 K_s = 8.1;
 Cm0 = 0;
 cg = 0.41;
 
 % Evaluating shear stresses and spar web thicknesses
-[horizTail,frontSpar,rearSpar] = shear_flow(horizTail, frontSpar, rearSpar, K_s, rho_cruise, V_D, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+[vertTail,frontSpar,rearSpar] = shear_flow(vertTail, frontSpar, rearSpar, K_s, rho_cruise, V_D, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
 % Evaluating spar flange dimensions
-[frontSpar] = sparSizing(horizTail, SparMaterial(numMaterial), frontSpar);
-[rearSpar] = sparSizing(horizTail, SparMaterial(numMaterial), rearSpar);
+[frontSpar] = sparSizing(vertTail, SparMaterial(numMaterial), frontSpar);
+[rearSpar] = sparSizing(vertTail, SparMaterial(numMaterial), rearSpar);
 
-
-
-%% Plotting Results
+% Plotting Results
 
 % Plotting Loading Distribution
 fig1 = figure(1);
 hold on
-plot(horizTail.span, horizTail.lift, '.')
-plot(horizTail.span, -horizTail.selfWeight, '.')
-plot(horizTail.span, horizTail.loading, 'k-')
-legend('Lift', 'Self-weight', 'Overall Loading Distribution', 'Location', ' Southeast')
+plot(wing.span, wing.lift, '.')
+plot(wing.span, -wing.selfWeight, '.')
+plot(wing.span, -wing.engineWeight, '.')
+plot(wing.span, -wing.ucWeight, '.')
+plot(wing.span, -wing.fuseWeight, '.')
+plot(wing.span, -wing.fuelWeight, '.')
+plot(wing.span, wing.loading, 'k-')
+legend('Lift', 'Self-weight', 'Engine Weight', 'Undercarriage Weight', 'Aircraft Weight',...
+    'Fuel Weight', 'Overall Loading Distribution', 'Location', ' Southeast')
 ylabel('Loading Distribution (N/m)')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
-title('Horiz tail Vertical Loading Distribution')
+xlabel('Wing Spanwise Coordinate y (m)')
+title('Wing Vertical Loading Distribution')
 grid minor
 fig1.Units = 'normalized';
 fig1.Position = [0 0.5 0.25 0.4];
@@ -56,10 +59,10 @@ fig1.Position = [0 0.5 0.25 0.4];
 % Plotting Shear Force
 fig2 = figure(2);
 hold on
-plot(horizTail.span, horizTail.shearForce)
+plot(wing.span, wing.shearForce)
 ylabel('Shear Force (N)')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
-title('Horiz tail Vertical Shear Force Distribution')
+xlabel('Wing Spanwise Coordinate y (m)')
+title('Wing Vertical Shear Force Distribution')
 grid minor
 fig2.Units = 'normalized';
 fig2.Position = [0.25 0.5 0.25 0.4];
@@ -67,27 +70,27 @@ fig2.Position = [0.25 0.5 0.25 0.4];
 % Plotting Bending Moment
 fig3 = figure(3);
 hold on
-plot(horizTail.span, horizTail.bendingMoment)
+plot(wing.span, wing.bendingMoment)
 ylabel('Bending Moment (Nm)')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
-title('Horiz tail Bending Moment Distribution')
+xlabel('Wing Spanwise Coordinate y (m)')
+title('Wing Bending Moment Distribution')
 grid minor
 fig3.Units = 'normalized';
 fig3.Position = [0.5 0.5 0.25 0.4];
 
 % Plotting the torque distribution
 fig4 = figure(4);
-plot(horizTail.span, horizTail.torque)
-xlabel('Horiz tail Spanwise Coordinate y (m)')
+plot(wing.span, wing.torque)
+xlabel('Wing Spanwise Coordinate y (m)')
 ylabel('Torque Distribution (N)')
-title('Horiz tail Torque Distribution')
+title('Wing Torque Distribution')
 grid minor
 fig4.Units = 'normalized';
 fig4.Position = [0.75 0.5 0.25 0.4];
 
-% % Plotting wingbox area variation
+% Plotting wingbox area variation
 % figure
-% plot(wing.span,wing.sparwebarea,'.b')
+% plot(wing.span,wing.boxArea,'.b')
 % grid on
 % xlabel('Wing Span (m)')
 % ylabel('Wingbox Area (m^2)')
@@ -96,9 +99,9 @@ fig4.Position = [0.75 0.5 0.25 0.4];
 % Plotting the thickness variations
 fig5 = figure(5);
 hold on
-plot(horizTail.span,1000*frontSpar.tw,'r')
-plot(horizTail.span,1000*rearSpar.tw,'b')
-xlabel('Horiz tail span (m)')
+plot(wing.span,1000*frontSpar.tw,'r')
+plot(wing.span,1000*rearSpar.tw,'b')
+xlabel('Wing span (m)')
 ylabel('Thickness (mm)')
 legend({'Front spar','Rear spar'},'Location','Northeast')
 title('Spar Web Thickness Distribution')
@@ -106,7 +109,7 @@ grid minor
 fig5.Units = 'normalized';
 fig5.Position = [0 0.05 0.25 0.4];
 
-% % Plotting the front and rear spar shear flow
+% Plotting the front and rear spar shear flow
 % figure
 % plot(wing.span,frontSpar.qweb,'.r')
 % hold on
@@ -119,10 +122,10 @@ fig5.Position = [0 0.05 0.25 0.4];
 
 % Plotting front and rear spar shear stress
 fig6 = figure(6);
-plot(horizTail.span,frontSpar.shearstress,'r')
+plot(wing.span,frontSpar.shearstress,'r')
 hold on
-plot(horizTail.span,rearSpar.shearstress,'b')
-xlabel('Horiz tail span (m)')
+plot(wing.span,rearSpar.shearstress,'b')
+xlabel('Wing span (m)')
 ylabel('Shear stress (N/m^2)')
 legend({'Front Spar','Rear Spar'},'Location','Northeast')
 title('Spar Web Shear Stress Distribution')
@@ -131,20 +134,19 @@ fig6.Units = 'normalized';
 fig6.Position = [0.25 0.05 0.25 0.4];
 
 % Plotting front and Rear Spar flange dimensions
-
 fig7 = figure(7);
 hold on
 yyaxis left
-plot(horizTail.span, 1000*frontSpar.b, '-r')
-plot(horizTail.span, 1000*rearSpar.b, '-b')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
+plot(wing.span, 1000*frontSpar.b, '-r')
+plot(wing.span, 1000*rearSpar.b, '-b')
+xlabel('Wing Spanwise Coordinate y (m)')
 ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
 yyaxis right
-plot(horizTail.span, 1000*frontSpar.tf, '--r')
-plot(horizTail.span, 1000*rearSpar.tf, '--b')
+plot(wing.span, 1000*frontSpar.tf, '--r')
+plot(wing.span, 1000*rearSpar.tf, '--b')
 ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
 legend('Front Spar Flange Breadth', 'Rear Spar Flange Breadth', 'Front Spar Flange Thickness', 'Rear Spar Flange Thickness')
-title('Horiz tail Spar Flange Thickness and Breadth')
+title('Wing Spar Flange Thickness and Breadth')
 grid minor
 fig7.Units = 'normalized';
 fig7.Position = [0.5 0.05 0.25 0.4];
@@ -153,15 +155,21 @@ fig7.Position = [0.5 0.05 0.25 0.4];
 fig8 = figure(8);
 hold on
 yyaxis left
-plot(horizTail.span, frontSpar.Area, '-r')
-plot(horizTail.span, rearSpar.Area, '-b')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
+plot(wing.span, frontSpar.Area, '-r')
+plot(wing.span, rearSpar.Area, '-b')
+xlabel('Wing Spanwise Coordinate y (m)')
 ylabel('Spar Cross-Sectional Area (m^2)', 'Color', 'k')
 yyaxis right
-plot(horizTail.span, frontSpar.Ixx, '--r')
-plot(horizTail.span, rearSpar.Ixx, '--b')
+plot(wing.span, frontSpar.Ixx, '--r')
+plot(wing.span, rearSpar.Ixx, '--b')
 ylabel('Second Moment of Area I_x_x (m^4)', 'Color', 'k')
 legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
+
+figure
+hold on
+plot(wing.span, rearSpar.Ixx)
+plot(wing.span, rearSpar.IxxMax)
+legend('Ixx', 'Ixx Max')
