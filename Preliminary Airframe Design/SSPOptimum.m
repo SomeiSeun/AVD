@@ -124,3 +124,4 @@ for j=1:noPanelsMax
 end
 save('SkinStringerPanelOpt.mat','Optimum')
 end 
+% noStringersDist,skinThicknessDist,stringerThicknessDist,
