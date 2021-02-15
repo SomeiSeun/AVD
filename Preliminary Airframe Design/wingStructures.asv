@@ -188,7 +188,7 @@ hold off
 [Optimum]=SSPOptimum(wing,N_alongSpan);
 [noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,Optimum);
 
-% Plotting skin thickness distribution along span 
+% Plotting the skin thickness distribution along span
 figure
 x=[wing.span(1:50:end),0];
 y=[skinThicknessDist(1:50:end),skinThicknessDist(end)]*1000;
@@ -202,14 +202,6 @@ grid minor
 %% Rib Spacing and Rib Thickness Optimisation
 [rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS]=ribSpacing(wing,Optimum,boxHeight,skinThicknessDist,N_alongSpan);
 
-% Plotting Mass Vs Rib Spacing
+% Plot of Mass Vs Rib Spacing 
 figure 
-plot(rSpacing,massWingBox,'-b')
-hold on 
-plot(rSpacing,massEffRib,'-r')
-plot(rSpacing,massEffSS)
-xlabel('Rib Spacing (m)')
-ylabel('Mass')
-legend('Total','Ribs','Skin-Stringer')
-title('Rib Spacing Optimisation')
-grid minor 
+plot(rSpacing,massWingBox,'-b','
