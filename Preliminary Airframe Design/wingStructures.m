@@ -213,3 +213,4 @@ ylabel('Mass')
 legend('Total','Ribs','Skin-Stringer')
 title('Rib Spacing Optimisation')
 grid minor 
+hold off

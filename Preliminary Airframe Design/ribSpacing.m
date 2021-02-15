@@ -28,7 +28,8 @@ for i=1:length(rSpacing)
         ribThickness(BC1)=0.001;
         
        %% To Optimise, consider achieving optimum mass: 
-        effectiveSST(i,:)=(1/F)*(rSpacing(i)*(N_alongSpan/E)).^(1/2);                           % Effective Thickness calculated from mean stress realised by the skin and stringer at failure.
+        nAlongSpan=abs(N_alongSpan);
+        effectiveSST(i,:)=(1/F)*(rSpacing(i)*(nAlongSpan/E)).^(1/2);                           % Effective Thickness calculated from mean stress realised by the skin and stringer at failure.
         effectiveRT(i,:)=(boxHeight.*ribThickness(i,:))/(rSpacing(i));
         massEffSS(i,:)=sum((densitySS*effectiveSST(i,:).*boxLength.*discSpan),2);
         massEffRib(i,:)=sum((densityRibs*effectiveRT(i,:).*boxLength.*discSpan),2);
