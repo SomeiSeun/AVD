@@ -1,4 +1,4 @@
-function [N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing,E)
+function [N_alongSpan,t2_alongSpan,sigma,boxHeight] = skinStringerFunction(numSections, wing,E)
 
 %skin-stringer panel calculations
 boxHeight=0.15*wing.chord; %thickness of the aerofoil used as height of wing box

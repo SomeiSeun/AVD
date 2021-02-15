@@ -182,7 +182,7 @@ legend('Ixx', 'Ixx Max')
 
 
 %% Skin thickness sizing (ch3)
-[N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing,UpperSkinMaterial(numMaterial));
+[N_alongSpan,t2_alongSpan,sigma,boxHeight] = skinStringerFunction(numSections, wing,UpperSkinMaterial(numMaterial));
 
 %% Skin Stringer Panel Sizing and Optimization
 [Optimum]=SSPOptimum(wing,N_alongSpan);

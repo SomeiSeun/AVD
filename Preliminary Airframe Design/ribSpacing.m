@@ -6,17 +6,16 @@ E=71.8e9;
 F=0.95;
 densitySS=2.7;
 densityRibs=2.7;
-hWB=0.12*c_alongSpan;
 boxLength=wing.boxLength;
 boxArea=wing.boxArea;
 T=skinThicknessDist+(Optimum.aStringer/(Optimum.numberStringer*Optimum.stringerPitch));
-IxxPanel=(boxLength.*((T.^3)/12) + T.*(0.5*hWB).^2);
+IxxPanel=(boxLength.*((T.^3)/12) + T.*(0.5*boxHeight).^2);
 
 % Find Optimum Rib Spacing
 rSpacing=0.3:0.001:1.0; 
 for i=1:length(rSpacing)
-        fCrush(i,:)=(wing.bendingMoment.*rSpacing(i).*(hWB).*(T).*boxLength)/(2*E*(IxxPanel).^2); 
-        ribThickness(i,:)=(fCrush(i,:).*((hWB.*(wing.bendingMoment).^2)).^2)/(3.62.*boxLength*E);
+        fCrush(i,:)=(wing.bendingMoment.*rSpacing(i).*(boxHeight).*(T).*boxLength)/(2*E*(IxxPanel).^2); 
+        ribThickness(i,:)=(fCrush(i,:).*((boxHeight.*(wing.bendingMoment).^2)).^2)/(3.62.*boxLength*E);
         
         % Apply BC to ensure rib thickness is greater than 1mm 
         BC1=ribThickness<0.001; 
@@ -24,9 +23,7 @@ for i=1:length(rSpacing)
         
        %% To Optimise, consider achieving optimum mass: 
           effectiveSST(i,:)=1/F*sqrt(rSpacing(i)*N_alongSpan/E);                                % Effective Thickness calculated from mean stress realised by the skin and stringer at failure.
-          effectiveRT(i,:)=(hWB.*ribThickness(i,:))/rSpacing(i);
-          massEffSS(i)=sum((densitySS*effectiveSST(i,:).*boxArea),2);
-          massEffRib(i)=sum((densityRibs*effectiveRT(i,:).*boxArea),2);
+          effectiveRT(i,:)=(boxHeight.*ribThickness(i,:))/rSpacing(i);
 
 end
 massWingBox=massEffRib + massEffSS;
@@ -34,13 +31,9 @@ massWingBox=massEffRib + massEffSS;
  optRibSpacing=rSpacing(minindex);
  
 % end
- 
-save('ribSpacing.mat','optRibSpacing')
+
 
 %% Plots of Results
 
-figure
-hold on 
-plot(rSpacing,massEffRib)
-hold off
+
 
