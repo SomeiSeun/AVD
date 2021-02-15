@@ -1,4 +1,4 @@
-clear
+vertclear
 clc
 close all
 
@@ -12,13 +12,10 @@ Nz = 1;             % Limit load factor
 numMaterial = 1;    % From Materials.mat, must be integer between 1 and 4
 
 % Evaluating lift and weight distributions
-
-liftReq = 0.5*0.308*rho_takeoff*V_takeoff^2*SVert;
+V_D = V_Cruise*0.82/0.8;
+liftReq = 0.5*0.308*rho_cruise*V_D^2*SVert;
 vertTail =  bendingTail(Nz, numSections, liftReq, components, spanHoriz, cRootVert, taperVert);
 vertTail.engineWeight = zeros(1,numSections);
-vertTail.ucWeight = zeros(1,numSections);
-vertTail.fuseWeight = zeros(1,numSections);
-vertTail.fuelWeight = zeros(1,numSections);
 
 % Defining vertical tail box structural parameters
 frontSparLocation = 0.25;
@@ -33,7 +30,7 @@ Cm0 = 0;
 cg = 0.41;
 
 % Evaluating shear stresses and spar web thicknesses
-[vertTail,frontSpar,rearSpar] = shear_flow(vertTail, frontSpar, rearSpar, K_s, rho_takeoff, V_takeoff,...
+[vertTail,frontSpar,rearSpar] = shear_flow(vertTail, frontSpar, rearSpar, K_s, rho_cruise, V_D,...
     SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
 % Evaluating spar flange dimensions
