@@ -38,7 +38,8 @@ fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, r, b, N);
 fuselage = fuselage_distributions(components, Nz, numSections, W0, mainLength);
 
 %% fuselage tail load distribution
-
+% DON'T THINK THAT WE NEED THIS SINCE WE ONLY HAVE 1 LOADING CASE TO WORRY
+% ABOUT? (US)
 
 
 
@@ -56,7 +57,7 @@ FrameSpacing=convlength(20, 'in','m');
 
 %% presurisation 
 % ratio of cylindrical fus thickness to hemispherical ends thickness
-t_c = ((2 - poisson) / (1 - poisson)) * t_s; % t_c is cylindrical fus thickness
+t_c = ((2 - poisson) / (1 - poisson)) * t_s;    % t_c is cylindrical fus thickness
 
 %% bending in fuselage
 %use a datasheet to choose stringer area, as there are too many unknowns
@@ -70,29 +71,45 @@ t_c = ((2 - poisson) / (1 - poisson)) * t_s; % t_c is cylindrical fus thickness
 
 
 %% light frames
-%(EI)_f=(C_f*M*D^2)/L; for that particular station
+fuselage = light_frames(E, D, M, L);
 
+% Plotting a 3D graph for thickness variation against flange width and web
+% height
+figure
+surf(fuselage.web_height, fuselage.flange_width, fuselage.frame_t)
+xlabel('Web height (m)')
+ylabel('Flange width (m)')
+zlabel('Frame thickness (m)')
+title('Frame thickness surface plot')
+colorbar
+
+% Plotting a 3D graph for area variation against web height and flange
+% width
+figure
+surf(fuselage.web_height, fuselage.flange_width, fuselage.frame_area)
+xlabel('Web height (m)')
+ylabel('Flange width (m)')
+zlabel('Frame area (m^2)')
+title('Frame area surface plot')
+colorbar
 
 %% heavy frames
-%equations to code up: WISE curve equations
-[fuselage,theta] = wise_curves(P, R, T, Q);
+[fuselage,theta_deg] = wise_curves(P, R, T, Q);
 
 % Plotting the Wise curves
 figure
-plot(theta,fuselage.tangent_m,'-r')
+plot(theta_deg,fuselage.tangent_m,'-r')
 xlabel('Angle (Radians)')
 ylabel('Bending moment (Nm)')
 title('Bending moment variation around the fuselage ring')
 
 figure
-plot(theta,fuselage.tangent_n,'-r')
+plot(theta_deg,fuselage.tangent_n,'-r')
 hold on
-plot(theta,fuselage.tangent_s,'-b')
+plot(theta_deg,fuselage.tangent_s,'-b')
 xlabel('Angle (Radians)')
 ylabel('Force (N)')
 title('Shear and normal force variation around the fuselage ring')
 legend({'Normal','Shear'},'Location','North')
-
-
 
 %reaction shear flow around ring equation

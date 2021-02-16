@@ -1,17 +1,18 @@
-function [fuselage,theta] = wise_curves(P, R, T, Q)
+function [fuselage,theta_deg] = wise_curves(P, R, T, Q)
 
 % This function plots the wise curves
 % The INPUTS are:
-% P =
-% R =
-% T =
-% Q =
+% P = Tangential load
+% R = Radius of the fuselage
+% T = Moment
+% Q = Radial load
 
 % The OUTPUTS are:
 % fuselage = structure with forces due to the different load cases
 
 % Initialising the arrays
 theta = linspace(0,2*pi,1000);
+theta_deg = (180 / pi) * theta;
 fuselage.tangent_m = zeros(1,length(theta));
 fuselage.tangent_n = zeros(1,length(theta));
 fuselage.tangent_s = zeros(1,length(theta));
