@@ -8,16 +8,21 @@ load('ConceptualDesign.mat', 'W0',  'components', 'rho_cruise', 'V_Cruise', 'mai
 %load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
 %^ Using same materials for fuselage as the wings?
 
+%Nz = 1.5*2.5;
+%numSections = 10000;
+
+
+
 %% Anudi -- this is not the proper code, simply a breakdown of the procedure. Code in progress
 %materials (sheet 1 of spreadsheet)
 
 %fuselage materials not selected yet so using temporary values for now (values in sample spreadsheet)
-E = 73000;      % N/mm^2
-Poisson = 0.33;
-G = E/2/(1+Poisson);
-Bulk_Mod = E/3/(1-2*Poisson);
-TensileYieldStress = 324;   % MPa
-ShearYieldStress = TensileYieldStress/sqrt(3);
+E=73000; %N/mm^2
+Poisson=0.33;
+G=E/2/(1+Poisson);
+Bulk_Mod=E/3/(1-2*Poisson);
+TensileYieldStress=324; %MPa
+ShearYieldStress=TensileYieldStress/sqrt(3);
 
 %% fuselage inertial load distributions (sheet 2 of spreadsheet)
 %discretize fuselage - already done in fuselage.length from concep design
@@ -55,8 +60,8 @@ FrameSpacing=convlength(20, 'in','m');
 
 
 %% presurisation 
-% ratio of cylindrical fus thickness to hemispherical ends thickness
-t_c = ((2 - poisson) / (1 - poisson)) * t_s; % t_c is cylindrical fus thickness
+%ratio of cylindrical fus thickness to hemispherical ends thickness =2.5
+t_c = (2 - poisson) / (1 - poisson)) * t_s; %t_c is cylindrical fus thickness
 
 %% bending in fuselage
 %use a datasheet to choose stringer area, as there are too many unknowns
@@ -75,5 +80,4 @@ t_c = ((2 - poisson) / (1 - poisson)) * t_s; % t_c is cylindrical fus thickness
 
 %% heavy frames
 %equations to code up: WISE curve equations
-fuselage = wise_curves(P, R, T, Q)
 %reaction shear flow around ring equation
