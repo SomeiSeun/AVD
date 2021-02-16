@@ -200,7 +200,8 @@ grid minor
 
 
 %% Rib Spacing and Rib Thickness Optimisation
-[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS]=ribSpacing(wing,Optimum,boxHeight,skinThicknessDist,N_alongSpan);
+[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,Optimum,boxHeight,skinThicknessDist,N_alongSpan);
+[optRibParameters]=RibThickness(optRibSpacing,wing,minMassIndex,ribThickness);
 
 % Plotting Mass Vs Rib Spacing
 figure 

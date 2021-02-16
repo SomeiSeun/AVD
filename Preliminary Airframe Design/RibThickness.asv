@@ -1,6 +1,6 @@
 %% Determining the Rib Thickness at each station (assuming that Ribs will be positioned perpendicular to the leading edge)
 
-function[optRibParameters]=RibThickness(optRibSpacing,wing,minMassIndex,ribThickness)
+function[OptRibParameteres]=RibThickness
 % Initialize 
 i=1;
 j=1;
@@ -26,7 +26,6 @@ OptimumRibThickness(i)=ribThickness(minMassIndex,locate);
 end 
  
 OptimumRibThickness=OptimumRibThickness(i);
-optRibParameters.ribSpacing=optRibSpacing;
-optRibParameters.ribThickness=OptimumRibThickness; 
-optRibParameters.numberOfRibs=numberOfRibs;
-end 
+OptRibParameters.ribSpacing=optRibSpacing;
+OptRibParameters.ribThickness=OptimumRibThickness; 
+OptRibParameters.numberOfRibs=numberOfRibs;
