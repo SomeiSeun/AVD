@@ -1,4 +1,4 @@
-function fuselage = wise_curves(P, R, T, Q)
+function [fuselage,theta] = wise_curves(P, R, T, Q)
 
 % This function plots the wise curves
 % The INPUTS are:

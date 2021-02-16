@@ -75,5 +75,24 @@ t_c = ((2 - poisson) / (1 - poisson)) * t_s; % t_c is cylindrical fus thickness
 
 %% heavy frames
 %equations to code up: WISE curve equations
-fuselage = wise_curves(P, R, T, Q)
+[fuselage,theta] = wise_curves(P, R, T, Q);
+
+% Plotting the Wise curves
+figure
+plot(theta,fuselage.tangent_m,'-r')
+xlabel('Angle (Radians)')
+ylabel('Bending moment (Nm)')
+title('Bending moment variation around the fuselage ring')
+
+figure
+plot(theta,fuselage.tangent_n,'-r')
+hold on
+plot(theta,fuselage.tangent_s,'-b')
+xlabel('Angle (Radians)')
+ylabel('Force (N)')
+title('Shear and normal force variation around the fuselage ring')
+legend({'Normal','Shear'},'Location','North')
+
+
+
 %reaction shear flow around ring equation
