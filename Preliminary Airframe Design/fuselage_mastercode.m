@@ -21,21 +21,21 @@ Bulk_Mod = E/3/(1-2*Poisson);
 TensileYieldStress = 324;    % MPa
 ShearYieldStress = TensileYieldStress/sqrt(3);
 
-<<<<<<< HEAD
+
 %% fuselage inertial load distributions (sheet 2 of spreadsheet)
 %discretize fuselage - already done in fuselage.length from concep design
-numSections = 12;
+numSections = 100;
 Nz = 1.5*2.5; % load case
 %load case 1
 %allocate weights of each component to discretized points along span of fuselage
-=======
+
 %% Fuselage inertial load distributions (sheet 2 of spreadsheet)
 % Discretize fuselage - already done in fuselage.length from concep design
 numSections = 12;  % MIGHT BE BETTER TO HAVE MORE DISCRETISATIONS? 12 SEEMS TOO LITTLE (US)
 Nz = 1.5*2.5;      % Load case
 
 % Allocate weights of each component to discretized points along span of fuselage
->>>>>>> main
+
 
 % Use force and moment eqm to get RS and FS reactions
 
@@ -48,17 +48,15 @@ fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, r, b, N);
 % Plot BM distribution
 fuselage = fuselage_distributions(components, Nz, numSections, W0, mainLength);
 
-<<<<<<< HEAD
+
 %% landing load case 
 
 %use values from notes as a starting point, as per the videos
 StringerSpacing=convlength(7,'in','m'); %range is 6.5-9 inches
 %StringerShape: Z stringers
 FrameDepth=convlength(4.0, 'in','m'); %range is 3.5-4.4
-=======
-%% Fuselage tail load distribution
-% DON'T THINK THAT WE NEED THIS SINCE WE ONLY HAVE 1 LOADING CASE TO WORRY
-% ABOUT? (US)
+
+
 
 %% Landing load case 
 
@@ -67,7 +65,6 @@ StringerSpacing=convlength(7,'in','m');  % Range is 6.5-9 inches
 
 % StringerShape: Z stringers
 FrameDepth=convlength(4.0, 'in','m');    % Range is 3.5-4.4
->>>>>>> main
 FrameSpacing=convlength(20, 'in','m');
 
 % Materials to use: 2000 series for skin and 7000 series for stringer

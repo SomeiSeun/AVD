@@ -17,7 +17,7 @@ function fuselage = fuselage_distributions(components, Nz, numSections, W0, main
 fusSections_x=linspace(0,mainLength, numSections);
 %model fus weight as a load per unit length
 weights=extractfield(components,'weight');
-FusWeightDistribution(1, 1: numSections ) = weights(4)/ numSections ;
+% FusWeightDistribution(1, 1: numSections ) = weights(4)/ numSections ;
 
 %get x_cg positions for each component
 x_cg=zeros(1,25);
