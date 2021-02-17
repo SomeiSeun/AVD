@@ -10,21 +10,14 @@ addpath('../Powerplant')
 
 %% Defining Parameters
 numSections = input('How many points do you want to discretise the wing into? ');
-Nz = 1.5*2.5;    % Ultimate load factor
-fuelInTank = 0;  % Value between 0 and 1
-numMaterial = 1; % From Materials.mat, must be integer between 1 and 4
+Nz = 1.5*2.5; % ultimate load factor
+fuelInTank = 0; % value between 0 and 1
+numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
 
 % Evaluating dift and deight distributions
 wing = bendingWing(Nz, fuelInTank, numSections, W0, components, spanWing, cRootWing, taperWing, Thrustline_position);
 
-% Adding Engine thrust values
-for i = 1:numSections
-    if wing.engineWeight(i) == 0
-        wing.Thrust(i) = 0;
-    else
-        wing.Thrust(i) = beta_Cruise * Engine_SeaLevelThrust;
-    end
-end
+
 
 % Defining wing structural parameters
 frontSparLocation = 0.25;
@@ -39,8 +32,7 @@ Cm0 = -0.2;
 cg = 0.4;
 
 % Evaluating shear stresses and spar web thicknesses
-[wing,frontSpar,rearSpar] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise,...
-    SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg, Thrustline_position(3));
+[wing,frontSpar,rearSpar] = shear_flow(wing, frontSpar, rearSpar, K_s, rho_cruise, V_Cruise, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
 
 % Evaluating spar flange dimensions
 [frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar);
