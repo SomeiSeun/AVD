@@ -1,4 +1,5 @@
-function [wing,frontsparweb,rearsparweb] = shear_flow(wing, frontsparweb, rearsparweb, K_s, rho, V, E, b1, b2, flex_ax, cm0, cg)
+function [wing,frontsparweb,rearsparweb] = shear_flow(wing, frontsparweb, rearsparweb,...
+    K_s, rho, V, E, b1, b2, flex_ax, cm0, cg, Thrustline_position)
 
 % This function is used to find the thicknesses for the spar web
 
@@ -15,6 +16,7 @@ function [wing,frontsparweb,rearsparweb] = shear_flow(wing, frontsparweb, rearsp
 % flex_ax = position of flexural axis non-dimensionalised
 % cm0 = Aerofoil zero AOA pitching moment
 % cg = centre of gravity for the aerofoil used
+% Thrustline_position = y distance between leading edge and thrust
 
 % The outputs are:
 % frontsparweb = structure with all the required values for the front spar web
@@ -35,7 +37,7 @@ for i = 1:length(wing.span)
     wing.torque(i) = (wing.lift(i) * (flex_ax - 0.25) * wing.chord(i)) +...
         (wing.selfWeight(i) * (cg - flex_ax)) * wing.chord(i) +...
         pitchingmoment(i) - (wing.engineWeight(i) * ((0.5 * wing.chord(i)) + 3))...
-        + (wing.Thrust(i) * 3);                                                     % Torque distribution along the wing
+        + (wing.Thrust(i) * abs(Thrustline_position));                              % Torque distribution along the wing
     q1(i) = -wing.shearForce(i) / (2 * frontsparweb.h(i));                          % q1 shear flow component
     q0(i) = wing.torque(i) / (2 * wing.boxArea(i));                                 % q0 shear flow component
     frontsparweb.qweb(i) = abs(q1(i) + q0(i));                                      % Front spar shear flow
