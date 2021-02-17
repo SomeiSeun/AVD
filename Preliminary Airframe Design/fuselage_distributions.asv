@@ -49,8 +49,5 @@ end
 
 
 %create structure fuselage with everything
-fuselage.sections=fusSections_x;
-fuselage.weightDist=weightDistributions;
-% fuselage.SF=; %shear force distribution
-% fuselage.BM=; %BM distribution
+fuselage.sections=fus
 end

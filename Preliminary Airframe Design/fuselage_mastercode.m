@@ -23,7 +23,7 @@ ShearYieldStress = TensileYieldStress/sqrt(3);
 %discretize fuselage - already done in fuselage.length from concep design
 numSections = 12;
 Nz = 1.5*2.5; % load case
-
+%load case 1
 %allocate weights of each component to discretized points along span of fuselage
 
 %use force and moment eqm to get RS and FS reactions
@@ -36,12 +36,6 @@ fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, r, b, N);
 
 %plot BM distribution
 fuselage = fuselage_distributions(components, Nz, numSections, W0, mainLength);
-
-%% fuselage tail load distribution
-% DON'T THINK THAT WE NEED THIS SINCE WE ONLY HAVE 1 LOADING CASE TO WORRY
-% ABOUT? (US)
-
-
 
 %% landing load case 
 
