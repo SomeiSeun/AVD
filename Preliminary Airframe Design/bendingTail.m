@@ -14,12 +14,13 @@ tail.span = linspace(span/2, fuseWidth, numSections);
 
 % Tail Lift (assuming no tail lift)
 tail.lift = zeros(1, numSections);
-tail.lift = 4*(liftReq)/(pi*(span-2*fuseWidth))*sqrt(1 - (2*(tail.span - fuseWidth)/(span-2*fuseWidth)).^2);
+tail.lift = 4*(Nz*liftReq)/(pi*(span-2*fuseWidth))*sqrt(1 - (2*(tail.span - fuseWidth)/(span-2*fuseWidth)).^2);
 
 % Tail Self-weight (assumed quadratic variation)
 tail.selfWeight =  Nz*6*0.5*components(2).weight/((span-2*fuseWidth)*(taper^2 + taper + 1))*(tail.chord/cFuse).^2;
 
 tail.engineWeight = zeros(1, numSections);
+tail.Thrust = zeros(1, numSections);
 
 % Overall Wing Loading
 tail.loading = tail.lift - tail.selfWeight;

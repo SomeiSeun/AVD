@@ -5,15 +5,15 @@ close all
 load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'taperHoriz', 'Thrustline_position',...
     'SHoriz', 'rho_cruise', 'V_Cruise')
 load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
+load('diveTrim');
 
 % Defining Parameters
 numSections = 1e3;
-Nz = 1; % limit load factor
+Nz = 2.5; % limit load factor
 numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
 
 % Evaluating lift and weight distributions
-V_D = V_Cruise*0.82/0.8;
-liftReq = 0.5*0.308*rho_cruise*V_D^2*SHoriz;
+liftReq = Nz*liftHorizDive;
 horizTail =  bendingTail(Nz, numSections, liftReq, components, spanHoriz, cRootHoriz, taperHoriz);
 
 % Defining horizontal tail box structural parameters
@@ -29,7 +29,9 @@ Cm0 = 0;
 cg = 0.41;
 
 % Evaluating shear stresses and spar web thicknesses
-[horizTail,frontSpar,rearSpar] = shear_flow(horizTail, frontSpar, rearSpar, K_s, rho_cruise, V_D, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg);
+[horizTail,frontSpar,rearSpar] = shear_flow(horizTail, frontSpar, rearSpar, K_s,...
+    rho_cruise, V_Dive, SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation,...
+    flexuralAxis, Cm0, cg, Thrustline_position(3));
 
 % Evaluating spar flange dimensions
 [frontSpar] = sparSizing(horizTail, SparMaterial(numMaterial), frontSpar);

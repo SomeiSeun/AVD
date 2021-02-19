@@ -19,6 +19,6 @@ Klambda = (10-3*taperWing)/7;
 
 KH = (1-abs(hHoriz/wingSpan))/((2*lHoriz/wingSpan)^(1/3));
 
-downwash = 4.44*(KA*Klambda*KH*sqrt(cosd(quarterSweepWing)))^1.19*CLalphaW/CLalphaW_M0;
+downwash = 4.44*(KA*Klambda*KH*sqrt(cosd(quarterSweepWing)))^1.19.*CLalphaW./CLalphaW_M0;
 
 end
