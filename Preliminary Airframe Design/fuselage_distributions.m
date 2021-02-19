@@ -13,39 +13,74 @@ function fuselage = fuselage_distributions(components, Nz, numSections, W0, main
 % The outputs are:
 % fuselage = structure containing shear force and bending moment distributions
 
-%discretize main section of fuselage (without nose and tail sections)
+
+
 fusSections_x=linspace(0,mainLength, numSections);
-%model fus weight as a load per unit length
-weights=extractfield(components,'weight');
-% FusWeightDistribution(1, 1: numSections ) = weights(4)/ numSections ;
+%get weights of other components
+ComponentWeights=extractfield(components,'weight');
 
 %get x_cg positions for each component
-x_cg=zeros(1,25);
+x_cg=zeros(1,25); 
 for i=1:25
-    x_cg(i)=components(i).cog(1);
+    x_cg(i)=components(i).cog(1); 
 end
-% weightDistributions=zeros(length(weights)+1,numSections);
 
 %distribute weights of different components as point forces acting at their x_cg
+weightDistributions=zeros(length(ComponentWeights),numSections); %initialise array
 
 %wing weight distribution- modelled as a distributed load
 wing_x1=wingRootLE(1); wing_x2=wingRootLE(1)+cRootWing;
 [~,I1] = min(abs(fusSections_x -wing_x1));
 [~,I2] = min(abs(fusSections_x -wing_x2 ));
-weightDistributions(2,I1:I2)=weights(1)/(fusSections_x(I1)-fusSections_x(I2));
+weightDistributions(1,I1:I2)=ComponentWeights(1)/(fusSections_x(I1)-fusSections_x(I2));
 
 %weight distributions of other components- modelled as point loads
-for i=3:length(weights)
-I1=1;
-% [~,I1] = min(abs(fusSections_x -x_cg(i)));
+for i=2:length(ComponentWeights)
 [~,I2] = min(abs(fusSections_x -x_cg(i) ));
-weightDistributions(i,I2)=weights(i); %repeat for all components
-end 
+weightDistributions(i,I2)=ComponentWeights(i); %repeat for all components
+end
 
-%shear force
-% SF=zeros(1,length(fusSections_x);
+%fuselage weight (index 4 in weights array) distribution- model as a distributed load per unit length
+weightDistributions(4,1:numSections)=ComponentWeights(4)/ numSections;
 
-%BM
+%now for the aero loads
+FS_pos_fus=wingRootLE(1)+0.25*cRootWing;
+RS_pos_fus=wingRootLE(1)+0.70*cRootWing;
+
+%sum inertial weights at each station 
+for i=1:numSections
+    weightSum(i)=sum(weightDistributions(:,i));
+end
+
+%solve a set of simultaneous equations to find reactions at FS and RS
+totalF=sum(weightSum); %force eqm
+%moment eqm
+for i=1:numSections
+    M(i)= weightSum(i)*fusSections_x(i);
+end
+M_0= sum(M);
+A=[1 1; FS_pos_fus RS_pos_fus]; C=[totalF;M_0];
+Reactions=A\C;
+
+%now add the aero loads onto the weights array, into the FS and RS
+%positions
+[~,I1] = min(abs(fusSections_x -FS_pos_fus));
+weightSum(I1)=Reactions(1);
+
+[~,I2] = min(abs(fusSections_x -RS_pos_fus));
+weightSum(I2)=Reactions(2);
+
+%SF
+SF=zeros(1,numSections);
+for i=2:numSections
+    SF(i)=SF(i-1)+weightSum(i);
+end
+SF=-SF;
+% BM=trapz(fusSections_x,SF);
+
+%plot inertial load distributions
+
+BM=zeros(1,numSections);
 
 
 %create structure fuselage with everything
