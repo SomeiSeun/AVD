@@ -46,7 +46,6 @@ cg = 0.4;
 [frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar);
 [rearSpar] = sparSizing(wing, SparMaterial(numMaterial), rearSpar);
 
-
 % [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial(numMaterial));
 % 
 %  % Skin Stringer Panel Sizing 
