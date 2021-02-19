@@ -1,4 +1,4 @@
-function fuselage = fuselage_distributions(components, n, numSections, W0, mainLength, wingRootLE, cRootWing)
+function fuselage = fuselage_distributions(components, n, numSections, W0, mainLength)
 
 % Creating a function which finds the bending moment and shear force
 % distributions along the fuselage
@@ -13,6 +13,9 @@ function fuselage = fuselage_distributions(components, n, numSections, W0, mainL
 
 % The outputs are:
 % fuselage = structure containing shear force and bending moment distributions
+%discretize fuselage 
+numSections=1000;
+n=1.5*2.5; 
 
 %discretize main section of fuselage (without nose and tail sections)
 fusSections_x=linspace(0,mainLength, numSections);
@@ -80,6 +83,6 @@ end
 %create structure fuselage with everything
 fuselage.sections=fusSections_x;
 fuselage.weightDist=weightDistributions;
-fuselage.SF=SF; %shear force distribution
-fuselage.BM=BM; %BM distribution
+% fuselage.SF=; %shear force distribution
+% fuselage.BM=; %BM distribution
 end
