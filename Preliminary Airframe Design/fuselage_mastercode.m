@@ -4,15 +4,11 @@ clear
 clc
 close all
 
-load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing', 'V_landing', 'mainLength', 'fusDiamOuter')
+load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing', 'V_landing', 'mainLength', 'wingRootLE','cRootWing','fusDiamOuter')
 %load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
-%^ Using same materials for fuselage as the wings?
-
 D = fusDiamOuter;
 
-%% Anudi -- this is not the proper code, simply a breakdown of the procedure. Code in progress
-% Materials (sheet 1 of spreadsheet)
-
+%% Anudi 
 % Fuselage materials not selected yet so using temporary values for now (values in sample spreadsheet)
 E = 73000;                   % N/mm^2
 Poisson = 0.33;
@@ -21,45 +17,117 @@ Bulk_Mod = E/3/(1-2*Poisson);
 TensileYieldStress = 324;    % MPa
 ShearYieldStress = TensileYieldStress/sqrt(3);
 
+numSections=1000;
 
-%% fuselage inertial load distributions (sheet 2 of spreadsheet)
-%discretize fuselage - already done in fuselage.length from concep design
-numSections = 100;
-Nz = 1.5*2.5; % load case
-%load case 1
-%allocate weights of each component to discretized points along span of fuselage
+%% BM and SF distribution- load case 1 complete (AB)
+%load case 1 
+% [fuselageSF, fuselageBM] = fuselage_distributions(components, Nz, numSections, W0, mainLength);
+n1=1.5*2.5;
+LoadCase1 = fuselage_distributions(components, n1, numSections, W0, mainLength, wingRootLE, cRootWing)
+%plot
+figure(1)
+plot(LoadCase1.sections, LoadCase1.SF)
+xlabel('Distance along fuselage length (m)')
+ylabel('Shear Force (N)')
+title('Shear Force Distribution')
 
-%% Fuselage inertial load distributions (sheet 2 of spreadsheet)
-% Discretize fuselage - already done in fuselage.length from concep design
-numSections = 12;  % MIGHT BE BETTER TO HAVE MORE DISCRETISATIONS? 12 SEEMS TOO LITTLE (US)
-Nz = 1.5*2.5;      % Load case
+%plot BM distribution
+figure(2)
+plot(LoadCase1.sections, LoadCase1.BM)
+xlabel('Distance along fuselage length (m)')
+ylabel('Bending Moment (Nm)')
+title('Bending Moment Distribution')
 
-% Allocate weights of each component to discretized points along span of fuselage
+
+% EVERYTHING BELOW THIS IS STILL IN PROGRESS- WILL CONVERT INTO FUNCTIONS WHEN DONE (AB)
+%% tail trim load superimposition
+%calculate tail trim load - it must balance the 2.5g pitching moment of the
+%wing
+TT_Load=(2.5*9.81*(sum(Reactions))*x_cg(1))/x_cg(2);
+%now superimpose tail load case onto weightdistributions
+WtDisTT=zeros(1,numSections); %zero inertial load assumed here
+%calculate new reactions at spars for this tail load case
+C_TT=[ sum(WtDisTT); TT_Load*x_cg(2)]; 
+Reactions_TT=A\C_TT;
+%aero loads, acting upwards
+[~,I4] = min(abs(fusSections_x -x_cg(2)));
+WtDisTT(I4)=-TT_Load; WtDisTT(I1)=-Reactions_TT(1); WtDisTT(I3)=-Reactions_TT(2);
+
+SF_TT=zeros(1,numSections);
+for i=2:numSections
+SF_TT(i)=SF_TT(i-1)+WtDisTT(i);
+end
+SF_TT=-SF_TT;
+dBM_TT=zeros(1,numSections);BM_TT=zeros(1,numSections);
+for i=2:numSections
+dBM_TT(i)=SF_TT(i-1)*(fusSections_x(i)-fusSections_x(i-1))+(SF_TT(i)+SF_TT(i-1))*(fusSections_x(i)-fusSections_x(i-1))/2;
+BM_TT(i)=BM_TT(i-1)+dBM_TT(i);
+end
+%symm flight+ TT load
+SF_Total_LC1=SF+SF_TT;
+BM_Total_LC1=BM+BM_TT;
+
+% plot shear force distribution - must be 0 at the end
+figure(1)
+plot(fusSections_x, SF) %just symm flight
+xlabel('Distance along fuselage length (m)')
+ylabel('Shear Force (N)')
+title('Shear Force Distribution')
+hold on
+plot(fusSections_x, SF_TT) %just tail load
+plot(fusSections_x, SF_Total_LC1) %symm+tail load
+%plot BM distribution
+figure(2)
+plot(fusSections_x, BM)
+xlabel('Distance along fuselage length (m)')
+ylabel('Bending Moment (Nm)')
+title('Bending Moment Distribution')
+hold on
+plot(fusSections_x, BM_TT)
+plot(fusSections_x, BM_Total_LC1)
 
 
-% Use force and moment eqm to get RS and FS reactions
+%% landing load case - repeat BM and SF distributions
+gear_cg=x_cg(5);
+weightDistributions3=weightDistributions; %inertial load distribution is the same
 
-% Plot inertial load distributions
+%WHAT NEEDS TO BE DONE- FIND GEAR LOAD AND TAIL LOAD DISTRIBUTION IN THE
+%WEIGHTS ARRAY
 
-% Plot shear force distribution - must be 0 at the end (Stringers needs to
-% be done before this step)
+%calculate gear load reactions
+C3=[ ; ];
+Reactions3=A\C3; %reactions are now at gear and tail (NOT FS AND RS!!!!)
+
+[~,I5] = min(abs(fusSections_x -x_cg(5)));
+weightSum3(I4)=-Reactions3(??); %TAIL LOAD
+weightSum3(I5)=-Reactions3(??); %GEAR LOAD
+
+SF3=zeros(1,numSections);
+for i=2:numSections
+    SF3(i)=SF3(i-1)+weightSum3(i);
+end
+SF3=-SF3;
+dBM3=zeros(1,numSections);BM3=zeros(1,numSections);
+for i=2:numSections
+    dBM3(i)=SF3(i-1)*(fusSections_x(i)-fusSections_x(i-1))+(SF3(i)+SF3(i-1))*(fusSections_x(i)-fusSections_x(i-1))/2;
+    BM3(i)=BM3(i-1)+dBM3(i);
+end
+
+%plot
+figure(1)
+% plot(fusSections_x, SF3)
+legend('Load case 1','with TT', 'Load case 3')
+figure(2)
+% plot(fusSections_x, BM3)
+legend('Load case 1','just tail load''symm+ TT', 'Load case 3')
+%load case 3
+% n3=?
+% LoadCase3 = fuselage_distributions(components, n3, numSections, W0, mainLength, wingRootLE, cRootWing)
+
+%% 
 fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, r, b, N);
 
-% Plot BM distribution
-fuselage = fuselage_distributions(components, Nz, numSections, W0, mainLength);
-
-
-%% landing load case 
-
-%use values from notes as a starting point, as per the videos
-StringerSpacing=convlength(7,'in','m'); %range is 6.5-9 inches
-%StringerShape: Z stringers
-FrameDepth=convlength(4.0, 'in','m'); %range is 3.5-4.4
-
-
-
-%% Landing load case 
-
+%% stringer sizing - in progress(AB)
 % Use values from notes as a starting point, as per the videos
 StringerSpacing=convlength(7,'in','m');  % Range is 6.5-9 inches
 

@@ -1,24 +1,25 @@
-function fuselage = fuselage_distributions(components, Nz, numSections, W0, mainLength)
+function fuselage = fuselage_distributions(components, n, numSections, W0, mainLength, wingRootLE, cRootWing)
 
 % Creating a function which finds the bending moment and shear force
 % distributions along the fuselage
 
 % The inputs are:
 % components = structure containing all the weights
-% Nz = load factor
+% n = load factor
 % numSections = number of discretisations
 % W0 = MTOW of the aircraft
-% mainLength = length of the fuselage
+% mainLength = length of the fuselage (analysis carried out only on middle
+% section)
 
 % The outputs are:
 % fuselage = structure containing shear force and bending moment distributions
 
-
-
+%discretize main section of fuselage (without nose and tail sections)
 fusSections_x=linspace(0,mainLength, numSections);
+
 %get weights of other components
 ComponentWeights=extractfield(components,'weight');
-
+ComponentWeights=n*ComponentWeights; 
 %get x_cg positions for each component
 x_cg=zeros(1,25); 
 for i=1:25
@@ -27,15 +28,8 @@ end
 
 %distribute weights of different components as point forces acting at their x_cg
 weightDistributions=zeros(length(ComponentWeights),numSections); %initialise array
-
-%wing weight distribution- modelled as a distributed load
-wing_x1=wingRootLE(1); wing_x2=wingRootLE(1)+cRootWing;
-[~,I1] = min(abs(fusSections_x -wing_x1));
-[~,I2] = min(abs(fusSections_x -wing_x2 ));
-weightDistributions(1,I1:I2)=ComponentWeights(1)/(fusSections_x(I1)-fusSections_x(I2));
-
 %weight distributions of other components- modelled as point loads
-for i=2:length(ComponentWeights)
+for i=1:length(ComponentWeights)
 [~,I2] = min(abs(fusSections_x -x_cg(i) ));
 weightDistributions(i,I2)=ComponentWeights(i); %repeat for all components
 end
@@ -65,10 +59,10 @@ Reactions=A\C;
 %now add the aero loads onto the weights array, into the FS and RS
 %positions
 [~,I1] = min(abs(fusSections_x -FS_pos_fus));
-weightSum(I1)=Reactions(1);
+weightSum(I1)=-Reactions(1);
 
 [~,I2] = min(abs(fusSections_x -RS_pos_fus));
-weightSum(I2)=Reactions(2);
+weightSum(I2)=-Reactions(2);
 
 %SF
 SF=zeros(1,numSections);
@@ -76,16 +70,16 @@ for i=2:numSections
     SF(i)=SF(i-1)+weightSum(i);
 end
 SF=-SF;
-% BM=trapz(fusSections_x,SF);
-
-%plot inertial load distributions
-
 BM=zeros(1,numSections);
+for i=2:numSections
+    dBM(i)=SF(i-1)*(fusSections_x(i)-fusSections_x(i-1))+(SF(i)+SF(i-1))*(fusSections_x(i)-fusSections_x(i-1))/2;
+    BM(i)=BM(i-1)+dBM(i);
 
+end
 
 %create structure fuselage with everything
 fuselage.sections=fusSections_x;
 fuselage.weightDist=weightDistributions;
-% fuselage.SF=; %shear force distribution
-% fuselage.BM=; %BM distribution
+fuselage.SF=SF; %shear force distribution
+fuselage.BM=BM; %BM distribution
 end
