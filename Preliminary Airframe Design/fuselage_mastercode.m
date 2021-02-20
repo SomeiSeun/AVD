@@ -39,6 +39,87 @@ ylabel('Bending Moment (Nm)')
 title('Bending Moment Distribution')
 
 
+% EVERYTHING BELOW THIS IS STILL IN PROGRESS- WILL CONVERT INTO FUNCTIONS WHEN DONE (AB)
+%% tail trim load superimposition
+%calculate tail trim load - it must balance the 2.5g pitching moment of the
+%wing
+TT_Load=(2.5*9.81*(sum(Reactions))*x_cg(1))/x_cg(2);
+%now superimpose tail load case onto weightdistributions
+WtDisTT=zeros(1,numSections); %zero inertial load assumed here
+%calculate new reactions at spars for this tail load case
+C_TT=[ sum(WtDisTT); TT_Load*x_cg(2)]; 
+Reactions_TT=A\C_TT;
+%aero loads, acting upwards
+[~,I4] = min(abs(fusSections_x -x_cg(2)));
+WtDisTT(I4)=-TT_Load; WtDisTT(I1)=-Reactions_TT(1); WtDisTT(I3)=-Reactions_TT(2);
+
+SF_TT=zeros(1,numSections);
+for i=2:numSections
+SF_TT(i)=SF_TT(i-1)+WtDisTT(i);
+end
+SF_TT=-SF_TT;
+dBM_TT=zeros(1,numSections);BM_TT=zeros(1,numSections);
+for i=2:numSections
+dBM_TT(i)=SF_TT(i-1)*(fusSections_x(i)-fusSections_x(i-1))+(SF_TT(i)+SF_TT(i-1))*(fusSections_x(i)-fusSections_x(i-1))/2;
+BM_TT(i)=BM_TT(i-1)+dBM_TT(i);
+end
+%symm flight+ TT load
+SF_Total_LC1=SF+SF_TT;
+BM_Total_LC1=BM+BM_TT;
+
+% plot shear force distribution - must be 0 at the end
+figure(1)
+plot(fusSections_x, SF) %just symm flight
+xlabel('Distance along fuselage length (m)')
+ylabel('Shear Force (N)')
+title('Shear Force Distribution')
+hold on
+plot(fusSections_x, SF_TT) %just tail load
+plot(fusSections_x, SF_Total_LC1) %symm+tail load
+%plot BM distribution
+figure(2)
+plot(fusSections_x, BM)
+xlabel('Distance along fuselage length (m)')
+ylabel('Bending Moment (Nm)')
+title('Bending Moment Distribution')
+hold on
+plot(fusSections_x, BM_TT)
+plot(fusSections_x, BM_Total_LC1)
+
+
+%% landing load case - repeat BM and SF distributions
+gear_cg=x_cg(5);
+weightDistributions3=weightDistributions; %inertial load distribution is the same
+
+%WHAT NEEDS TO BE DONE- FIND GEAR LOAD AND TAIL LOAD DISTRIBUTION IN THE
+%WEIGHTS ARRAY
+
+%calculate gear load reactions
+C3=[ ; ];
+Reactions3=A\C3; %reactions are now at gear and tail (NOT FS AND RS!!!!)
+
+[~,I5] = min(abs(fusSections_x -x_cg(5)));
+weightSum3(I4)=-Reactions3(??); %TAIL LOAD
+weightSum3(I5)=-Reactions3(??); %GEAR LOAD
+
+SF3=zeros(1,numSections);
+for i=2:numSections
+    SF3(i)=SF3(i-1)+weightSum3(i);
+end
+SF3=-SF3;
+dBM3=zeros(1,numSections);BM3=zeros(1,numSections);
+for i=2:numSections
+    dBM3(i)=SF3(i-1)*(fusSections_x(i)-fusSections_x(i-1))+(SF3(i)+SF3(i-1))*(fusSections_x(i)-fusSections_x(i-1))/2;
+    BM3(i)=BM3(i-1)+dBM3(i);
+end
+
+%plot
+figure(1)
+% plot(fusSections_x, SF3)
+legend('Load case 1','with TT', 'Load case 3')
+figure(2)
+% plot(fusSections_x, BM3)
+legend('Load case 1','just tail load''symm+ TT', 'Load case 3')
 %load case 3
 % n3=?
 % LoadCase3 = fuselage_distributions(components, n3, numSections, W0, mainLength, wingRootLE, cRootWing)
