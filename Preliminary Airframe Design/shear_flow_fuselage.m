@@ -3,11 +3,14 @@ function fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, N, Sx, I_yy, 
 % This function finds out the shear force distribution for a Fuselage CSA
 % The INPUTS are:
 % A_s = area of the stringer
-% y_s = distance of the stringers from neutral axis 
+% y_s = distance of the stringers from neutral axis in y axis
 % Sy = shear force 
 % I_xx = second moment of area of the fuselage section
 % A_fus = area of the fuselage section
 % N = number of stringers
+% Sx = shear force 
+% I_yy = second moment of area of the fuselage section
+% x_s = distance of the stringers from neutral axis in x axis
 
 % The OUTPUTS are:
 % fuselage = structure with q, qb and q0 added

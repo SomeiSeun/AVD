@@ -10,13 +10,14 @@ load('Materials.mat', 'FuselageMaterial')
 D = fusDiamOuter;
 numMaterial = 1; % Needs to be 1 or 2
 
-%% Anudi 
-% Fuselage materials not selected yet so using temporary values for now (values in sample spreadsheet)
+%% Material properties
+% Setting anc calculating all the relevant materials properties needed
+
 E = FuselageMaterial(numMaterial).YM;
 Poisson = FuselageMaterial(numMaterial).Poisson;
 G = FuselageMaterial(numMaterial).SM;
 Bulk_Mod = FuselageMaterial(numMaterial).BM;
-TensileYieldStress = 324;    % MPa
+TensileYieldStress = 324;                      % MPa
 ShearYieldStress = TensileYieldStress/sqrt(3);
 
 numSections=1000;
@@ -67,7 +68,8 @@ end
 SF_TT=-SF_TT;
 dBM_TT=zeros(1,numSections);BM_TT=zeros(1,numSections);
 for i=2:numSections
-    dBM_TT(i)=SF_TT(i-1)*(fusSections_x(i)-fusSections_x(i-1))+(SF_TT(i)+SF_TT(i-1))*(fusSections_x(i)-fusSections_x(i-1))/2;
+    dBM_TT(i)=SF_TT(i-1)*(fusSections_x(i)-fusSections_x(i-1))+(SF_TT(i)+SF_TT(i-1))*...
+        (fusSections_x(i)-fusSections_x(i-1))/2;
     BM_TT(i)=BM_TT(i-1)+dBM_TT(i);
 end
 
@@ -133,8 +135,17 @@ legend('Load case 1','just tail load''symm+ TT', 'Load case 3')
 % n3=?
 % LoadCase3 = fuselage_distributions(components, n3, numSections, W0, mainLength, wingRootLE, cRootWing)
 
-%% 
-fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, r, b, N);
+%% Shear flow around the fuselage
+% Sx = 0???
+% Ixx = Iyy for the fuselage cross section???
+A_fus = pi * (D / 2)^2;  % Area of the fuselage cross section
+%Sy = abs(max(fuselage.shearforce_distribution));
+% A_s = area of the stringer
+% y_s = array of distances of the stringers from neutral axis
+% x_s = array of distances of the stringers from neutral axis
+% N = number of stringers
+
+fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, N, Sx, I_yy, x_s);
 
 %% stringer sizing - in progress(AB)
 % Use values from notes as a starting point, as per the videos
@@ -151,21 +162,22 @@ FrameSpacing=convlength(20, 'in','m');
 
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
-t_c = ((2 - poisson) / (1 - poisson)) * t_s;    % t_c is cylindrical fus thickness
+thickness_ratio = ((2 - Poisson) / (1 - Poisson));    % t_c is cylindrical fus thickness
+fprintf('The thickness ratio of cylinder to the spherical cap is %f.\n',thickness_ratio)
 
 % Finding out the thicknesses required to survive pressurisation
-% P is pressure 
-% d is fuselage diameter
+% P is pressure
 fuselage.thickness_h = (P * D / (2 * TensileYieldStress));  % Thickness due to hoop stress
 fuselage.thickness_l = (P * D / (4 * TensileYieldStress));  % Thickness due to longitudinal stress
-% ^ The thickness value which is larger is chosen and added to the skin
-% thickness 
+fuselage.thickness_pressurisation = [fuselage.thickness_h fuselage.thickness_l];
+fprintf('The extra thickness that needs to be added to the fuselage due to pressurisation is %f.\n',...
+    max(fuselage.thickness_pressurisation))
 
 %% Bending in fuselage
 % Use a datasheet to choose stringer area, as there are too many unknowns
 % Use a brute force method, select As and ts and then iterate twice. Three
 % variables would be As, ts and pitch b. Choose the configuration that gives
-% lowest weight.
+% lowest weight
 
 % We don't have to do the design for every discretised station- simply look
 % for worst case and use that to select variables. Then use those same
@@ -173,6 +185,8 @@ fuselage.thickness_l = (P * D / (4 * TensileYieldStress));  % Thickness due to l
 
 
 %% Light frames
+L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
+% M = max(fuselage.bendingmoments);
 fuselage = light_frames(E, D, M, L);
 
 % Plotting a 3D graph for thickness variation against flange width and web
@@ -195,7 +209,12 @@ zlabel('Frame area (m^2)')
 title('Frame area surface plot')
 colorbar
 
+fprintf('The smallest area obtained is %f m^2.\n',min(fuselage.frame_area))
+
 %% Heavy frames
+T = 0;     % Looking at the diagrams given in the notes, T should be 0 for us
+R = D/2;   % Radius of the fuselage
+% Q = 0; ??????
 [fuselage,theta_deg] = wise_curves(P, R, T, Q);
 % ^ NEED TO PERFORM THIS FUNCTION AT ONLY THE WORST POINT SO AT MAX SHEAR
 % FORCE/BENDING MOMENT POINT
