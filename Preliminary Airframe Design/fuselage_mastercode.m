@@ -4,16 +4,18 @@ clear
 clc
 close all
 
-load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing', 'V_landing', 'mainLength', 'wingRootLE','cRootWing','fusDiamOuter')
-%load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
+load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing',...
+    'V_landing', 'mainLength', 'wingRootLE','cRootWing','fusDiamOuter')
+load('Materials.mat', 'FuselageMaterial')
 D = fusDiamOuter;
+numMaterial = 1; % Needs to be 1 or 2
 
 %% Anudi 
 % Fuselage materials not selected yet so using temporary values for now (values in sample spreadsheet)
-E = 73000;                   % N/mm^2
-Poisson = 0.33;
-G = E/2/(1+Poisson);
-Bulk_Mod = E/3/(1-2*Poisson);
+E = FuselageMaterial(numMaterial).YM;
+Poisson = FuselageMaterial(numMaterial).Poisson;
+G = FuselageMaterial(numMaterial).SM;
+Bulk_Mod = FuselageMaterial(numMaterial).BM;
 TensileYieldStress = 324;    % MPa
 ShearYieldStress = TensileYieldStress/sqrt(3);
 

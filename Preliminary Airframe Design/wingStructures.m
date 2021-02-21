@@ -6,7 +6,7 @@ load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'tape
     'rho_cruise', 'V_Cruise','beta_Cruise','Engine_SeaLevelThrust')
 load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
 load('skinStringerpanel.mat')
-addpath('../Powerplant')
+%addpath('../Powerplant')
 
 %% Defining Parameters
 numSections = input('How many points do you want to discretise the wing into? ');
