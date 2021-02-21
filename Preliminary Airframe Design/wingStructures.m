@@ -200,8 +200,10 @@ hold off
 
 % Plotting skin thickness distribution along span 
 figure
-x=[wing.span(1:50:end),0];
-y=[skinThicknessDist(1:50:end),skinThicknessDist(end)]*1000;
+x=[wing.span(end:-50:1)];
+y=[skinThicknessDist(end:-50:1)*1000];
+plot(wing.span(end:-50:1),skinThicknessDist(end:-50:1)*1000,'.-r')
+hold on
 stairs(x,y,'b')
 xlabel('Distance along wing (m)') 
 ylabel('Skin Thickness (mm)')

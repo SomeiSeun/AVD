@@ -171,5 +171,18 @@ fig8.Position = [0.75 0.05 0.25 0.4];
 [N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections,horizTail,UpperSkinMaterial(numMaterial));
 
 %% Skin Stringer Panel Sizing and Optimization
-[Optimum]=SSPOptimum(horizTail,N_alongSpan);
-[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,Optimum);
+[HSSOptimum]=SSPOptimum(horizTail,N_alongSpan);
+[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,HSSOptimum);
+
+
+% Plotting skin thickness distribution along span 
+figure
+x=[horizTail.span(end:-75:1)];
+y=[skinThicknessDist(end:-75:1)*1000];
+plot(horizTail.span,skinThicknessDist*1000,'-r')
+hold on
+stairs(x,y,'b')
+xlabel('Distance along Horizontal Tailplane (m)') 
+ylabel('Skin Thickness (mm)')
+title('Skin Thickness Distribution')
+grid minor
