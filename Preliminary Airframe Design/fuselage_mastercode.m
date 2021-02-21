@@ -166,7 +166,7 @@ thickness_ratio = ((2 - Poisson) / (1 - Poisson));    % t_c is cylindrical fus t
 fprintf('The thickness ratio of cylinder to the spherical cap is %f.\n',thickness_ratio)
 
 % Finding out the thicknesses required to survive pressurisation
-% P is pressure
+P = 58227.3;
 fuselage.thickness_h = (P * D / (2 * TensileYieldStress));  % Thickness due to hoop stress
 fuselage.thickness_l = (P * D / (4 * TensileYieldStress));  % Thickness due to longitudinal stress
 fuselage.thickness_pressurisation = [fuselage.thickness_h fuselage.thickness_l];
