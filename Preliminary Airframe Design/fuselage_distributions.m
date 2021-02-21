@@ -8,8 +8,8 @@ function fuselage = fuselage_distributions(components, n, numSections, W0, mainL
 % n = load factor
 % numSections = number of discretisations
 % W0 = MTOW of the aircraft
-% mainLength = length of the fuselage (analysis carried out only on middle
-% section)
+% mainLength = length of the middle section of the fuselage
+%
 
 % The outputs are:
 % fuselage = structure containing shear force and bending moment distributions
@@ -19,7 +19,8 @@ fusSections_x=linspace(0,mainLength, numSections);
 
 %get weights of other components
 ComponentWeights=extractfield(components,'weight');
-ComponentWeights=n*ComponentWeights; 
+ComponentWeights=n*ComponentWeights;
+
 %get x_cg positions for each component
 x_cg=zeros(1,25); 
 for i=1:25
@@ -28,6 +29,7 @@ end
 
 %distribute weights of different components as point forces acting at their x_cg
 weightDistributions=zeros(length(ComponentWeights),numSections); %initialise array
+
 %weight distributions of other components- modelled as point loads
 for i=1:length(ComponentWeights)
 [~,I2] = min(abs(fusSections_x -x_cg(i) ));
@@ -48,10 +50,12 @@ end
 
 %solve a set of simultaneous equations to find reactions at FS and RS
 totalF=sum(weightSum); %force eqm
+
 %moment eqm
 for i=1:numSections
     M(i)= weightSum(i)*fusSections_x(i);
 end
+
 M_0= sum(M);
 A=[1 1; FS_pos_fus RS_pos_fus]; C=[totalF;M_0];
 Reactions=A\C;
