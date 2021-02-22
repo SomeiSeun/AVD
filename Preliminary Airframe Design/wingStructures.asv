@@ -6,11 +6,7 @@ load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'tape
     'rho_cruise', 'V_Cruise','beta_Cruise','Engine_SeaLevelThrust')
 load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
 load('skinStringerpanel.mat')
-
-% Loading in a different coordinates txt file to plot the aerofoil
-load('NACA 64215 plotting purposes.txt')
-x = NACA_64215_plotting_purposes(:,1);
-y = NACA_64215_plotting_purposes(:,2);
+%addpath('../Powerplant')
 
 %% Defining Parameters
 numSections = input('How many points do you want to discretise the wing into? ');
@@ -195,25 +191,12 @@ plot(wing.span, rearSpar.IxxMax)
 legend('Ixx', 'Ixx Max')
 hold off
 
-% Plotting the aerofoil with points of interest
-figure
-plot(x,y,'k','LineWidth',1.5)
-hold on
-axis equal
-xlabel('x/c')
-ylabel('y/c')
-plot(cg,0,'xb','MarkerSize',10,'LineWidth',1.5)
-plot(flexuralAxis,0,'xm','MarkerSize',10,'LineWidth',1.5)
-plot(0.25,0,'xc','MarkerSize',10,'LineWidth',1.5)
-legend({'NACA 64215','Centre of gravity','Flexural Axis','Mean Aerodynamic Chord'},'Location','Northeast')
-grid minor
-
 %% Skin thickness sizing (ch3)
 [N_alongSpan,t2_alongSpan,sigma,boxHeight] = skinStringerFunction(numSections, wing,UpperSkinMaterial(numMaterial));
 
 %% Skin Stringer Panel Sizing and Optimization
-[WSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(wing,N_alongSpan);
-[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,WSSOptimum);
+[Optimum]=SSPOptimum(wing,N_alongSpan);
+[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,Optimum);
 
 % Plotting skin thickness distribution along span 
 figure
@@ -229,41 +212,39 @@ grid minor
 
 
 %% Rib Spacing and Rib Thickness Optimisation
-[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,WSSOptimum,boxHeight,skinThicknessDist,N_alongSpan);
+[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,Optimum,boxHeight,skinThicknessDist,N_alongSpan);
 [optRibParameters]=RibThickness(optRibSpacing,wing,minMassIndex,ribThickness);
 
-% % Plotting Mass Vs Rib Spacing
-% figure 
-% plot(rSpacing,massWingBox,'-b')
-% hold on 
-% plot(rSpacing,massEffRib,'-r')
-% plot(rSpacing,massEffSS)
-% xlabel('Rib Spacing (m)')
-% ylabel('Mass')
-% legend('Total','Ribs','Skin-Stringer')
-% title('Rib Spacing Optimisation')
-% grid minor 
-% hold off
+% Plotting Mass Vs Rib Spacing
+figure 
+plot(rSpacing,massWingBox,'-b')
+hold on 
+plot(rSpacing,massEffRib,'-r')
+plot(rSpacing,massEffSS)
+xlabel('Rib Spacing (m)')
+ylabel('Mass')
+legend('Total','Ribs','Skin-Stringer')
+title('Rib Spacing Optimisation')
+grid minor 
+hold off
 
 
 figure
-surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,stringerGeometry.aEffective)
-xlabel('As/bt')
-ylabel('Ts/t')
-zlabel('Skin Thickness (m)') 
-title('Skin Thickness for different Skin-Stringer Ratios')
-colormap('turbo')
-s=colorbar();
-s.Label.String ='Total Area (m^2)';
-
-
-figure
+subplot(2,1,1)
 surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tStringer,stringerGeometry.aEffective)
 xlabel('As/bt')
 ylabel('Ts/t')
 zlabel('Stringer Thickness (m)') 
-title('Stringer Thickness for different Skin-Stringer Ratios')
+title('Stringer Thickness for different Stringer Parameters')
 colormap('turbo')
 s=colorbar();
 s.Label.String ='Total Area (m^2)';
-
+subplot(2,1,2)
+surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,stringerGeometry.aEffective)
+xlabel('As/bt')
+ylabel('Ts/t')
+zlabel('Skin Thickness (m)') 
+title('Skin Thickness for different Stringer Parameters')
+colormap('turbo')
+s=colorbar();
+s.Label.String ='Total Area (m^2)';
