@@ -1,4 +1,4 @@
-function[Optimum]=SSPOptimum(wing,N_alongSpan)
+function[Optimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(wing,N_alongSpan)
 noStringersMax=100;                                                         
 noPanelsMax=noStringersMax+1;
 K=3.62;                                                                    
@@ -13,9 +13,9 @@ numberofStringers=1:noPanelsMax-1;
 boxHeight=0.15*wing.chord; 
 %% Effective Area Calculations for a number of different 
 x=1;
-for As_bt=0.5:0.005:1.0                                                     % Runs through a range of different Stringer Area to Skin Area Ratios
+for As_bt=0.5:0.015:1.0                                                     % Runs through a range of different Stringer Area to Skin Area Ratios
     y=1;
-    for ts_t=0.5:0.005:1.0                                                  % Runs through a range of different Stringer Thickness to Skin Thickness Ratios
+    for ts_t=0.5:0.015:1.0                                                  % Runs through a range of different Stringer Thickness to Skin Thickness Ratios
         for i=1:noPanelsMax                                                 % Find the skin and stringer areas respectively for a number of different panel sizes
              b(i)=wing.boxLength(end)/i;                                    % Calculate stringer pitch           
              tSkin(i)= ((N_alongSpan(end)*(b(i))^2)/(K*ESkin))^(1/3);       % Thickness of the skin
