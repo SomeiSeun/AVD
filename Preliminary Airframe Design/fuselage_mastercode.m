@@ -36,23 +36,25 @@ figure(1) %shear force
 plot(LoadCase1.sections, LoadCase1.TotalSF1) %total
 xlabel('Distance along fuselage length (m)')
 ylabel('Shear Force (N)')
-title('Shear Force Distribution')
+%title('Shear Force Distribution')
 hold on
 % plot(LoadCase1.sections, LoadCase1.TTSF) %tail trim
 % plot(LoadCase1.sections, LoadCase1.InSF) %just inertial
 plot(LoadCase4.Sections, LoadCase4.SF4)
 legend('Load case 1', 'Load case 4')
+grid minor
 
 figure(2) %bending moment
 plot(LoadCase1.sections, LoadCase1.TotalBM1)
 xlabel('Distance along fuselage length (m)')
 ylabel('Bending Moment (Nm)')
-title('Bending Moment Distribution')
+%title('Bending Moment Distribution')
 hold on
 % plot(LoadCase1.sections, LoadCase1.TTBM) %tail trim
 % plot(LoadCase1.sections, LoadCase1.InBM) %just inertial
 plot(LoadCase4.Sections, LoadCase4.BM4)
-legend('Load case 1', 'Load case 4')
+legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
+grid minor
 
 %% Shear flow around the fuselage
 % Sx = 0???

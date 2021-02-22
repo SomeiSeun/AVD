@@ -6,7 +6,11 @@ load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'tape
     'rho_cruise', 'V_Cruise','beta_Cruise','Engine_SeaLevelThrust')
 load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
 load('skinStringerpanel.mat')
-%addpath('../Powerplant')
+
+% Loading in a different coordinates txt file to plot the aerofoil
+load('NACA 64215 plotting purposes.txt')
+x = NACA_64215_plotting_purposes(:,1);
+y = NACA_64215_plotting_purposes(:,2);
 
 %% Defining Parameters
 numSections = input('How many points do you want to discretise the wing into? ');
@@ -190,6 +194,19 @@ plot(wing.span, rearSpar.Ixx)
 plot(wing.span, rearSpar.IxxMax)
 legend('Ixx', 'Ixx Max')
 hold off
+
+% Plotting the aerofoil with points of interest
+figure
+plot(x,y,'k','LineWidth',1.5)
+hold on
+axis equal
+xlabel('x/c')
+ylabel('y/c')
+plot(cg,0,'xb','MarkerSize',10,'LineWidth',1.5)
+plot(flexuralAxis,0,'xm','MarkerSize',10,'LineWidth',1.5)
+plot(0.25,0,'xc','MarkerSize',10,'LineWidth',1.5)
+legend({'NACA 64215','Centre of gravity','Flexural Axis','Mean Aerodynamic Chord'},'Location','Northeast')
+grid minor
 
 %% Skin thickness sizing (ch3)
 [N_alongSpan,t2_alongSpan,sigma,boxHeight] = skinStringerFunction(numSections, wing,UpperSkinMaterial(numMaterial));

@@ -7,8 +7,13 @@ load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'ta
 load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
 load('diveTrim');
 
+% Loading in a different coordinates txt file to plot the aerofoil
+load('NACA 0012 plotting purposes.txt')
+x = NACA_0012_plotting_purposes(:,1);
+y = NACA_0012_plotting_purposes(:,2);
+
 % Defining Parameters
-numSections = 1e3;
+numSections = input('How many points would you like to discrtise the tailplane into? ');
 Nz = 2.5; % limit load factor
 numMaterial = 1; % from Materials.mat, must be integer between 1 and 4
 
@@ -166,6 +171,19 @@ legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
+
+% Plotting the aerofoil with points of interest
+figure
+plot(x,y,'k','LineWidth',1.5)
+hold on
+axis equal
+xlabel('x/c')
+ylabel('y/c')
+plot(cg,0,'xb','MarkerSize',10,'LineWidth',1.5)
+plot(flexuralAxis,0,'xm','MarkerSize',10,'LineWidth',1.5)
+plot(0.25,0,'xc','MarkerSize',10,'LineWidth',1.5)
+legend({'NACA 0012','Centre of gravity','Flexural Axis','Mean Aerodynamic Chord'},'Location','Northeast')
+grid minor
 
 %% Skin thickness sizing (ch3)
 [N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections,horizTail,UpperSkinMaterial(numMaterial));

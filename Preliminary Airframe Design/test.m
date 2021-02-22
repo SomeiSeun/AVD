@@ -4,11 +4,16 @@ clear
 clc
 close all
 
-load('NACA 64215.txt')
-x = NACA_64215(:,1);
-y = NACA_64215(:,2);
+load('NACA 0012 plotting purposes.txt')
+x = NACA_0012_plotting_purposes(:,1);
+y = NACA_0012_plotting_purposes(:,2);
 
 figure
-plot(x,y)
+plot(x,y,'r')
+hold on
 axis equal
-grid on
+xlabel('x/c')
+ylabel('y/c')
+plot(0.41,0,'xb','MarkerSize',10)
+legend({'NACA 0012','cg'},'Location','Northeast')
+grid minor
