@@ -4,6 +4,8 @@ clear
 clc
 close all
 
+
+
 load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing',...
     'V_landing', 'mainLength', 'wingRootLE','cRootWing','fusDiamOuter', 'rho_cruise', 'V_Cruise', 'SHoriz', 'SWing')
 load('Materials.mat', 'FuselageMaterial')
