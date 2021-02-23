@@ -21,19 +21,21 @@ Bulk_Mod = FuselageMaterial(numMaterial).BM;
 TensileYieldStress = 324;                      % MPa
 ShearYieldStress = TensileYieldStress/sqrt(3);
 
-numSections=1000;
+numSections = input('How many points do you want to discretise the fuselage section into? ');
 
 %% BM and SF distributions
-%load case 1 complete (AB)
-n1=1.5*2.5;
-LoadCase1 = fuselage_distributions_LC1(components, n1, numSections, W0, mainLength, wingRootLE, cRootWing, CL_trimHoriz,rho_cruise, V_Cruise, CL_trimWings, etaH, SHoriz, SWing); 
-% load case 4- repeat BM and SF distributions
-n4=1; %landing load factor
+% Load case 1 complete (AB)
+n1 = 1.5*2.5;
+LoadCase1 = fuselage_distributions_LC1(components, n1, numSections, W0,...
+    mainLength, wingRootLE, cRootWing, CL_trimHoriz,rho_cruise, V_Cruise, CL_trimWings, etaH, SHoriz, SWing);
+
+% Load case 4- repeat BM and SF distributions
+n4 = 1; %landing load factor
 LoadCase4 = fuselage_distributions_LC4(components, n4, numSections, W0, mainLength, LoadCase1.weightDistributionIN);
 
-% plot SF and BM
-figure(1) %shear force 
-plot(LoadCase1.sections, LoadCase1.TotalSF1) %total
+% Plot SF and BM
+figure(1) % Shear force 
+plot(LoadCase1.sections, LoadCase1.TotalSF1) % Total
 xlabel('Distance along fuselage length (m)')
 ylabel('Shear Force (N)')
 %title('Shear Force Distribution')
@@ -55,7 +57,7 @@ hold on
 plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
-
+%{
 %% Shear flow around the fuselage
 % Sx = 0???
 % Ixx = Iyy for the fuselage cross section???
@@ -104,10 +106,10 @@ fprintf('The extra thickness that needs to be added to the fuselage due to press
 % for worst case and use that to select variables. Then use those same
 % variables everywhere
 
-
+%}
 %% Light frames
 L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
-% M = max(fuselage.bendingmoments);
+M = max(abs(LoadCase1.TotalBM1));
 fuselage = light_frames(E, D, M, L);
 
 % Plotting a 3D graph for thickness variation against flange width and web
@@ -117,7 +119,7 @@ surf(fuselage.web_height, fuselage.flange_width, fuselage.frame_t)
 xlabel('Web height (m)')
 ylabel('Flange width (m)')
 zlabel('Frame thickness (m)')
-title('Frame thickness surface plot')
+%title('Frame thickness surface plot')
 colorbar
 
 % Plotting a 3D graph for area variation against web height and flange
@@ -127,7 +129,7 @@ surf(fuselage.web_height, fuselage.flange_width, fuselage.frame_area)
 xlabel('Web height (m)')
 ylabel('Flange width (m)')
 zlabel('Frame area (m^2)')
-title('Frame area surface plot')
+%title('Frame area surface plot')
 colorbar
 
 fprintf('The smallest area obtained is %f m^2.\n',min(fuselage.frame_area))

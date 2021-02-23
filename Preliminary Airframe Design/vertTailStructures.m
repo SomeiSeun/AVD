@@ -12,7 +12,7 @@ x = NACA_0012_plotting_purposes(:,1);
 y = NACA_0012_plotting_purposes(:,2);
 
 % Defining Parameters
-numSections = input('How many sections do you want to discretise the vertical tailplane into? ')
+numSections = input('How many sections do you want to discretise the vertical tailplane into? ');
 Nz = 1;             % Limit load factor
 numMaterial = 1;    % From Materials.mat, must be integer between 1 and 4
 
