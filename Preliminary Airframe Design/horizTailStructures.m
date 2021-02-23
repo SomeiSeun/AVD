@@ -4,7 +4,7 @@ close all
 
 load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'taperHoriz', 'Thrustline_position',...
     'SHoriz', 'rho_cruise', 'V_Cruise')
-load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
+load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial','LowerSkinMaterial')
 load('diveTrim');
 
 % Loading in a different coordinates txt file to plot the aerofoil
@@ -189,7 +189,7 @@ grid minor
 [N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections,horizTail,UpperSkinMaterial(numMaterial));
 
 %% Skin Stringer Panel Sizing and Optimization
-[HSSOptimum]=SSPOptimum(horizTail,N_alongSpan);
+[HSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(horizTail,N_alongSpan,UpperSkinMaterial(numMaterial));
 [noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,HSSOptimum);
 
 
@@ -204,3 +204,13 @@ xlabel('Distance along Horizontal Tailplane (m)')
 ylabel('Skin Thickness (mm)')
 title('Skin Thickness Distribution')
 grid minor
+
+figure
+surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tStringer,stringerGeometry.aEffective)
+xlabel('As/bt')
+ylabel('Ts/t')
+zlabel('Stringer Thickness (m)') 
+title('Stringer Thickness for different Skin-Stringer Ratios')
+colormap('turbo')
+s=colorbar();
+s.Label.String ='Total Area (m^2)';

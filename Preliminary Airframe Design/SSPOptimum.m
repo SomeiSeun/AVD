@@ -1,8 +1,8 @@
-function[Optimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(wing,N_alongSpan)
+function[Optimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(wing,N_alongSpan,SkinMaterial)
 noStringersMax=100;                                                         
 noPanelsMax=noStringersMax+1;
 K=3.62;                                                                    
-ESkin=71.8e9;
+ESkin=SkinMaterial.YM;
 
 % Initialize
 b=length(noPanelsMax); 
@@ -42,8 +42,8 @@ for As_bt=0.5:0.015:1.0                                                     % Ru
         bC1=heightStringer<(0.1*boxHeight(end));                            % height of the stringer must be less than 10% of the wingbox
         bC2=b>(8*depthStringer);                                            % stringer pitch must be at least 8 times the depth of the stringer 
         bC3=heightStringer>0.0225;                                          % stringer height must be more than 2 centimeters
-        bC4=tSkin>0.00125;
-        bC5=tStringer>0.00125;
+        bC4=tSkin>0.001;
+        bC5=tStringer>0.001;
        
 
         stringerIndex=stringerIndex(bC1 & bC2 & bC3 & bC4 & bC5);
