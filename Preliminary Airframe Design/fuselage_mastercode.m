@@ -57,7 +57,7 @@ hold on
 plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
-%
+%{
 %% Shear flow around the fuselage
 % Sx = 0???
 % Ixx = Iyy for the fuselage cross section???
@@ -137,7 +137,8 @@ fprintf('The smallest area obtained is %f m^2.\n',min(fuselage.frame_area))
 %% Heavy frames
 T = 0;     % Looking at the diagrams given in the notes, T should be 0 for us
 R = D/2;   % Radius of the fuselage
-% Q = 0; ??????
+%Q = 0;
+%P = 10000; % Just not sure about values of P and Q
 [fuselage,theta_deg] = wise_curves(P, R, T, Q);
 % ^ NEED TO PERFORM THIS FUNCTION AT ONLY THE WORST POINT SO AT MAX SHEAR
 % FORCE/BENDING MOMENT POINT
