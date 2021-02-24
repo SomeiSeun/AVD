@@ -57,7 +57,7 @@ hold on
 plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
-%{
+%
 %% Shear flow around the fuselage
 % Sx = 0???
 % Ixx = Iyy for the fuselage cross section???
