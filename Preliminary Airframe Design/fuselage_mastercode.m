@@ -57,7 +57,7 @@ hold on
 plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
-%{
+%
 %% Shear flow around the fuselage
 % Sx = 0???
 % Ixx = Iyy for the fuselage cross section???
@@ -144,18 +144,20 @@ R = D/2;   % Radius of the fuselage
 
 % Plotting the Wise curves
 figure
-plot(theta_deg,fuselage.tangent_m,'-r')
+plot(theta_deg,fuselage.heavyframe_bendingmoment,'-r')
 xlabel('Angle (Degrees)')
 ylabel('Bending moment (Nm)')
 title('Bending moment variation around the fuselage ring')
+grid minor
 
 figure
-plot(theta_deg,fuselage.tangent_n,'-r')
+plot(theta_deg,fuselage.heavyframe_normalforce,'-r')
 hold on
-plot(theta_deg,fuselage.tangent_s,'-b')
+plot(theta_deg,fuselage.heavyframe_shearforce,'-b')
 xlabel('Angle (Degrees)')
 ylabel('Force (N)')
 title('Shear and normal force variation around the fuselage ring')
 legend({'Normal','Shear'},'Location','North')
+grid minor
 
 % Rreaction shear flow around ring equation
