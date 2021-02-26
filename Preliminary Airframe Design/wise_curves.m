@@ -34,4 +34,7 @@ for i = 1:length(theta)
     fuselage.moment_n(i) = (T / (2 * pi * R)) * (1.5 * cos(theta(i)) + (pi - theta(i)) * sin(theta(i)));
     fuselage.moment_s(i) = (T / (2 * pi * R)) * (1 + 2 * cos(theta(i)));
 end
+fuselage.heavyframe_bendingmoment = fuselage.tangent_m + fuselage.radial_m + fuselage.moment_m;
+fuselage.heavyframe_normalforce = fuselage.tangent_n + fuselage.radial_n + fuselage.moment_n;
+fuselage.heavyframe_shearforce = fuselage.tangent_s + fuselage.radial_s + fuselage.moment_s;
 end
