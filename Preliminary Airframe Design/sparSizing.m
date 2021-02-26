@@ -1,4 +1,4 @@
-function [spar] = sparSizing(wing, SparMaterial, spar)
+function spar = sparSizing(wing, SparMaterial, spar, IxxCutoff)
 
 n = 1e4;
 numSections = length(wing.span);
@@ -6,25 +6,14 @@ numSections = length(wing.span);
 % Determining target Ixx values for front and rear spars for each spar
 % material TYS available
 spar.Ixx = 0.5*wing.bendingMoment.*spar.h./(2*SparMaterial.TYS);
-spar.IxxMax = 1/12*0.5*spar.h.*spar.h.^3;
+spar.Ixx(spar.Ixx < spar.Ixx(floor(IxxCutoff*numSections))) = spar.Ixx(floor(IxxCutoff*numSections));
 
-spar.curvature = zeros(1,numSections);
-spar.displacement = zeros(1,numSections);
-for i = 2:numSections
-    spar.curvature(i) = spar.curvature(i-1) + trapz(wing.span(i-1:i), 2*SparMaterial.TYS./(SparMaterial.YM*spar.h(i-1:i)));
-    spar.displacement(i) = spar.displacement(i-1) + trapz(wing.span(i-1:i), spar.curvature(i-1:i));
-end
-spar.curvature = spar.curvature - spar.curvature(end);
-spar.displacement = spar.displacement(end) - spar.displacement;
-
+% Initialising arrays
 spar.tf = zeros(1, numSections);
 spar.b = zeros(1, numSections);
 spar.Area = zeros(1, numSections);
-% Initialising arrays
-for i = 1:numSections
-    clc
-    disp(['Progress: ' num2str(i) '/' num2str(numSections)])
 
+for i = 1:numSections
     % Defining range of values for flange thickness tf (m)
     tf = linspace(1e-3, 0.5*spar.h(i), n);
     b = (12*spar.Ixx(i) - spar.tw(i).*(spar.h(i) - 2*tf).^3)./(2*tf.^3 + 6*tf.*(spar.h(i) - tf).^2);

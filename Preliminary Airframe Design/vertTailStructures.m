@@ -2,8 +2,8 @@ clear
 clc
 close all
 
-load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootVert', 'taperVert', 'Thrustline_position',...
-    'SVert', 'rho_takeoff', 'V_takeoff')
+load('ConceptualDesign.mat', 'W0',  'components', 'heightVert', 'cRootVert', 'taperVert', 'Thrustline_position',...
+    'SVert', 'rho_takeoff', 'V_takeoff', 'CG_all', 'vertAC', 'beta_Cruise', 'Engine_SeaLevelThrust')
 load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
 
 % Loading in a different coordinates txt file to plot the aerofoil
@@ -17,47 +17,38 @@ Nz = 1;             % Limit load factor
 numMaterial = 1;    % From Materials.mat, must be integer between 1 and 4
 
 % Evaluating lift and weight distributions
-
-liftReq = 0.5*0.308*rho_takeoff*V_takeoff^2*SVert;
-vertTail =  bendingTail(Nz, numSections, liftReq, components, spanHoriz, cRootVert, taperVert);
+liftReq = Engine_SeaLevelThrust*Thrustline_position(2)/(vertAC(1) - CG_all(1,1));
+vertTail =  bendingVertTail(Nz, numSections, liftReq, components, 2*heightVert, cRootVert, taperVert, 0);
 vertTail.engineWeight = zeros(1,numSections);
 vertTail.ucWeight = zeros(1,numSections);
 vertTail.fuseWeight = zeros(1,numSections);
 vertTail.fuelWeight = zeros(1,numSections);
 
 % Defining vertical tail box structural parameters
-frontSparLocation = 0.25;
-rearSparLocation = 0.75;
-flexuralAxis = 0.5 * (frontSparLocation + rearSparLocation);
-
-% Evaluating basic wing box parameters
-[vertTail, frontSpar, rearSpar] = analyseWingBox('NACA 0012.txt', vertTail, frontSparLocation, rearSparLocation);
+tcRatio = 0.1;
+[vertTail, frontSpar, rearSpar] = analyseWingBox('NACA 0012.txt', vertTail, tcRatio);
 
 K_s = 8.1;
 Cm0 = 0;
 cg = 0.41;
 
 % Evaluating shear stresses and spar web thicknesses
+flexuralAxis = 0.5*(frontSpar.coords(1,1) + rearSpar.coords(1,1));
 [vertTail,frontSpar,rearSpar] = shear_flow(vertTail, frontSpar, rearSpar, K_s, rho_takeoff, V_takeoff,...
-    SparMaterial(numMaterial).YM, frontSparLocation, rearSparLocation, flexuralAxis, Cm0, cg, Thrustline_position(3));
+    SparMaterial(numMaterial).YM, flexuralAxis, Cm0, cg, Thrustline_position(3));
 
 % Evaluating spar flange dimensions
-[frontSpar] = sparSizing(vertTail, SparMaterial(numMaterial), frontSpar);
-[rearSpar] = sparSizing(vertTail, SparMaterial(numMaterial), rearSpar);
+IxxCutoff = 0.001;
+[frontSpar] = sparSizing(vertTail, SparMaterial(numMaterial), frontSpar, IxxCutoff);
+[rearSpar] = sparSizing(vertTail, SparMaterial(numMaterial), rearSpar, IxxCutoff);
 
 %% Plotting Results
 % Plotting Loading Distribution
 fig1 = figure(1);
 hold on
-plot(vertTail.span, vertTail.lift, '.')
-plot(vertTail.span, -vertTail.selfWeight, '.')
-plot(vertTail.span, -vertTail.engineWeight, '.')
-plot(vertTail.span, -vertTail.ucWeight, '.')
-plot(vertTail.span, -vertTail.fuseWeight, '.')
-plot(vertTail.span, -vertTail.fuelWeight, '.')
+
 plot(vertTail.span, vertTail.loading, 'k-')
-legend('Lift', 'Self-weight', 'Engine Weight', 'Undercarriage Weight', 'Aircraft Weight',...
-    'Fuel Weight', 'Overall Loading Distribution', 'Location', ' Southeast')
+legend('Overall Loading Distribution', 'Location', ' Southeast')
 ylabel('Loading Distribution (N/m)')
 xlabel('Vert Tail Spanwise Coordinate y (m)')
 title('Vert Tail Vertical Loading Distribution')
@@ -97,14 +88,6 @@ grid minor
 fig4.Units = 'normalized';
 fig4.Position = [0.75 0.5 0.25 0.4];
 
-% Plotting wingbox area variation
-% figure
-% plot(wing.span,wing.boxArea,'.b')
-% grid on
-% xlabel('Wing Span (m)')
-% ylabel('Wingbox Area (m^2)')
-% title('Wingbox Area Distribution')
-
 % Plotting the thickness variations
 fig5 = figure(5);
 hold on
@@ -117,17 +100,6 @@ title('Spar Web Thickness Distribution')
 grid minor
 fig5.Units = 'normalized';
 fig5.Position = [0 0.05 0.25 0.4];
-
-% Plotting the front and rear spar shear flow
-% figure
-% plot(wing.span,frontSpar.qweb,'.r')
-% hold on
-% plot(wing.span,rearSpar.qweb,'.b')
-% grid on
-% xlabel('Wing span (m)')
-% ylabel('Shear flow (N/m)')
-% legend({'Front spar','Rear spar'},'Location','Northeast')
-% title('Sparhear flow spanwise distribution')
 
 % Plotting front and rear spar shear stress
 fig6 = figure(6);
@@ -187,7 +159,9 @@ ylabel('y/c')
 plot(cg,0,'xb','MarkerSize',10,'LineWidth',1.5)
 plot(flexuralAxis,0,'xm','MarkerSize',10,'LineWidth',1.5)
 plot(0.25,0,'xc','MarkerSize',10,'LineWidth',1.5)
-legend({'NACA 0012','Centre of gravity','Flexural Axis','Mean Aerodynamic Chord'},'Location','Northeast')
+plot(frontSpar.coords(1,:), frontSpar.coords(2,:))
+plot(rearSpar.coords(1,:), rearSpar.coords(2,:))
+legend({'NACA 0012','Centre of gravity','Flexural Axis','Aerodynamic Centre', 'Front Spar', 'Rear Spar'},'Location','Northeast')
 grid minor
 
 %% Skin thickness sizing (ch3)

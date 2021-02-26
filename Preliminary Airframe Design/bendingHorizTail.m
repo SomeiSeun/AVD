@@ -1,9 +1,7 @@
-function tail =  bendingTail(Nz, numSections, liftReq, components, span, cRoot, taper)
+function tail =  bendingHorizTail(Nz, numSections, liftReq, components, span, cRoot, taper, fuseWidth)
 % This function calculates the bending moment and shear force distributions
 % along the wing, assuming a clamped beam and symmetric flight.
 
-% Defining width of structural components in m (rough values!)
-fuseWidth = 1;
 
 % Discretising wing into sections
 cTip = cRoot*taper;
@@ -23,7 +21,7 @@ tail.engineWeight = zeros(1, numSections);
 tail.Thrust = zeros(1, numSections);
 
 % Overall Wing Loading
-tail.loading = tail.lift - tail.selfWeight;
+tail.loading = tail.lift - tail.SelfWeight;
 
 % Calculating shear force and bending moment distributions
 tail.shearForce = zeros(1, numSections);
