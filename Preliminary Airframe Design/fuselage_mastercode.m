@@ -71,16 +71,7 @@ A_fus = pi * (D / 2)^2;  % Area of the fuselage cross section
 fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, N, Sx, I_yy, x_s);
 
 %% stringer sizing - in progress(AB)
-% Use values from notes as a starting point, as per the videos
-StringerSpacing=convlength(7,'in','m');  % Range is 6.5-9 inches
-
-% StringerShape: Z stringers
-FrameDepth=convlength(4.0, 'in','m');    % Range is 3.5-4.4
-FrameSpacing=convlength(20, 'in','m');
-
-% Materials to use: 2000 series for skin and 7000 series for stringer
-
-% Aassume constant stringer pitch for both tensile side and compression side
+% fusStringer=FusStringerSizing(LoadCase1.TotalBM1,D,
 
 
 %% Presurisation 
