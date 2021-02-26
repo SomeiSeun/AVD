@@ -4,7 +4,7 @@ close all
 
 load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'taperWing', 'Thrustline_position',...
     'rho_cruise', 'V_Cruise','beta_Cruise','Engine_SeaLevelThrust')
-load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
+load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial','LowerSkinMaterial')
 load('skinStringerpanel.mat')
 
 % Loading in a different coordinates txt file to plot the aerofoil
@@ -215,6 +215,8 @@ grid minor
 [WSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(wing,N_alongSpan,UpperSkinMaterial);
 [noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,WSSOptimum);
 
+[LWSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(wing,N_alongSpan,LowerSkinMaterial(numMaterial));
+[LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,LWSSOptimum);
 % Plotting skin thickness distribution along span 
 figure
 x=[wing.span(end:-50:1)];
@@ -229,21 +231,21 @@ grid minor
 
 
 %% Rib Spacing and Rib Thickness Optimisation
-[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,WSSOptimum,boxHeight,skinThicknessDist,N_alongSpan);
+[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,WSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LWSSOptimum);
 [optRibParameters]=RibThickness(optRibSpacing,wing,minMassIndex,ribThickness);
 
-% % Plotting Mass Vs Rib Spacing
-% figure 
-% plot(rSpacing,massWingBox,'-b')
-% hold on 
-% plot(rSpacing,massEffRib,'-r')
-% plot(rSpacing,massEffSS)
-% xlabel('Rib Spacing (m)')
-% ylabel('Mass')
-% legend('Total','Ribs','Skin-Stringer')
-% title('Rib Spacing Optimisation')
-% grid minor 
-% hold off
+% Plotting Mass Vs Rib Spacing
+figure 
+plot(rSpacing,massWingBox,'-b')
+hold on 
+plot(rSpacing,massEffRib,'-r')
+plot(rSpacing,massEffSS)
+xlabel('Rib Spacing (m)')
+ylabel('Mass')
+legend('Total','Ribs','Skin-Stringer')
+title('Rib Spacing Optimisation')
+grid minor 
+hold off
 
 
 figure
