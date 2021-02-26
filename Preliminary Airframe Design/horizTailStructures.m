@@ -162,8 +162,8 @@ ylabel('y/c')
 plot(cg,0,'xb','MarkerSize',10,'LineWidth',1.5)
 plot(flexuralAxis,0,'xm','MarkerSize',10,'LineWidth',1.5)
 plot(0.25,0,'xc','MarkerSize',10,'LineWidth',1.5)
-plot(frontSpar.coords(1,:), frontSpar.coords(2,:))
-plot(rearSpar.coords(1,:), rearSpar.coords(2,:))
+plot(frontSpar.coords(1,:),frontSpar.coords(2,:),'LineWidth',1.5)
+plot(rearSpar.coords(1,:),rearSpar.coords(2,:),'LineWidth',1.5)
 legend({'NACA 0012','Centre of gravity','Flexural Axis','Aerodynamic Centre', 'Front Spar', 'Rear Spar'},'Location','Northeast')
 grid minor
 

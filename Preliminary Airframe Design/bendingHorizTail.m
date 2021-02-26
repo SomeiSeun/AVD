@@ -21,7 +21,7 @@ tail.engineWeight = zeros(1, numSections);
 tail.Thrust = zeros(1, numSections);
 
 % Overall Wing Loading
-tail.loading = tail.lift - tail.SelfWeight;
+tail.loading = tail.lift - tail.selfWeight;
 
 % Calculating shear force and bending moment distributions
 tail.shearForce = zeros(1, numSections);
