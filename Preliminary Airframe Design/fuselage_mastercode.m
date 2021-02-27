@@ -8,6 +8,7 @@ load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing',...
     'V_landing', 'mainLength', 'wingRootLE','cRootWing','fusDiamOuter','rho_cruise', 'V_Cruise', 'SHoriz', 'SWing')
 load('Materials.mat', 'FuselageMaterial')
 load('../Preliminary Design Optimiser/trimAnalysis.mat')
+load('wingStructures.mat','wing')
 D = fusDiamOuter;
 numMaterial = 1; % Needs to be 1 or 2
 
@@ -57,7 +58,7 @@ hold on
 plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
-%
+%{
 %% Shear flow around the fuselage
 % Sx = 0???
 % Ixx = Iyy for the fuselage cross section???
@@ -97,7 +98,7 @@ fprintf('The extra thickness that needs to be added to the fuselage due to press
 % for worst case and use that to select variables. Then use those same
 % variables everywhere
 
-%}
+%
 %% Light frames
 L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
 M = max(abs(LoadCase1.TotalBM1));
@@ -124,22 +125,67 @@ zlabel('Frame area (m^2)')
 colorbar
 
 fprintf('The smallest area obtained is %f m^2.\n',min(fuselage.frame_area))
-
+%}
 %% Heavy frames
-T = 0;     % Looking at the diagrams given in the notes, T should be 0 for us
-R = D/2;   % Radius of the fuselage
-%Q = 0;
-%P = 10000; % Just not sure about values of P and Q
+T = 0;                                               % Torque in the fuselage
+R = D/2;                                             % Radius of the fuselage
+heavy_theta = 55;                                    % Setting the angle between the fuselage and the wing
+Q = max(wing.lift)*sind(heavy_theta);
+P = max(wing.lift)*cosd(heavy_theta);
 [fuselage,theta_deg] = wise_curves(P, R, T, Q);
-% ^ NEED TO PERFORM THIS FUNCTION AT ONLY THE WORST POINT SO AT MAX SHEAR
-% FORCE/BENDING MOMENT POINT
+
+min_area_shear = fuselage.heavyframe_shearforce_max / TensileYieldStress;
+min_area_normal = fuselage.heavyframe_normalforce_max / ShearYieldStress;
+second_moment_of_area = fuselage.heavyframe_bendingmoment_max / TensileYieldStress;
+
+%{
+heavy_theta = linspace(0,90,90);
+
+max_bendingmoment = zeros(1,length(heavy_theta));
+max_normalforce = zeros(1,length(heavy_theta));
+max_shearforce = zeros(1,length(heavy_theta));
+
+for i = 1:length(heavy_theta)
+    Q = max(wing.lift)*sind(heavy_theta(i));
+    P = max(wing.lift)*cosd(heavy_theta(i));
+    [fuselage,theta_deg] = wise_curves(P, R, T, Q);
+    max_bendingmoment(i) = fuselage.heavyframe_bendingmoment_max;
+    max_shearforce(i) = fuselage.heavyframe_shearforce_max;
+    max_normalforce(i) = fuselage.heavyframe_normalforce_max;
+end
+
+figure
+plot(heavy_theta,max_bendingmoment,'xr')
+xlabel('Angle (Degrees)')
+ylabel('Bending moment (Nm)')
+grid minor
+str = {'AP'};
+text(55,40000,str,'Color','green','FontSize',8)
+
+figure
+plot(heavy_theta,max_shearforce,'xr')
+hold on
+plot(heavy_theta,max_normalforce,'*g')
+xlabel('Angle (Degrees)')
+ylabel('Force (N)')
+grid minor
+legend({'Shear force','Normal force'},'Location','South')
+
+figure
+plot(heavy_theta,max_shearforce+max_normalforce)
+xlabel('Angle (Degrees)')
+ylabel('Force (N)')
+grid minor
+str = {'AP'};
+text(55,107000,str,'Color','green','FontSize',8)
+%}
 
 % Plotting the Wise curves
 figure
 plot(theta_deg,fuselage.heavyframe_bendingmoment,'-r')
 xlabel('Angle (Degrees)')
 ylabel('Bending moment (Nm)')
-title('Bending moment variation around the fuselage ring')
+%title('Bending moment variation around the fuselage ring')
 grid minor
 
 figure
@@ -148,7 +194,7 @@ hold on
 plot(theta_deg,fuselage.heavyframe_shearforce,'-b')
 xlabel('Angle (Degrees)')
 ylabel('Force (N)')
-title('Shear and normal force variation around the fuselage ring')
+%title('Shear and normal force variation around the fuselage ring')
 legend({'Normal','Shear'},'Location','North')
 grid minor
 
