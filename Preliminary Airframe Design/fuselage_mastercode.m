@@ -17,11 +17,12 @@ numMaterial = 1; % Needs to be 1 or 2
 % Al2024-T6: 363 MPa Tensile Yield Stress
 % Al7175-T6: 489.5 MPa Tensile Yield Stress
 
+SYS = [363*10^6, 489.5*10^6];
 E = FuselageMaterial(numMaterial).YM;
 Poisson = FuselageMaterial(numMaterial).Poisson;
 G = FuselageMaterial(numMaterial).SM;
 Bulk_Mod = FuselageMaterial(numMaterial).BM;
-TensileYieldStress = 363*10^6;
+TensileYieldStress = SYS(numMaterial);
 ShearYieldStress = TensileYieldStress/sqrt(3);
 
 numSections = input('How many points do you want to discretise the fuselage section into? ');
@@ -60,7 +61,7 @@ hold on
 plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
-%
+%{
 %% Shear flow around the fuselage
 A_fus = pi * (D / 2)^2;  % Area of the fuselage cross section
 Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
@@ -69,17 +70,17 @@ T = 0;                               % Torque acting on the fuselage
 % y_s = array of distances of the stringers from neutral axis
 % N = number of stringers
 
-fuselage = shear_flow_fuselage(A_s, y_s, Sy, A_fus, N, T, ShearYieldStress);
+fuselage = shear_flow_fuselage(A_s, y_s, Sy, A_fus, N, T, ShearYieldStress, fuselage);
 
 % Displaying the maximum thickness of the fuselage cross section
 fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
 
 % Plotting the shear flow around the fuselage cross section
 figure
-
+%
 %% stringer sizing 
 [fusStringer, fusBoom] = FusStringerSizing(LoadCase1.TotalBM1,D);
-
+%}
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
 thickness_ratio = ((2 - Poisson) / (1 - Poisson));    % t_c is cylindrical fus thickness
@@ -90,7 +91,7 @@ P = 58227.3;
 fuselage.thickness_h = (P * D / (2 * TensileYieldStress));  % Thickness due to hoop stress
 fuselage.thickness_l = (P * D / (4 * TensileYieldStress));  % Thickness due to longitudinal stress
 fuselage.thickness_pressurisation = [fuselage.thickness_h fuselage.thickness_l];
-fprintf('The extra thickness that needs to be added to the fuselage due to pressurisation is %f.\n',...
+fprintf('The extra thickness that needs to be added to the fuselage due to pressurisation is %f m.\n',...
     max(fuselage.thickness_pressurisation))
 
 %% Bending in fuselage
@@ -107,7 +108,7 @@ fprintf('The extra thickness that needs to be added to the fuselage due to press
 %% Light frames
 L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
 M = max(abs(LoadCase1.TotalBM1));
-fuselage = light_frames(E, D, M, L);
+fuselage = light_frames(E, D, M, L, fuselage);
 
 % Plotting a 3D graph for thickness variation against flange width and web
 % height
@@ -137,16 +138,16 @@ R = D/2;                                             % Radius of the fuselage
 heavy_theta = 55;                                    % Setting the angle between the fuselage and the wing
 Q = max(wing.lift)*sind(heavy_theta);
 P = max(wing.lift)*cosd(heavy_theta);
-[fuselage,theta_deg] = wise_curves(P, R, T, Q);
+[fuselage,theta_deg] = wise_curves(P, R, T, Q, fuselage);
 
-min_area_shear = fuselage.heavyframe_shearforce_max / TensileYieldStress;
-min_area_normal = fuselage.heavyframe_normalforce_max / ShearYieldStress;
+min_area_shear = fuselage.heavyframe_shearforce_max / ShearYieldStress;
+min_area_normal = fuselage.heavyframe_normalforce_max / TensileYieldStress;
 second_moment_of_area = fuselage.heavyframe_bendingmoment_max / TensileYieldStress;
 fprintf('The minimum area required for the heavy frame cross section is %f m^2.\n',max(min_area_shear,min_area_normal))
 fprintf('The second moment of area required for the heavy frame cross section is %f m^4.\n',second_moment_of_area)
 h = 0.01;
 b = 0.01;
-%fuselage = heavy_frame_Ixx_area_calc(h,b,second_moment_of_area,max(min_area_shear,min_area_normal));
+fuselage = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area, max(min_area_shear,min_area_normal), fuselage);
 
 %{
 heavy_theta = linspace(0,90,90);
@@ -207,5 +208,3 @@ ylabel('Force (N)')
 %title('Shear and normal force variation around the fuselage ring')
 legend({'Normal','Shear'},'Location','North')
 grid minor
-
-% Rreaction shear flow around ring equation

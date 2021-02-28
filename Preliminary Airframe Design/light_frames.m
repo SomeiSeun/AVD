@@ -1,4 +1,4 @@
-function fuselage = light_frames(E, D, M, L)
+function fuselage = light_frames(E, D, M, L, fuselage)
 
 % This function does calculations for light frames
 % The INPUTS are:
@@ -6,6 +6,7 @@ function fuselage = light_frames(E, D, M, L)
 % D = fuselage diameter
 % L = frame spacing
 % M = ultimate bending moment on fuselage
+% fuselage = structure to stop it being overwritten
 
 % The OUTPUTS are:
 % fuselage = structure with light frame variables added

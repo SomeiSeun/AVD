@@ -1,4 +1,4 @@
-function fuselage = shear_flow_fuselage(A_s, y_s, Sy, A_fus, N, T, TSS)
+function fuselage = shear_flow_fuselage(A_s, y_s, Sy, A_fus, N, T, SYS, fuselage)
 
 % This function finds out the shear force distribution for a Fuselage CSA
 % The INPUTS are:
@@ -8,7 +8,8 @@ function fuselage = shear_flow_fuselage(A_s, y_s, Sy, A_fus, N, T, TSS)
 % A_fus = area of the fuselage section
 % N = number of stringers
 % T = torque on the fuselage cross section
-% TSS = Tensile Shear Stress for the chosen material
+% SYS = Shear Yield Stress for the chosen material
+% fuselage = structure to stop it being overwritten
 
 % The OUTPUTS are:
 % fuselage = structure with q, qb and q0 added
@@ -26,6 +27,6 @@ for i = 1:length(N)
     fuselage.q_b(i) = (-(Sy / fuselage.heavyframeIxxtotal) * A_s * y_s(i));
     fuselage.q_0(i) = T / (2 * A_fus);
     fuselage.q(i) = fuselage.q_b(i) + fuselage.q_0(i);
-    fuselage.crossectionthickness(i) = fuselage.q(i) / TSS;
+    fuselage.crossectionthickness(i) = fuselage.q(i) / SYS;
 end
 end

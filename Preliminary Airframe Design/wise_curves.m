@@ -1,4 +1,4 @@
-function [fuselage,theta_deg] = wise_curves(P, R, T, Q)
+function [fuselage,theta_deg] = wise_curves(P, R, T, Q, fuselage)
 
 % This function plots the wise curves
 % The INPUTS are:
@@ -6,6 +6,7 @@ function [fuselage,theta_deg] = wise_curves(P, R, T, Q)
 % R = Radius of the fuselage
 % T = Moment
 % Q = Radial load
+% fuselage = structure to stop this structure from being overwritten
 
 % The OUTPUTS are:
 % fuselage = structure with forces due to the different load cases
