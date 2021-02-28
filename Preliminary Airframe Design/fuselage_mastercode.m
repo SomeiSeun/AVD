@@ -14,12 +14,14 @@ numMaterial = 1; % Needs to be 1 or 2
 
 %% Material properties
 % Setting anc calculating all the relevant materials properties needed
+% Al2024-T6: 363 MPa Tensile Yield Stress
+% Al7175-T6: 489.5 MPa Tensile Yield Stress
 
 E = FuselageMaterial(numMaterial).YM;
 Poisson = FuselageMaterial(numMaterial).Poisson;
 G = FuselageMaterial(numMaterial).SM;
 Bulk_Mod = FuselageMaterial(numMaterial).BM;
-TensileYieldStress = 324;                      % MPa
+TensileYieldStress = 363*10^6;
 ShearYieldStress = TensileYieldStress/sqrt(3);
 
 numSections = input('How many points do you want to discretise the fuselage section into? ');
@@ -137,6 +139,8 @@ P = max(wing.lift)*cosd(heavy_theta);
 min_area_shear = fuselage.heavyframe_shearforce_max / TensileYieldStress;
 min_area_normal = fuselage.heavyframe_normalforce_max / ShearYieldStress;
 second_moment_of_area = fuselage.heavyframe_bendingmoment_max / TensileYieldStress;
+fprintf('The minimum area required for the heavy frame cross section is %f m^2.\n',max(min_area_shear,min_area_normal))
+fprintf('The second moment of area required for the heavy frame cross section is %f m^4.\n',second_moment_of_area)
 
 %{
 heavy_theta = linspace(0,90,90);
