@@ -58,6 +58,20 @@ plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
 %
+%% Shear flow around the fuselage
+% Sx = 0???
+% Ixx = Iyy for the fuselage cross section???
+A_fus = pi * (D / 2)^2;  % Area of the fuselage cross section
+%Sy = abs(max(fuselage.shearforce_distribution));
+% A_s = area of the stringer
+% y_s = array of distances of the stringers from neutral axis
+% x_s = array of distances of the stringers from neutral axis
+% N = number of stringers
+
+% fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, N, Sx, I_yy, x_s);
+
+%% stringer sizing 
+[fusStringer, fusBoom]=FusStringerSizing(LoadCase1.TotalBM1,D)
 
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
@@ -72,22 +86,17 @@ fuselage.thickness_pressurisation = [fuselage.thickness_h fuselage.thickness_l];
 fprintf('The extra thickness that needs to be added to the fuselage due to pressurisation is %f.\n',...
     max(fuselage.thickness_pressurisation))
 
-%% stringer sizing 
-[fusStringer, fusBoom]=FusStringerSizing(LoadCase1.TotalBM1,D)
+%% Bending in fuselage
+% Use a datasheet to choose stringer area, as there are too many unknowns
+% Use a brute force method, select As and ts and then iterate twice. Three
+% variables would be As, ts and pitch b. Choose the configuration that gives
+% lowest weight
 
+% We don't have to do the design for every discretised station- simply look
+% for worst case and use that to select variables. Then use those same
+% variables everywhere
 
-%% Shear flow around the fuselage
-% Sx = 0???
-% Ixx = Iyy for the fuselage cross section???
-A_fus = pi * (D / 2)^2;  % Area of the fuselage cross section
-%Sy = abs(max(fuselage.shearforce_distribution));
-% A_s = area of the stringer
-% y_s = array of distances of the stringers from neutral axis
-% x_s = array of distances of the stringers from neutral axis
-% N = number of stringers
-
-% fuselage = shear_flow_fuselage(A_s, y_s, Sy, I_xx, A_fus, N, Sx, I_yy, x_s);
-
+%}
 %% Light frames
 L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
 M = max(abs(LoadCase1.TotalBM1));
@@ -141,3 +150,5 @@ ylabel('Force (N)')
 title('Shear and normal force variation around the fuselage ring')
 legend({'Normal','Shear'},'Location','North')
 grid minor
+
+% Rreaction shear flow around ring equation
