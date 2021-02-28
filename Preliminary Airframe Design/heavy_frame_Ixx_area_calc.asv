@@ -19,8 +19,8 @@ solutions = zeros(3,length(b));
 for i = 1:length(b)
     eqn = (b(i) * H^3 / 12) + (h(i)^3 / 6) * ((50 * area) - (0.5 * H)) + ...
         (h(i) / 2) * ((50 * area) - (0.5 * H)) * (H + h(i))^2 == second_moment_of_area;
-    solx = solve(eqn,H);
-    solutions_normal = double(solx);
+    solx = solve(eqn,H)
+    solutions_normal = double(solx)
     solutions(1,i) = solutions_normal(1);
     solutions(2,i) = solutions_normal(2);
     solutions(3,i) = solutions_normal(3);

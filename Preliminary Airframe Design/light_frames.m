@@ -13,7 +13,7 @@ function fuselage = light_frames(E, D, M, L, fuselage)
 
 I_f = (1 / 16000) * M * D^2 / (L * E);
 
-fuselage.web_height = linspace(0.05,0.12,40);  % In metres
+fuselage.web_height = linspace(0.05,0.12,40);     % In metres
 fuselage.flange_width = linspace(0.05,0.12,40);   % In metres
 fuselage.frame_t = zeros(length(fuselage.web_height),length(fuselage.flange_width));
 fuselage.frame_area = zeros(length(fuselage.web_height),length(fuselage.flange_width));
