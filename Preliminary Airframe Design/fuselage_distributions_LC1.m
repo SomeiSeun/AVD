@@ -129,4 +129,5 @@ LoadCase1.BMTT=BM_TT; %just tail load
 LoadCase1.SF_IN=SF; %just inertial
 LoadCase1.BM_IN=BM; %just inertial
 LoadCase1.weightDistributionIN=weightSum;
+LoadCase1.Reactions=Reactions;
 end 
