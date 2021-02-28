@@ -234,3 +234,5 @@ colormap('turbo')
 s=colorbar();
 s.Label.String ='Total Area (m^2)';
 
+% Saving the workspace for other programmes
+save('wingStructures.mat')

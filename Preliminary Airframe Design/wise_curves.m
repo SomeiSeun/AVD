@@ -37,4 +37,7 @@ end
 fuselage.heavyframe_bendingmoment = fuselage.tangent_m + fuselage.radial_m + fuselage.moment_m;
 fuselage.heavyframe_normalforce = fuselage.tangent_n + fuselage.radial_n + fuselage.moment_n;
 fuselage.heavyframe_shearforce = fuselage.tangent_s + fuselage.radial_s + fuselage.moment_s;
+fuselage.heavyframe_bendingmoment_max = max(abs(fuselage.heavyframe_bendingmoment));
+fuselage.heavyframe_normalforce_max = max(abs(fuselage.heavyframe_normalforce));
+fuselage.heavyframe_shearforce_max = max(abs(fuselage.heavyframe_shearforce));
 end
