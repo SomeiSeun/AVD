@@ -145,10 +145,12 @@ min_area_normal = fuselage.heavyframe_normalforce_max / TensileYieldStress;
 second_moment_of_area = fuselage.heavyframe_bendingmoment_max / TensileYieldStress;
 fprintf('The minimum area required for the heavy frame cross section is %f m^2.\n',max(min_area_shear,min_area_normal))
 fprintf('The second moment of area required for the heavy frame cross section is %f m^4.\n',second_moment_of_area)
-h = 0.01;
-b = 0.01;
+h = linspace(0,0.2,50);
+b = linspace(0,0.2,50);
 fuselage = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area, max(min_area_shear,min_area_normal), fuselage);
-
+%fprintf('The length B and H are %f m and %f m respectively. \n',fuselage.heav)
+fuselage.heavyframeB
+fuselage.heavyframeH
 %{
 heavy_theta = linspace(0,90,90);
 

@@ -23,5 +23,6 @@ for i = 1:length(solx)
        fuselage.heavyframeH(i) = double(solx(i));
     end
 end
+
 fuselage.heavyframeB = (50 * area) - (0.5.*fuselage.heavyframeH);
 end
