@@ -1,0 +1,20 @@
+function fuselage = heavy_frame_Ixx_area_calc(h,b,second_moment_of_area,area)
+
+% Creating a function which finds out the dimensions of an I cross section
+% to be used in heavy frames
+
+% The INPUTS are:
+% h = flange height in m
+% b = width of the central part of I section in m
+% second_moment_of_area = required Ixx value for the I section
+% area = required area for the I section
+
+% The OUTPUTS are:
+% fuselage = structure
+
+syms H
+eqn = (0.01 * H^3 / 12) + (0.01^3 / 6)*(50 * area - 0.5 * H) + ...
+    0.005 * (50 * area - 0.5 * H) * (H + 0.01)^2 == second_moment_
+
+
+end
