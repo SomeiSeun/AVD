@@ -175,7 +175,7 @@ grid minor
 [noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,HSSOptimum);
 
 [LHSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(horizTail,N_alongSpan,LowerSkinMaterial(numMaterial));
-[LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,LHSSOptimum);
+[LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,LWSSOptimum);
 
 [rSpacing,optRibSpacing,massHTPBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(horizTail,HSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LHSSOptimum);
 [optRibParameters]=RibThickness(optRibSpacing,horizTail,minMassIndex,ribThickness);

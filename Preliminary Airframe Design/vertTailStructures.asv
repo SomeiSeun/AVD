@@ -4,7 +4,7 @@ close all
 
 load('ConceptualDesign.mat', 'W0',  'components', 'heightVert', 'cRootVert', 'taperVert', 'Thrustline_position',...
     'SVert', 'rho_takeoff', 'V_takeoff', 'CG_all', 'vertAC', 'beta_Cruise', 'Engine_SeaLevelThrust')
-load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial','LowerSkinMaterial')
+load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
 
 % Loading in a different coordinates txt file to plot the aerofoil
 load('NACA 0012 plotting purposes.txt')
@@ -173,27 +173,27 @@ grid minor
 [noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,VSSOptimum);
 
 [LVSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(vertTail,N_alongSpan,LowerSkinMaterial(numMaterial));
-[LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,LVSSOptimum);
+[LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,LWSSOptimum);
 % Plotting skin thickness distribution along span 
 figure
-x=[vertTail.span(end:-50:1)];
+x=[wing.span(end:-50:1)];
 y=[skinThicknessDist(end:-50:1)*1000];
-plot(vertTail.span(end:-50:1),skinThicknessDist(end:-50:1)*1000,'.-r')
+plot(wing.span(end:-50:1),skinThicknessDist(end:-50:1)*1000,'.-r')
 hold on
 stairs(x,y,'b')
-xlabel('Distance along Vertical Tailplane (m)') 
+xlabel('Distance along wing (m)') 
 ylabel('Skin Thickness (mm)')
 title('Skin Thickness Distribution')
 grid minor
 
 
 %% Rib Spacing and Rib Thickness Optimisation
-[rSpacing,optRibSpacing,massVTPBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(vertTail,VSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LVSSOptimum);
-[optRibParameters]=RibThickness(optRibSpacing,vertTail,minMassIndex,ribThickness);
+[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,WSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LWSSOptimum);
+[optRibParameters]=RibThickness(optRibSpacing,wing,minMassIndex,ribThickness);
 
 % Plotting Mass Vs Rib Spacing
 figure 
-plot(rSpacing,massVTPBox,'-b')
+plot(rSpacing,massWingBox,'-b')
 hold on 
 plot(rSpacing,massEffRib,'-r')
 plot(rSpacing,massEffSS)
