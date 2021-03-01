@@ -8,7 +8,7 @@ wing.span = linspace(spanWing/2, 0, numSections);
 
 % Defining width of structural components in m (rough values!)
 fuseWidth = 1.5;
-pylonWidth = 0.5;
+pylonWidth = 1;
 ucWidth = 1;
 
 % Wing Lift (assuming no tail lift)

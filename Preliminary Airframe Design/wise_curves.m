@@ -1,4 +1,4 @@
-function [fuselage,theta_deg] = wise_curves(P, R, T, Q)
+function [fuselage,theta_deg] = wise_curves(P, R, T, Q, fuselage)
 
 % This function plots the wise curves
 % The INPUTS are:
@@ -6,6 +6,7 @@ function [fuselage,theta_deg] = wise_curves(P, R, T, Q)
 % R = Radius of the fuselage
 % T = Moment
 % Q = Radial load
+% fuselage = structure to stop this structure from being overwritten
 
 % The OUTPUTS are:
 % fuselage = structure with forces due to the different load cases
@@ -37,4 +38,7 @@ end
 fuselage.heavyframe_bendingmoment = fuselage.tangent_m + fuselage.radial_m + fuselage.moment_m;
 fuselage.heavyframe_normalforce = fuselage.tangent_n + fuselage.radial_n + fuselage.moment_n;
 fuselage.heavyframe_shearforce = fuselage.tangent_s + fuselage.radial_s + fuselage.moment_s;
+fuselage.heavyframe_bendingmoment_max = max(abs(fuselage.heavyframe_bendingmoment));
+fuselage.heavyframe_normalforce_max = max(abs(fuselage.heavyframe_normalforce));
+fuselage.heavyframe_shearforce_max = max(abs(fuselage.heavyframe_shearforce));
 end

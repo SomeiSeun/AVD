@@ -1,5 +1,5 @@
 function [wing,frontsparweb,rearsparweb] = shear_flow(wing, frontsparweb, rearsparweb,...
-    K_s, rho, V, E, b1, b2, flex_ax, cm0, cg, Thrustline_position)
+    K_s, rho, V, E, flex_ax, cm0, cg, Thrustline_position)
 
 % This function is used to find the thicknesses for the spar web
 

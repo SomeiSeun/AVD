@@ -77,7 +77,7 @@ fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fus
 
 % Plotting the shear flow around the fuselage cross section
 figure
-
+%
 %% stringer sizing 
 [fusStringer, fusBoom] = FusStringerSizing(LoadCase1.TotalBM1,D);
 %}
@@ -104,7 +104,7 @@ fprintf('The extra thickness that needs to be added to the fuselage due to press
 % for worst case and use that to select variables. Then use those same
 % variables everywhere
 
-
+%
 %% Light frames
 L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
 M = max(abs(LoadCase1.TotalBM1));
@@ -147,7 +147,18 @@ fprintf('The minimum area required for the heavy frame cross section is %f m^2.\
 fprintf('The second moment of area required for the heavy frame cross section is %f m^4.\n',second_moment_of_area)
 h = linspace(0.01,0.2,50);
 b = linspace(0.01,0.2,50);
+% h = 0.01;
+% b = 0.01;
 fuselage = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area, max(min_area_shear,min_area_normal), fuselage);
+%fprintf('The length B and H are %f m and %f m respectively. \n',fuselage.heav)
+fuselage.heavyframeB;
+fuselage.heavyframeH;
+
+figure
+surf(h,b,fuselage.heavyframeB)
+xlabel('Flange Height (m)')
+ylabel('Flange vertical part thickness (m)')
+zlabel()
 
 %{
 heavy_theta = linspace(0,90,90);
