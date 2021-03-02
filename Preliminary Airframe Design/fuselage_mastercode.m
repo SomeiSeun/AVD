@@ -61,7 +61,7 @@ hold on
 plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
-%{
+
 %% Shear flow around the fuselage
 A_fus = pi * (D / 2)^2;  % Area of the fuselage cross section
 Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
@@ -80,7 +80,7 @@ figure
 
 %% stringer sizing 
 [fusStringer, fusBoom] = FusStringerSizing(LoadCase1.TotalBM1,D);
-%}
+
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
 thickness_ratio = ((2 - Poisson) / (1 - Poisson));    % t_c is cylindrical fus thickness
@@ -131,7 +131,7 @@ zlabel('Frame area (m^2)')
 colorbar
 
 fprintf('The smallest area obtained is %f m^2.\n',min(fuselage.frame_area))
-%}
+
 %% Heavy frames
 T = 0;                                               % Torque in the fuselage
 R = D/2;                                             % Radius of the fuselage
@@ -145,9 +145,11 @@ min_area_normal = fuselage.heavyframe_normalforce_max / TensileYieldStress;
 second_moment_of_area = fuselage.heavyframe_bendingmoment_max / TensileYieldStress;
 fprintf('The minimum area required for the heavy frame cross section is %f m^2.\n',max(min_area_shear,min_area_normal))
 fprintf('The second moment of area required for the heavy frame cross section is %f m^4.\n',second_moment_of_area)
-h = linspace(0.01,0.2,50);
-b = linspace(0.01,0.2,50);
+h = linspace(0.01,0.4,100);
+b = linspace(0.01,0.4,100);
 fuselage = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area, max(min_area_shear,min_area_normal), fuselage);
+fuselage.heavyframeH;
+fuselage.heavyframeB;
 
 %{
 heavy_theta = linspace(0,90,90);
