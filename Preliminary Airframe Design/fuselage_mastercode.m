@@ -61,7 +61,7 @@ hold on
 plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
-
+%{
 %% Stringer sizing and shear flow around the fuselage
 A_fus = pi * (D / 2)^2;              % Area of the fuselage cross section
 Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
@@ -74,7 +74,7 @@ fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fus
 
 % Plotting the shear flow around the fuselage cross section
 figure
-
+%}
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
 thickness_ratio = ((2 - Poisson) / (1 - Poisson));    % t_c is cylindrical fus thickness
@@ -130,8 +130,8 @@ fprintf('The smallest area obtained is %f m^2.\n',min(fuselage.frame_area))
 T = 0;                                               % Torque in the fuselage
 R = D/2;                                             % Radius of the fuselage
 heavy_theta = 55;                                    % Setting the angle between the fuselage and the wing
-Q = max(wing.lift)*sind(heavy_theta);
-P = max(wing.lift)*cosd(heavy_theta);
+Q = (max(wing.lift) - max(wing.selfWeight) - max(wing.ucWeight))*sind(heavy_theta);
+P = (max(wing.lift) - max(wing.selfWeight) - max(wing.ucWeight))*cosd(heavy_theta);
 [fuselage,theta_deg] = wise_curves(P, R, T, Q, fuselage);
 
 min_area_shear = fuselage.heavyframe_shearforce_max / ShearYieldStress;
@@ -139,12 +139,10 @@ min_area_normal = fuselage.heavyframe_normalforce_max / TensileYieldStress;
 second_moment_of_area = fuselage.heavyframe_bendingmoment_max / TensileYieldStress;
 fprintf('The minimum area required for the heavy frame cross section is %f m^2.\n',max(min_area_shear,min_area_normal))
 fprintf('The second moment of area required for the heavy frame cross section is %f m^4.\n',second_moment_of_area)
-h = linspace(0.01,0.4,100);
-b = linspace(0.01,0.4,100);
-[fuselage,solutions] = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area,...
+H = linspace(0.1,0.2,100);
+B = linspace(0.1,0.2,100);
+[fuselage,solutions] = heavy_frame_Ixx_area_calc(H, B, second_moment_of_area,...
     max(min_area_shear,min_area_normal), fuselage);
-fuselage.heavyframeH;
-fuselage.heavyframeB;
 
 %{
 heavy_theta = linspace(0,90,90);
