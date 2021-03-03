@@ -39,9 +39,9 @@ flexuralAxis = 0.5*(frontSpar.coords(1,1) + rearSpar.coords(1,1));
     SparMaterial(numMaterial).YM, flexuralAxis, Cm0, cg, Thrustline_position(3));
 
 % Evaluating spar flange dimensions
-IxxCutoff = 0.126;
-[frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar, IxxCutoff);
-[rearSpar] = sparSizing(wing, SparMaterial(numMaterial), rearSpar, IxxCutoff);
+bMin = 0.003;
+[frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar, bMin);
+[rearSpar] = sparSizing(wing, SparMaterial(numMaterial), rearSpar, bMin);
 
 % [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial(numMaterial));
 % 
@@ -132,30 +132,31 @@ fig6.Position = [0.25 0.05 0.25 0.4];
 fig7 = figure(7);
 hold on
 yyaxis left
-plot(wing.span, 1000*frontSpar.b, '-b')
-xlabel('Wing Spanwise Coordinate y (m)')
-ylabel('Spar Flange Breadth b (mm)')
+plot(wing.span, 1000*frontSpar.b, '-r')
+plot(wing.span, 1000*rearSpar.b, '-b')
+xlabel('Spanwise Coordinate y (m)')
+ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
 yyaxis right
 plot(wing.span, 1000*frontSpar.tf, '--r')
-ylabel('Spar Flange Thickness t_f (mm)')
-legend('Spar Flange Breadth','Spar Flange Thickness')
-title('Wing Front Spar Flange Thickness and Breadth')
+plot(wing.span, 1000*rearSpar.tf, '--b')
+ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
+legend('Front Spar Flange Breadth', 'Rear Spar Flange Breadth', 'Front Spar Flange Thickness', 'Rear Spar Flange Thickness')
+title('Wing Flange Thickness and Breadth')
 grid minor
 fig7.Units = 'normalized';
 fig7.Position = [0.5 0.05 0.25 0.4];
 
-% Plotting spar areas and Ixx values
+% Plotting spar Ixx values
 fig8 = figure(8);
 hold on
-yyaxis left
-plot(wing.span, frontSpar.Area, '-b')
-xlabel('Wing Spanwise Coordinate y (m)')
-ylabel('Spar Cross-Sectional Area (m^2)')
-yyaxis right
-plot(wing.span, frontSpar.Ixx, '--r')
+plot(wing.span, frontSpar.Ixx, '-b')
+plot(wing.span, rearSpar.Ixx, '-r')
+plot(wing.span, frontSpar.IxxReq, '--b')
+plot(wing.span, rearSpar.IxxReq, '--r')
 ylabel('Second Moment of Area I_x_x (m^4)')
-legend('Spar Area', 'Spar Ixx')
-title('Wing Front Spar Ixx and Area');
+xlabel('Wing Spanwise Coordinate y (m)')
+legend('Front Spar Actual I_x_x', 'Rear Spar Actual I_x_x', 'Front Spar Required I_x_x', 'Rear Spar Required I_x_x')
+title('Wing Spar I_x_x Distribution');
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];

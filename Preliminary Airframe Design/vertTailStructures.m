@@ -13,7 +13,7 @@ y = NACA_0012_plotting_purposes(:,2);
 
 % Defining Parameters
 numSections = input('How many sections do you want to discretise the vertical tailplane into? ');
-Nz = 1;             % Limit load factor
+Nz = 1.5;             % Limit load factor
 numMaterial = 1;    % From Materials.mat, must be integer between 1 and 4
 
 % Evaluating lift and weight distributions
@@ -38,9 +38,9 @@ flexuralAxis = 0.5*(frontSpar.coords(1,1) + rearSpar.coords(1,1));
     SparMaterial(numMaterial).YM, flexuralAxis, Cm0, cg, Thrustline_position(3));
 
 % Evaluating spar flange dimensions
-IxxCutoff = 0.001;
-[frontSpar] = sparSizing(vertTail, SparMaterial(numMaterial), frontSpar, IxxCutoff);
-[rearSpar] = sparSizing(vertTail, SparMaterial(numMaterial), rearSpar, IxxCutoff);
+bMin = 0.0015;
+[frontSpar] = sparSizing(vertTail, SparMaterial(numMaterial), frontSpar, bMin);
+[rearSpar] = sparSizing(vertTail, SparMaterial(numMaterial), rearSpar, bMin);
 
 %% Plotting Results
 % Plotting Loading Distribution
@@ -132,19 +132,16 @@ grid minor
 fig7.Units = 'normalized';
 fig7.Position = [0.5 0.05 0.25 0.4];
 
-% Plotting spar areas and Ixx values
+% Plotting spar Ixx values
 fig8 = figure(8);
 hold on
-yyaxis left
-plot(vertTail.span, frontSpar.Area, '-r')
-plot(vertTail.span, rearSpar.Area, '-b')
-xlabel('Vert Tail Spanwise Coordinate y (m)')
-ylabel('Spar Cross-Sectional Area (m^2)', 'Color', 'k')
-yyaxis right
-plot(vertTail.span, frontSpar.Ixx, '--r')
-plot(vertTail.span, rearSpar.Ixx, '--b')
-ylabel('Second Moment of Area I_x_x (m^4)', 'Color', 'k')
-legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
+plot(vertTail.span, frontSpar.Ixx, '-b')
+plot(vertTail.span, rearSpar.Ixx, '-r')
+plot(vertTail.span, frontSpar.IxxReq, '--b')
+plot(vertTail.span, rearSpar.IxxReq, '--r')
+ylabel('Second Moment of Area I_x_x (m^4)')
+xlabel('Spanwise Coordinate y (m)')
+legend('Front Spar Actual I_x_x', 'Rear Spar Actual I_x_x', 'Front Spar Required I_x_x', 'Rear Spar Required I_x_x')
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
@@ -188,7 +185,7 @@ grid minor
 
 
 %% Rib Spacing and Rib Thickness Optimisation
-[rSpacing,optRibSpacing,massVTPBox,massEffRib,massEffSS,ribThickness,minMassIndex,T]=ribSpacing(vertTail,VSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LVSSOptimum);
+[rSpacing,optRibSpacing,massVTPBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(vertTail,VSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LVSSOptimum);
 [optRibParameters]=RibThickness(optRibSpacing,vertTail,minMassIndex,ribThickness);
 
 % Plotting Mass Vs Rib Spacing

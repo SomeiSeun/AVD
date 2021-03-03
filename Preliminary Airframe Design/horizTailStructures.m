@@ -36,9 +36,9 @@ flexuralAxis = 0.5*(frontSpar.coords(1,1) + rearSpar.coords(1,1));
     rho_cruise, V_Dive, SparMaterial(numMaterial).YM, flexuralAxis, Cm0, cg, Thrustline_position(3));
 
 % Evaluating spar flange dimensions
-IxxCutoff = 0.001;
-frontSpar = sparSizing(horizTail, SparMaterial(numMaterial), frontSpar, IxxCutoff);
-rearSpar = sparSizing(horizTail, SparMaterial(numMaterial), rearSpar, IxxCutoff);
+bMin = 0.003;
+frontSpar = sparSizing(horizTail, SparMaterial(numMaterial), frontSpar, bMin);
+rearSpar = sparSizing(horizTail, SparMaterial(numMaterial), rearSpar, bMin);
 
 
 %% Plotting Results
@@ -138,16 +138,14 @@ fig7.Position = [0.5 0.05 0.25 0.4];
 % Plotting spar areas and Ixx values
 fig8 = figure(8);
 hold on
-yyaxis left
-plot(horizTail.span, frontSpar.Area, '-r')
-plot(horizTail.span, rearSpar.Area, '-b')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
-ylabel('Spar Cross-Sectional Area (m^2)', 'Color', 'k')
-yyaxis right
-plot(horizTail.span, frontSpar.Ixx, '--r')
-plot(horizTail.span, rearSpar.Ixx, '--b')
-ylabel('Second Moment of Area I_x_x (m^4)', 'Color', 'k')
-legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
+plot(horizTail.span, frontSpar.Ixx, '-b')
+plot(horizTail.span, rearSpar.Ixx, '-r')
+plot(horizTail.span, frontSpar.IxxReq, '--b')
+plot(horizTail.span, rearSpar.IxxReq, '--r')
+ylabel('Second Moment of Area I_x_x (m^4)')
+xlabel('Spanwise Coordinate y (m)')
+legend('Front Spar Actual I_x_x', 'Rear Spar Actual I_x_x', 'Front Spar Required I_x_x', 'Rear Spar Required I_x_x')
+title('Horizontal Tail Spar I_x_x Distribution');
 grid minor
 fig8.Units = 'normalized';
 fig8.Position = [0.75 0.05 0.25 0.4];
