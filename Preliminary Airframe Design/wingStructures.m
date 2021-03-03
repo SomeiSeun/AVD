@@ -209,12 +209,6 @@ title('Skin Thickness Distribution')
 grid minor
 
 
-
-
-
-
-
-
 % Plotting Mass Vs Rib Spacing
 figure 
 plot(rSpacing,massWingBox,'-b')
@@ -222,11 +216,20 @@ hold on
 plot(rSpacing,massEffRib,'-r')
 plot(rSpacing,massEffSS)
 xlabel('Rib Spacing (m)')
-ylabel('Mass')
+ylabel('Volume')
 legend('Total','Ribs','Skin-Stringer')
-title('Rib Spacing Optimisation')
+% title('Rib Spacing Optimisation')
 grid minor 
 hold off
+
+% Plot Rib Thickness at each station 
+
+figure 
+plot(optRibParameters.ribPositions,optRibParameters.ribThickness*1000,'-o')
+xlabel('Position along span (m)')
+ylabel('Rib Thickness (mm)')
+
+
 
 
 figure
@@ -234,7 +237,7 @@ surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,strin
 xlabel('As/bt')
 ylabel('Ts/t')
 zlabel('Skin Thickness (m)') 
-title('Skin Thickness for different Skin-Stringer Ratios')
+% title('Skin Thickness for different Skin-Stringer Ratios')
 colormap('turbo')
 s=colorbar();
 s.Label.String ='Total Area (m^2)';
@@ -245,7 +248,7 @@ surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tStringer,s
 xlabel('As/bt')
 ylabel('Ts/t')
 zlabel('Stringer Thickness (m)') 
-title('Stringer Thickness for different Skin-Stringer Ratios')
+% title('Stringer Thickness for different Skin-Stringer Ratios')
 colormap('turbo')
 s=colorbar();
 s.Label.String ='Total Area (m^2)';
