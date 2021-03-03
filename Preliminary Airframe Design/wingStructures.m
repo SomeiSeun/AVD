@@ -45,7 +45,7 @@ bMin = 0.003;
 
 % [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial(numMaterial));
 % 
-%  % Skin Stringer Panel Sizing 
+%  % Skin Stringer Panel Sizing 5
 % [Optimum]=SSPOptimum(c_alongSpan,N_alongSpan,b2);
 
 %% Plotting Results
@@ -206,14 +206,9 @@ hold on
 stairs(x,y,'b')
 xlabel('Distance along wing (m)') 
 ylabel('Skin Thickness (mm)')
-title('Skin Thickness Distribution')
+legend('Optimum','Altered for Manufacturing')
+% title('Skin Thickness Distribution')
 grid minor
-
-
-
-
-
-
 
 
 % Plotting Mass Vs Rib Spacing
@@ -223,11 +218,22 @@ hold on
 plot(rSpacing,massEffRib,'-r')
 plot(rSpacing,massEffSS)
 xlabel('Rib Spacing (m)')
-ylabel('Mass')
+ylabel('Volume')
 legend('Total','Ribs','Skin-Stringer')
-title('Rib Spacing Optimisation')
+% title('Rib Spacing Optimisation')
 grid minor 
 hold off
+
+% Plot Rib Thickness at each station 
+
+figure 
+plot(optRibParameters.ribPositions,optRibParameters.ribThickness*1000,'bx','Linewidth',1.3)
+xlabel('Position along span (m)')
+ylabel('Rib Thickness (mm)')
+% title('Rib Thickness Distribution')
+grid minor
+
+
 
 
 figure
@@ -235,7 +241,7 @@ surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,strin
 xlabel('As/bt')
 ylabel('Ts/t')
 zlabel('Skin Thickness (m)') 
-title('Skin Thickness for different Skin-Stringer Ratios')
+% title('Skin Thickness for different Skin-Stringer Ratios')
 colormap('turbo')
 s=colorbar();
 s.Label.String ='Total Area (m^2)';
@@ -246,7 +252,7 @@ surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tStringer,s
 xlabel('As/bt')
 ylabel('Ts/t')
 zlabel('Stringer Thickness (m)') 
-title('Stringer Thickness for different Skin-Stringer Ratios')
+% title('Stringer Thickness for different Skin-Stringer Ratios')
 colormap('turbo')
 s=colorbar();
 s.Label.String ='Total Area (m^2)';
