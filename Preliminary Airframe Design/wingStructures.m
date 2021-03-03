@@ -45,7 +45,7 @@ IxxCutoff = 0.126;
 
 % [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial(numMaterial));
 % 
-%  % Skin Stringer Panel Sizing 
+%  % Skin Stringer Panel Sizing 5
 % [Optimum]=SSPOptimum(c_alongSpan,N_alongSpan,b2);
 
 %% Plotting Results
@@ -205,7 +205,8 @@ hold on
 stairs(x,y,'b')
 xlabel('Distance along wing (m)') 
 ylabel('Skin Thickness (mm)')
-title('Skin Thickness Distribution')
+legend('Optimum','Altered for Manufacturing')
+% title('Skin Thickness Distribution')
 grid minor
 
 
@@ -225,9 +226,11 @@ hold off
 % Plot Rib Thickness at each station 
 
 figure 
-plot(optRibParameters.ribPositions,optRibParameters.ribThickness*1000,'-o')
+plot(optRibParameters.ribPositions,optRibParameters.ribThickness*1000,'bx','Linewidth',1.3)
 xlabel('Position along span (m)')
 ylabel('Rib Thickness (mm)')
+% title('Rib Thickness Distribution')
+grid minor
 
 
 

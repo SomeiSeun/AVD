@@ -10,7 +10,7 @@ aStringer=ones(1,length(wing.span));
 aLStringer=ones(1,length(wing.span));
 aStringer=Optimum.aStringer*aStringer;
 aLStringer=LWSSOptimum.aStringer*aLStringer;
-T=0.5*((skinThicknessDist+LskinThicknessDist)+(aStringer./(noStringersDist*Optimum.stringerPitch))+(aLStringer./(LnoStringersDist*LWSSOptimum.stringerPitch))); 
+T=0.5*((skinThicknessDist+LskinThicknessDist))+(aStringer./(noStringersDist*Optimum.stringerPitch))+(aLStringer./(LnoStringersDist*LWSSOptimum.stringerPitch)); 
 IxxPanel=2*boxLength.*((T.^3)/12 + T.*(0.5*boxHeight).^2);
 
 %% Determining Optimum Rib Spacing 
