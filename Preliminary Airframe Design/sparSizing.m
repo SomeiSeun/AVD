@@ -1,4 +1,4 @@
-function spar = sparSizing(wing, SparMaterial, spar, bMin)
+function spar = sparSizing(wing, SparMaterial, spar, bMin, ribPositions)
 
 n = 1e4;
 numSections = length(wing.span);
@@ -8,9 +8,9 @@ numSections = length(wing.span);
 spar.IxxReq = 0.5*wing.bendingMoment.*spar.h./(2*SparMaterial.TYS);
 
 % Initialising arrays
-spar.tf = zeros(1, numSections);
-spar.b = zeros(1, numSections);
-spar.Area = zeros(1, numSections);
+spar.tfReq = zeros(1, numSections);
+spar.bReq = zeros(1, numSections);
+spar.AreaReq = zeros(1, numSections);
 
 for i = 1:numSections
     % Defining range of values for flange thickness tf (m)
@@ -26,11 +26,27 @@ for i = 1:numSections
     [~,I] = min(Area);
     
     % Preparing function output
-    spar.tf(i) = tf(I);
-    spar.b(i) = b(I);
-    spar.Area(i) = Area(I);
+    spar.tfReq(i) = tf(I);
+    spar.bReq(i) = b(I);
+    spar.AreaReq(i) = Area(I);
 end
 
+spar.tf = zeros(1, numSections);
+spar.b = zeros(1, numSections);
+spar.Area = zeros(1, numSections);
+
+ribPositions = [0, ribPositions];
+
+for i = 2:length(ribPositions)
+    section = wing.span <= ribPositions(i) & wing.span >= ribPositions(i-1);
+    spar.tf(section) = max(spar.tfReq(section));
+    spar.b(section) = max(spar.bReq(section));
+end
+
+spar.b(spar.b == 0) = bMin;
+spar.tf(spar.tf == 0) = 1e-3;
+
+spar.Area =  2*spar.b.*spar.tf + spar.tw.*(spar.h - 2*spar.tf);
 spar.Ixx = 1/6*spar.b.*spar.tf.^3 + 1/2*spar.b.*spar.tf.*(spar.h - spar.tf).^2 + 1/12*spar.tw.*(spar.h - 2*spar.tf).^3;
 
 spar.mass = -1000*SparMaterial.Density*trapz(wing.span, spar.Area);

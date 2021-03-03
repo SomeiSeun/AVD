@@ -6,6 +6,7 @@ load('ConceptualDesign.mat', 'W0',  'components', 'spanHoriz', 'cRootHoriz', 'ta
     'SHoriz', 'rho_cruise', 'V_Cruise')
 load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial','LowerSkinMaterial')
 load('diveTrim');
+load('horizTailStructures.mat', 'optRibParameters')
 
 % Loading in a different coordinates txt file to plot the aerofoil
 load('NACA 0012 plotting purposes.txt')
@@ -37,8 +38,8 @@ flexuralAxis = 0.5*(frontSpar.coords(1,1) + rearSpar.coords(1,1));
 
 % Evaluating spar flange dimensions
 bMin = 0.003;
-frontSpar = sparSizing(horizTail, SparMaterial(numMaterial), frontSpar, bMin);
-rearSpar = sparSizing(horizTail, SparMaterial(numMaterial), rearSpar, bMin);
+frontSpar = sparSizing(horizTail, SparMaterial(numMaterial), frontSpar, bMin, optRibParameters.ribPositions);
+rearSpar = sparSizing(horizTail, SparMaterial(numMaterial), rearSpar, bMin, optRibParameters.ribPositions);
 
 
 %% Plotting Results
@@ -116,39 +117,39 @@ grid minor
 fig6.Units = 'normalized';
 fig6.Position = [0.25 0.05 0.25 0.4];
 
-% Plotting front and Rear Spar flange dimensions
-
-fig7 = figure(7);
+% Plotting front Spar flange breadth
+figure
 hold on
-yyaxis left
 plot(horizTail.span, 1000*frontSpar.b, '-r')
-plot(horizTail.span, 1000*rearSpar.b, '-b')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
+plot(horizTail.span, 1000*frontSpar.bReq, '-b')
+xlabel('Spanwise Coordinate y (m)')
 ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
-yyaxis right
-plot(horizTail.span, 1000*frontSpar.tf, '--r')
-plot(horizTail.span, 1000*rearSpar.tf, '--b')
-ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
-legend('Front Spar Flange Breadth', 'Rear Spar Flange Breadth', 'Front Spar Flange Thickness', 'Rear Spar Flange Thickness')
-title('Horiz tail Spar Flange Thickness and Breadth')
+legend('Actual Flange Breadth', 'Required Flange Breadth')
+title('Horizontal Tail Front Spar Flange Breadth')
 grid minor
-fig7.Units = 'normalized';
-fig7.Position = [0.5 0.05 0.25 0.4];
 
-% Plotting spar areas and Ixx values
-fig8 = figure(8);
+
+% Plotting front Spar flange thickness
+figure
+hold on
+plot(horizTail.span, 1000*frontSpar.tf, '-r')
+plot(horizTail.span, 1000*frontSpar.tfReq, '-b')
+xlabel('Spanwise Coordinate y (m)')
+ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
+legend('Actual Flange Thickness', 'Required Flange Thickness')
+title('Horizontal Tail Front Spar Flange Thickness')
+grid minor
+
+% Plotting spar Ixx values
+figure
 hold on
 plot(horizTail.span, frontSpar.Ixx, '-b')
-plot(horizTail.span, rearSpar.Ixx, '-r')
 plot(horizTail.span, frontSpar.IxxReq, '--b')
-plot(horizTail.span, rearSpar.IxxReq, '--r')
 ylabel('Second Moment of Area I_x_x (m^4)')
 xlabel('Spanwise Coordinate y (m)')
-legend('Front Spar Actual I_x_x', 'Rear Spar Actual I_x_x', 'Front Spar Required I_x_x', 'Rear Spar Required I_x_x')
-title('Horizontal Tail Spar I_x_x Distribution');
+legend('Actual I_x_x', 'Required I_x_x')
+title('Horizontal Tail Front Spar I_x_x Distribution');
 grid minor
-fig8.Units = 'normalized';
-fig8.Position = [0.75 0.05 0.25 0.4];
 
 % Plotting the aerofoil with points of interest
 figure
@@ -229,4 +230,4 @@ s=colorbar();
 s.Label.String ='Total Area (m^2)';
 
 
-
+save('horizTailStructures.mat')
