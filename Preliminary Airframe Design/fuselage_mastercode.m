@@ -10,7 +10,7 @@ load('Materials.mat', 'FuselageMaterial')
 load('../Preliminary Design Optimiser/trimAnalysis.mat')
 load('wingStructures.mat','wing')
 D = fusDiamOuter;
-numMaterial = 1; % Needs to be 1 or 2
+numMaterial = 2; % Needs to be 1 or 2
 
 %% Material properties
 % Setting anc calculating all the relevant materials properties needed
@@ -62,24 +62,18 @@ plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
 
-%% Shear flow around the fuselage
-% A_fus = pi * (D / 2)^2;  % Area of the fuselage cross section
-% Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
-% T = 0;                               % Torque acting on the fuselage
-% % A_s = area of a stringer
-% % y_s = array of distances of the stringers from neutral axis
-% % N = number of stringers
-% 
-% fuselage = shear_flow_fuselage(A_s, y_s, Sy, A_fus, N, T, ShearYieldStress, fuselage);
-% 
-% % Displaying the maximum thickness of the fuselage cross section
-% fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
-% 
-% % Plotting the shear flow around the fuselage cross section
-% figure
+%% Stringer sizing and shear flow around the fuselage
+A_fus = pi * (D / 2)^2;              % Area of the fuselage cross section
+Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
+T = 0;                               % Torque acting on the fuselage
 
-%% stringer sizing 
-[fusStringer, fusBoom] = FusStringerSizing(LoadCase1.TotalBM1,D);
+[Stringers, Boom] = Fuselage_stringer_shear_flow(LoadCase1.TotalBM1, D, T, SYS, A_fus, Sy);
+
+% Displaying the maximum thickness of the fuselage cross section
+fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
+
+% Plotting the shear flow around the fuselage cross section
+figure
 
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
@@ -147,7 +141,8 @@ fprintf('The minimum area required for the heavy frame cross section is %f m^2.\
 fprintf('The second moment of area required for the heavy frame cross section is %f m^4.\n',second_moment_of_area)
 h = linspace(0.01,0.4,100);
 b = linspace(0.01,0.4,100);
-fuselage = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area, max(min_area_shear,min_area_normal), fuselage);
+[fuselage,solutions] = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area,...
+    max(min_area_shear,min_area_normal), fuselage);
 fuselage.heavyframeH;
 fuselage.heavyframeB;
 
