@@ -184,11 +184,23 @@ grid minor
 
 [LWSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(wing,N_alongSpan,LowerSkinMaterial(numMaterial));
 [LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,LWSSOptimum);
-% Plotting skin thickness distribution along span 
+
+
+
+%% Rib Spacing and Rib Thickness Optimisation
+[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,WSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LWSSOptimum);
+[optRibParameters]=RibThickness(optRibSpacing,wing,minMassIndex,ribThickness);
+
+for i=1:length(wing.span)
+    skinStep(i)=wing.span(1)-wing.span(i);
+end 
+[val,idx]=min(abs(skinStep-optRibSpacing));
+minVal=skinStep(idx);
+
 figure
-x=[wing.span(end:-50:1)];
-y=[skinThicknessDist(end:-50:1)*1000];
-plot(wing.span(end:-50:1),skinThicknessDist(end:-50:1)*1000,'.-r')
+x=[wing.span(end-idx:-2*idx:1)];
+y=[skinThicknessDist(end-idx:-2*idx:1)*1000];
+plot(wing.span,skinThicknessDist*1000,'r')
 hold on
 stairs(x,y,'b')
 xlabel('Distance along wing (m)') 
@@ -197,9 +209,11 @@ title('Skin Thickness Distribution')
 grid minor
 
 
-%% Rib Spacing and Rib Thickness Optimisation
-[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,WSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LWSSOptimum);
-[optRibParameters]=RibThickness(optRibSpacing,wing,minMassIndex,ribThickness);
+
+
+
+
+
 
 % Plotting Mass Vs Rib Spacing
 figure 

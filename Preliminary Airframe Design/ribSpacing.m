@@ -2,8 +2,6 @@
 
 function[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassPosition]=ribSpacing(wing,Optimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LWSSOptimum)
 %Inputs to add to function later...
-densitySS=2.7;
-densityRibs=2.7;
 F=0.75;
 E=71.8e9;
 boxLength=wing.boxLength;

@@ -181,14 +181,14 @@ y=[skinThicknessDist(end:-50:1)*1000];
 plot(vertTail.span(end:-50:1),skinThicknessDist(end:-50:1)*1000,'.-r')
 hold on
 stairs(x,y,'b')
-xlabel('Distance along Vertical Tailplane (m)') 
+xlabel('Distance alo1ng Vertical Tailplane (m)') 
 ylabel('Skin Thickness (mm)')
 title('Skin Thickness Distribution')
 grid minor
 
 
 %% Rib Spacing and Rib Thickness Optimisation
-[rSpacing,optRibSpacing,massVTPBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(vertTail,VSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LVSSOptimum);
+[rSpacing,optRibSpacing,massVTPBox,massEffRib,massEffSS,ribThickness,minMassIndex,T]=ribSpacing(vertTail,VSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LVSSOptimum);
 [optRibParameters]=RibThickness(optRibSpacing,vertTail,minMassIndex,ribThickness);
 
 % Plotting Mass Vs Rib Spacing
