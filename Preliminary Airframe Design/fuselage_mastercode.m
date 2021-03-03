@@ -63,20 +63,20 @@ legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
 
 %% Shear flow around the fuselage
-A_fus = pi * (D / 2)^2;  % Area of the fuselage cross section
-Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
-T = 0;                               % Torque acting on the fuselage
-% A_s = area of a stringer
-% y_s = array of distances of the stringers from neutral axis
-% N = number of stringers
-
-fuselage = shear_flow_fuselage(A_s, y_s, Sy, A_fus, N, T, ShearYieldStress, fuselage);
-
-% Displaying the maximum thickness of the fuselage cross section
-fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
-
-% Plotting the shear flow around the fuselage cross section
-figure
+% A_fus = pi * (D / 2)^2;  % Area of the fuselage cross section
+% Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
+% T = 0;                               % Torque acting on the fuselage
+% % A_s = area of a stringer
+% % y_s = array of distances of the stringers from neutral axis
+% % N = number of stringers
+% 
+% fuselage = shear_flow_fuselage(A_s, y_s, Sy, A_fus, N, T, ShearYieldStress, fuselage);
+% 
+% % Displaying the maximum thickness of the fuselage cross section
+% fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
+% 
+% % Plotting the shear flow around the fuselage cross section
+% figure
 
 %% stringer sizing 
 [fusStringer, fusBoom] = FusStringerSizing(LoadCase1.TotalBM1,D);
