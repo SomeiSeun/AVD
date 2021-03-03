@@ -19,14 +19,14 @@ numberOfRibs=length(ribPosition);
 
 %Determine Rib Thickness at stations
 
-for i=1:numberOfRibs
-position=abs(wing.span(1)-ribPosition(i));
+for i=1:length(ribPosition)
+position=abs(wing.span-ribPosition(i));
 locate=find(position==min(position));
 OptimumRibThickness(i)=ribThickness(minMassIndex,locate);
 end 
- 
-OptimumRibThickness=OptimumRibThickness(i);
+
 optRibParameters.ribSpacing=optRibSpacing;
 optRibParameters.ribThickness=OptimumRibThickness; 
 optRibParameters.numberOfRibs=numberOfRibs;
+optRibParameters.ribPositions=ribPosition;
 end 

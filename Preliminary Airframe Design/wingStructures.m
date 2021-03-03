@@ -4,8 +4,9 @@ close all
 
 load('ConceptualDesign.mat', 'W0',  'components', 'spanWing', 'cRootWing', 'taperWing', 'Thrustline_position',...
     'rho_cruise', 'V_Cruise','beta_Cruise','Engine_SeaLevelThrust')
-load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
+load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial','LowerSkinMaterial')
 load('skinStringerpanel.mat')
+load('wingStructures.mat', 'optRibParameters')
 
 % Loading in a different coordinates txt file to plot the aerofoil
 load('NACA 64215 plotting purposes.txt')
@@ -39,13 +40,13 @@ flexuralAxis = 0.5*(frontSpar.coords(1,1) + rearSpar.coords(1,1));
     SparMaterial(numMaterial).YM, flexuralAxis, Cm0, cg, Thrustline_position(3));
 
 % Evaluating spar flange dimensions
-IxxCutoff = 0.126;
-[frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar, IxxCutoff);
-[rearSpar] = sparSizing(wing, SparMaterial(numMaterial), rearSpar, IxxCutoff);
+bMin = 0.003;
+[frontSpar] = sparSizing(wing, SparMaterial(numMaterial), frontSpar, bMin, optRibParameters.ribPositions(1:2:end));
+[rearSpar] = sparSizing(wing, SparMaterial(numMaterial), rearSpar, bMin, optRibParameters.ribPositions(1:2:end));
 
 % [c_alongSpan,N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections, wing.chord,wing.bendingMoment,UpperSkinMaterial(numMaterial));
 % 
-%  % Skin Stringer Panel Sizing 
+%  % Skin Stringer Panel Sizing 5
 % [Optimum]=SSPOptimum(c_alongSpan,N_alongSpan,b2);
 
 %% Plotting Results
@@ -128,37 +129,39 @@ grid minor
 fig6.Units = 'normalized';
 fig6.Position = [0.25 0.05 0.25 0.4];
 
-% Plotting front Spar flange dimensions
-fig7 = figure(7);
+% Plotting front Spar flange breadth
+figure
 hold on
-yyaxis left
-plot(wing.span, 1000*frontSpar.b, '-b')
-xlabel('Wing Spanwise Coordinate y (m)')
-ylabel('Spar Flange Breadth b (mm)')
-yyaxis right
-plot(wing.span, 1000*frontSpar.tf, '--r')
-ylabel('Spar Flange Thickness t_f (mm)')
-legend('Spar Flange Breadth','Spar Flange Thickness')
-title('Wing Front Spar Flange Thickness and Breadth')
+plot(wing.span, 1000*frontSpar.b, '-r')
+plot(wing.span, 1000*frontSpar.bReq, '-b')
+xlabel('Spanwise Coordinate y (m)')
+ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
+legend('Actual Flange Breadth', 'Required Flange Breadth')
+title('Wing Front Spar Flange Breadth')
 grid minor
-fig7.Units = 'normalized';
-fig7.Position = [0.5 0.05 0.25 0.4];
 
-% Plotting spar areas and Ixx values
-fig8 = figure(8);
+
+% Plotting front Spar flange thickness
+figure
 hold on
-yyaxis left
-plot(wing.span, frontSpar.Area, '-b')
-xlabel('Wing Spanwise Coordinate y (m)')
-ylabel('Spar Cross-Sectional Area (m^2)')
-yyaxis right
-plot(wing.span, frontSpar.Ixx, '--r')
-ylabel('Second Moment of Area I_x_x (m^4)')
-legend('Spar Area', 'Spar Ixx')
-title('Wing Front Spar Ixx and Area');
+plot(wing.span, 1000*frontSpar.tf, '-r')
+plot(wing.span, 1000*frontSpar.tfReq, '-b')
+xlabel('Spanwise Coordinate y (m)')
+ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
+legend('Actual Flange Thickness', 'Required Flange Thickness')
+title('Wing Front Spar Flange Thickness')
 grid minor
-fig8.Units = 'normalized';
-fig8.Position = [0.75 0.05 0.25 0.4];
+
+% Plotting spar Ixx values
+figure
+hold on
+plot(wing.span, frontSpar.Ixx, '-b')
+plot(wing.span, frontSpar.IxxReq, '--b')
+ylabel('Second Moment of Area I_x_x (m^4)')
+xlabel('Wing Spanwise Coordinate y (m)')
+legend('Actual I_x_x', 'Required I_x_x')
+title('Wing Front Spar I_x_x Distribution');
+grid minor
 
 % Plotting the aerofoil with points of interest
 figure
@@ -182,35 +185,57 @@ grid minor
 [WSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(wing,N_alongSpan,UpperSkinMaterial);
 [noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,WSSOptimum);
 
-% Plotting skin thickness distribution along span 
+[LWSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(wing,N_alongSpan,LowerSkinMaterial(numMaterial));
+[LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,LWSSOptimum);
+
+
+
+%% Rib Spacing and Rib Thickness Optimisation
+[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,WSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LWSSOptimum);
+[optRibParameters]=RibThickness(optRibSpacing,wing,minMassIndex,ribThickness);
+
+for i=1:length(wing.span)
+    skinStep(i)=wing.span(1)-wing.span(i);
+end 
+[val,idx]=min(abs(skinStep-optRibSpacing));
+minVal=skinStep(idx);
+
 figure
-x=[wing.span(end:-50:1)];
-y=[skinThicknessDist(end:-50:1)*1000];
-plot(wing.span(end:-50:1),skinThicknessDist(end:-50:1)*1000,'.-r')
+x=[wing.span(end-idx:-2*idx:1)];
+y=[skinThicknessDist(end-idx:-2*idx:1)*1000];
+plot(wing.span,skinThicknessDist*1000,'r')
 hold on
 stairs(x,y,'b')
 xlabel('Distance along wing (m)') 
 ylabel('Skin Thickness (mm)')
-title('Skin Thickness Distribution')
+legend('Optimum','Altered for Manufacturing')
+% title('Skin Thickness Distribution')
 grid minor
 
 
-%% Rib Spacing and Rib Thickness Optimisation
-[rSpacing,optRibSpacing,massWingBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(wing,WSSOptimum,boxHeight,skinThicknessDist,N_alongSpan);
-[optRibParameters]=RibThickness(optRibSpacing,wing,minMassIndex,ribThickness);
-
-% % Plotting Mass Vs Rib Spacing
-% figure 
-% plot(rSpacing,massWingBox,'-b')
-% hold on 
-% plot(rSpacing,massEffRib,'-r')
-% plot(rSpacing,massEffSS)
-% xlabel('Rib Spacing (m)')
-% ylabel('Mass')
-% legend('Total','Ribs','Skin-Stringer')
+% Plotting Mass Vs Rib Spacing
+figure 
+plot(rSpacing,massWingBox,'-b')
+hold on 
+plot(rSpacing,massEffRib,'-r')
+plot(rSpacing,massEffSS)
+xlabel('Rib Spacing (m)')
+ylabel('Volume')
+legend('Total','Ribs','Skin-Stringer')
 % title('Rib Spacing Optimisation')
-% grid minor 
-% hold off
+grid minor 
+hold off
+
+% Plot Rib Thickness at each station 
+
+figure 
+plot(optRibParameters.ribPositions,optRibParameters.ribThickness*1000,'bx','Linewidth',1.3)
+xlabel('Position along span (m)')
+ylabel('Rib Thickness (mm)')
+% title('Rib Thickness Distribution')
+grid minor
+
+
 
 
 figure
@@ -218,7 +243,7 @@ surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,strin
 xlabel('As/bt')
 ylabel('Ts/t')
 zlabel('Skin Thickness (m)') 
-title('Skin Thickness for different Skin-Stringer Ratios')
+% title('Skin Thickness for different Skin-Stringer Ratios')
 colormap('turbo')
 s=colorbar();
 s.Label.String ='Total Area (m^2)';
@@ -229,7 +254,7 @@ surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tStringer,s
 xlabel('As/bt')
 ylabel('Ts/t')
 zlabel('Stringer Thickness (m)') 
-title('Stringer Thickness for different Skin-Stringer Ratios')
+% title('Stringer Thickness for different Skin-Stringer Ratios')
 colormap('turbo')
 s=colorbar();
 s.Label.String ='Total Area (m^2)';

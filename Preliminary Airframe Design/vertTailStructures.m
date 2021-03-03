@@ -4,7 +4,8 @@ close all
 
 load('ConceptualDesign.mat', 'W0',  'components', 'heightVert', 'cRootVert', 'taperVert', 'Thrustline_position',...
     'SVert', 'rho_takeoff', 'V_takeoff', 'CG_all', 'vertAC', 'beta_Cruise', 'Engine_SeaLevelThrust')
-load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
+load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial','LowerSkinMaterial')
+load('vertTailStructures.mat', 'optRibParameters')
 
 % Loading in a different coordinates txt file to plot the aerofoil
 load('NACA 0012 plotting purposes.txt')
@@ -13,7 +14,7 @@ y = NACA_0012_plotting_purposes(:,2);
 
 % Defining Parameters
 numSections = input('How many sections do you want to discretise the vertical tailplane into? ');
-Nz = 1;             % Limit load factor
+Nz = 1.5;             % Limit load factor
 numMaterial = 1;    % From Materials.mat, must be integer between 1 and 4
 
 % Evaluating lift and weight distributions
@@ -38,9 +39,9 @@ flexuralAxis = 0.5*(frontSpar.coords(1,1) + rearSpar.coords(1,1));
     SparMaterial(numMaterial).YM, flexuralAxis, Cm0, cg, Thrustline_position(3));
 
 % Evaluating spar flange dimensions
-IxxCutoff = 0.001;
-[frontSpar] = sparSizing(vertTail, SparMaterial(numMaterial), frontSpar, IxxCutoff);
-[rearSpar] = sparSizing(vertTail, SparMaterial(numMaterial), rearSpar, IxxCutoff);
+bMin = 0.0015;
+[frontSpar] = sparSizing(vertTail, SparMaterial(numMaterial), frontSpar, bMin, optRibParameters.ribPositions);
+[rearSpar] = sparSizing(vertTail, SparMaterial(numMaterial), rearSpar, bMin, optRibParameters.ribPositions);
 
 %% Plotting Results
 % Plotting Loading Distribution
@@ -114,40 +115,39 @@ grid minor
 fig6.Units = 'normalized';
 fig6.Position = [0.25 0.05 0.25 0.4];
 
-% Plotting front and Rear Spar flange dimensions
-fig7 = figure(7);
+% Plotting front Spar flange breadth
+figure
 hold on
-yyaxis left
 plot(vertTail.span, 1000*frontSpar.b, '-r')
-plot(vertTail.span, 1000*rearSpar.b, '-b')
-xlabel('Vert Tail Spanwise Coordinate y (m)')
+plot(vertTail.span, 1000*frontSpar.bReq, '-b')
+xlabel('Spanwise Coordinate y (m)')
 ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
-yyaxis right
-plot(vertTail.span, 1000*frontSpar.tf, '--r')
-plot(vertTail.span, 1000*rearSpar.tf, '--b')
-ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
-legend('Front Spar Flange Breadth', 'Rear Spar Flange Breadth', 'Front Spar Flange Thickness', 'Rear Spar Flange Thickness')
-title('Vert Tail Spar Flange Thickness and Breadth')
+legend('Actual Flange Breadth', 'Required Flange Breadth')
+title('Vertical Tail Front Spar Flange Breadth')
 grid minor
-fig7.Units = 'normalized';
-fig7.Position = [0.5 0.05 0.25 0.4];
 
-% Plotting spar areas and Ixx values
-fig8 = figure(8);
+
+% Plotting front Spar flange thickness
+figure
 hold on
-yyaxis left
-plot(vertTail.span, frontSpar.Area, '-r')
-plot(vertTail.span, rearSpar.Area, '-b')
-xlabel('Vert Tail Spanwise Coordinate y (m)')
-ylabel('Spar Cross-Sectional Area (m^2)', 'Color', 'k')
-yyaxis right
-plot(vertTail.span, frontSpar.Ixx, '--r')
-plot(vertTail.span, rearSpar.Ixx, '--b')
-ylabel('Second Moment of Area I_x_x (m^4)', 'Color', 'k')
-legend('Front Spar Area', 'Rear Spar Area', 'Front Spar Ixx', 'Rear Spar Ixx')
+plot(vertTail.span, 1000*frontSpar.tf, '-r')
+plot(vertTail.span, 1000*frontSpar.tfReq, '-b')
+xlabel('Spanwise Coordinate y (m)')
+ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
+legend('Actual Flange Thickness', 'Required Flange Thickness')
+title('Vertical Tail Front Spar Flange Thickness')
 grid minor
-fig8.Units = 'normalized';
-fig8.Position = [0.75 0.05 0.25 0.4];
+
+% Plotting spar Ixx values
+figure
+hold on
+plot(vertTail.span, frontSpar.Ixx, '-b')
+plot(vertTail.span, frontSpar.IxxReq, '--b')
+ylabel('Second Moment of Area I_x_x (m^4)')
+xlabel('Spanwise Coordinate y (m)')
+legend('Actual I_x_x', 'Required I_x_x')
+title('Vertical Tail Front Spar I_x_x Distribution');
+grid minor
 
 % Plotting the aerofoil with points of interest
 figure
@@ -165,8 +165,66 @@ legend({'NACA 0012','Centre of gravity','Flexural Axis','Aerodynamic Centre', 'F
 grid minor
 
 %% Skin thickness sizing (ch3)
-[N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections,vertTail,UpperSkinMaterial(numMaterial));
+[N_alongSpan,t2_alongSpan,sigma,boxHeight] = skinStringerFunction(numSections,vertTail,UpperSkinMaterial(numMaterial));
 
 %% Skin Stringer Panel Sizing and Optimization
-[Optimum]=SSPOptimum(vertTail,N_alongSpan);
-[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,Optimum);
+%% Skin Stringer Panel Sizing and Optimization
+[VSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(vertTail,N_alongSpan,UpperSkinMaterial);
+[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,VSSOptimum);
+
+[LVSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(vertTail,N_alongSpan,LowerSkinMaterial(numMaterial));
+[LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,LVSSOptimum);
+% Plotting skin thickness distribution along span 
+figure
+x=[vertTail.span(end:-50:1)];
+y=[skinThicknessDist(end:-50:1)*1000];
+plot(vertTail.span(end:-50:1),skinThicknessDist(end:-50:1)*1000,'.-r')
+hold on
+stairs(x,y,'b')
+xlabel('Distance alo1ng Vertical Tailplane (m)') 
+ylabel('Skin Thickness (mm)')
+title('Skin Thickness Distribution')
+grid minor
+
+
+%% Rib Spacing and Rib Thickness Optimisation
+[rSpacing,optRibSpacing,massVTPBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(vertTail,VSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LVSSOptimum);
+[optRibParameters]=RibThickness(optRibSpacing,vertTail,minMassIndex,ribThickness);
+
+% Plotting Mass Vs Rib Spacing
+figure 
+plot(rSpacing,massVTPBox,'-b')
+hold on 
+plot(rSpacing,massEffRib,'-r')
+plot(rSpacing,massEffSS)
+xlabel('Rib Spacing (m)')
+ylabel('Mass')
+legend('Total','Ribs','Skin-Stringer')
+title('Rib Spacing Optimisation')
+grid minor 
+hold off
+
+
+figure
+surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,stringerGeometry.aEffective)
+xlabel('As/bt')
+ylabel('Ts/t')
+zlabel('Skin Thickness (m)') 
+title('Skin Thickness for different Skin-Stringer Ratios')
+colormap('turbo')
+s=colorbar();
+s.Label.String ='Total Area (m^2)';
+
+
+figure
+surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tStringer,stringerGeometry.aEffective)
+xlabel('As/bt')
+ylabel('Ts/t')
+zlabel('Stringer Thickness (m)') 
+title('Stringer Thickness for different Skin-Stringer Ratios')
+colormap('turbo')
+s=colorbar();
+s.Label.String ='Total Area (m^2)';
+
+% Saving the workspace for other programmes
+save('vertTailStructures.mat')

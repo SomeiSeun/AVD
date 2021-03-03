@@ -21,7 +21,7 @@ for i = 1:length(N)
     fuselage.heavyframeIxx(i) = A_s * y_s(i);
 end
 
-fuselage.heavyframeIxxtotal(i) = sum(fuselage.heavyframeIxx);
+fuselage.heavyframeIxxtotal = sum(fuselage.heavyframeIxx);
 
 for i = 1:length(N)
     fuselage.q_b(i) = (-(Sy / fuselage.heavyframeIxxtotal) * A_s * y_s(i));
