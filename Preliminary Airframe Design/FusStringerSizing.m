@@ -26,8 +26,8 @@ xlabel('X')
 ylabel('Y')
 title('Booms around the fuselage cross-section')
 
-SkinThickness= %t_f; %initial guess - based on literature review
-A_s= %initial guess - based on literature review
+SkinThickness = 0.001; % t_f; %initial guess - based on literature review
+A_s = 2.4e-5;          % initial guess - based on literature review
 TtlStringerArea= NumStringers*A_s;
 SkinEquivBoomArea=(SkinThickness*StringerSpacing/6)*(2+1); %Boom area from skin can also be considered as 15*t
 SingleBoomArea=TtlStringerArea+SkinEquivBoomArea; 
@@ -36,9 +36,8 @@ Boom.S_x =SingleBoomArea.Y; %first moment of area
 Boom.I_individual=SingleBoomArea.*Y.^2;
 Boom.I_xx=sum(Boom.I_individual); %second moment of area
 x_centroid=(sum(Boom.Area))/(SingleBoomArea*NumStringers);
-EdgeStress_max=  %use the y value of highest stringer as that is the
-% furthest from neutral axis
-sigma= M*EdgeStress_max/I/10^6; %max principle stress
+EdgeStress_max = diameter/2; %use the y value of highest stringer as that is the furthest from neutral axis
+sigma = M*EdgeStress_max/I/10^6; %max principle stress
 
 %now use these values in shear flow code, and get a skin thickness. Iterate
 %again and compare total weight of the two loops

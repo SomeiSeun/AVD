@@ -1,4 +1,4 @@
-function fuselage = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area, area, fuselage)
+function [fuselage,solutions] = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area, area, fuselage)
 
 % Creating a function which finds out the dimensions of an I cross section
 % to be used in heavy frames
