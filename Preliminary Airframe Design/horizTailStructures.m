@@ -168,17 +168,50 @@ legend({'NACA 0012','Centre of gravity','Flexural Axis','Aerodynamic Centre', 'F
 grid minor
 
 %% Skin thickness sizing (ch3)
-[N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections,horizTail,UpperSkinMaterial(numMaterial));
+[N_alongSpan,t2_alongSpan,sigma,boxHeight] = skinStringerFunction(numSections,horizTail,UpperSkinMaterial(numMaterial));
 
 %% Skin Stringer Panel Sizing and Optimization
-[HSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(horizTail,N_alongSpan,UpperSkinMaterial(numMaterial));
+[HSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(horizTail,N_alongSpan,UpperSkinMaterial);
 [noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,HSSOptimum);
+
+[LHSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(horizTail,N_alongSpan,LowerSkinMaterial(numMaterial));
+[LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,horizTail.boxLength,LHSSOptimum);
+
+[rSpacing,optRibSpacing,massHTPBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(horizTail,HSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LHSSOptimum);
+[optRibParameters]=RibThickness(optRibSpacing,horizTail,minMassIndex,ribThickness);
+
+% Plotting Mass Vs Rib Spacing
+figure 
+plot(rSpacing,massHTPBox,'-b')
+hold on 
+plot(rSpacing,massEffRib,'-r')
+plot(rSpacing,massEffSS)
+xlabel('Rib Spacing (m)')
+ylabel('Mass')
+legend('Total','Ribs','Skin-Stringer')
+title('Rib Spacing Optimisation')
+grid minor 
+hold off
+
+
+figure
+surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,stringerGeometry.aEffective)
+xlabel('As/bt')
+ylabel('Ts/t')
+zlabel('Skin Thickness (m)') 
+title('Skin Thickness for different Skin-Stringer Ratios')
+colormap('turbo')
+s=colorbar();
+s.Label.String ='Total Area (m^2)';
+
+
+
 
 
 % Plotting skin thickness distribution along span 
 figure
-x=[horizTail.span(end:-75:1)];
-y=[skinThicknessDist(end:-75:1)*1000];
+x=[horizTail.span(end:-50:1)];
+y=[skinThicknessDist(end:-50:1)*1000];
 plot(horizTail.span,skinThicknessDist*1000,'-r')
 hold on
 stairs(x,y,'b')
@@ -196,3 +229,6 @@ title('Stringer Thickness for different Skin-Stringer Ratios')
 colormap('turbo')
 s=colorbar();
 s.Label.String ='Total Area (m^2)';
+
+
+

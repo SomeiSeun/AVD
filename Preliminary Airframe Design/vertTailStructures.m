@@ -4,7 +4,7 @@ close all
 
 load('ConceptualDesign.mat', 'W0',  'components', 'heightVert', 'cRootVert', 'taperVert', 'Thrustline_position',...
     'SVert', 'rho_takeoff', 'V_takeoff', 'CG_all', 'vertAC', 'beta_Cruise', 'Engine_SeaLevelThrust')
-load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial')
+load('Materials.mat', 'SparMaterial', 'UpperSkinMaterial','LowerSkinMaterial')
 
 % Loading in a different coordinates txt file to plot the aerofoil
 load('NACA 0012 plotting purposes.txt')
@@ -165,8 +165,66 @@ legend({'NACA 0012','Centre of gravity','Flexural Axis','Aerodynamic Centre', 'F
 grid minor
 
 %% Skin thickness sizing (ch3)
-[N_alongSpan,t2_alongSpan,sigma] = skinStringerFunction(numSections,vertTail,UpperSkinMaterial(numMaterial));
+[N_alongSpan,t2_alongSpan,sigma,boxHeight] = skinStringerFunction(numSections,vertTail,UpperSkinMaterial(numMaterial));
 
 %% Skin Stringer Panel Sizing and Optimization
-[Optimum]=SSPOptimum(vertTail,N_alongSpan);
-[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,Optimum);
+%% Skin Stringer Panel Sizing and Optimization
+[VSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(vertTail,N_alongSpan,UpperSkinMaterial);
+[noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,VSSOptimum);
+
+[LVSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(vertTail,N_alongSpan,LowerSkinMaterial(numMaterial));
+[LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,LVSSOptimum);
+% Plotting skin thickness distribution along span 
+figure
+x=[vertTail.span(end:-50:1)];
+y=[skinThicknessDist(end:-50:1)*1000];
+plot(vertTail.span(end:-50:1),skinThicknessDist(end:-50:1)*1000,'.-r')
+hold on
+stairs(x,y,'b')
+xlabel('Distance alo1ng Vertical Tailplane (m)') 
+ylabel('Skin Thickness (mm)')
+title('Skin Thickness Distribution')
+grid minor
+
+
+%% Rib Spacing and Rib Thickness Optimisation
+[rSpacing,optRibSpacing,massVTPBox,massEffRib,massEffSS,ribThickness,minMassIndex,T]=ribSpacing(vertTail,VSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LVSSOptimum);
+[optRibParameters]=RibThickness(optRibSpacing,vertTail,minMassIndex,ribThickness);
+
+% Plotting Mass Vs Rib Spacing
+figure 
+plot(rSpacing,massVTPBox,'-b')
+hold on 
+plot(rSpacing,massEffRib,'-r')
+plot(rSpacing,massEffSS)
+xlabel('Rib Spacing (m)')
+ylabel('Mass')
+legend('Total','Ribs','Skin-Stringer')
+title('Rib Spacing Optimisation')
+grid minor 
+hold off
+
+
+figure
+surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,stringerGeometry.aEffective)
+xlabel('As/bt')
+ylabel('Ts/t')
+zlabel('Skin Thickness (m)') 
+title('Skin Thickness for different Skin-Stringer Ratios')
+colormap('turbo')
+s=colorbar();
+s.Label.String ='Total Area (m^2)';
+
+
+figure
+surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tStringer,stringerGeometry.aEffective)
+xlabel('As/bt')
+ylabel('Ts/t')
+zlabel('Stringer Thickness (m)') 
+title('Stringer Thickness for different Skin-Stringer Ratios')
+colormap('turbo')
+s=colorbar();
+s.Label.String ='Total Area (m^2)';
+
+% Saving the workspace for other programmes
+save('wingStructures.mat')
