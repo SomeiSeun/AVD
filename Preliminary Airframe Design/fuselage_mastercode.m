@@ -5,10 +5,12 @@ clc
 close all
 
 load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing',...
-    'V_landing', 'mainLength', 'wingRootLE','cRootWing','fusDiamOuter','rho_cruise', 'V_Cruise', 'SHoriz', 'SWing')
+    'V_landing', 'mainLength', 'wingRootLE','cRootWing','fusDiamOuter','rho_cruise', 'V_Cruise',...
+    'SHoriz', 'SWing','rho_takeoff','V_takeoff')
 load('Materials.mat', 'FuselageMaterial')
 load('../Preliminary Design Optimiser/trimAnalysis.mat')
 load('wingStructures.mat','wing')
+load('vertTailStructures.mat','vertTail')
 D = fusDiamOuter;
 numMaterial = 2; % Needs to be 1 or 2
 
@@ -31,7 +33,12 @@ numSections = input('How many points do you want to discretise the fuselage sect
 % Load case 1 complete (AB)
 n1 = 1.5*2.5;
 LoadCase1 = fuselage_distributions_LC1(components, n1, numSections, W0,...
-    mainLength, wingRootLE, cRootWing, CL_trimHoriz,rho_cruise, V_Cruise, CL_trimWings, etaH, SHoriz, SWing);
+    mainLength, wingRootLE, cRootWing, CL_trimHoriz, rho_cruise, V_Cruise, CL_trimWings, etaH, SHoriz, SWing);
+
+% Load case 2
+n = 1;
+LoadCase2 = fuselage_distributions_LC2(components, n, numSections, W0,...
+    mainLength, wingRootLE, cRootWing, CL_trimHoriz, rho_takeoff, V_takeoff, CL_trimWings, etaH, SHoriz, SWing);
 
 % Load case 4- repeat BM and SF distributions
 n4 = 1; %landing load factor
@@ -47,7 +54,8 @@ hold on
 % plot(LoadCase1.sections, LoadCase1.TTSF) %tail trim
 % plot(LoadCase1.sections, LoadCase1.InSF) %just inertial
 plot(LoadCase4.Sections, LoadCase4.SF4)
-legend('Load case 1', 'Load case 4')
+plot(LoadCase2.sections, LoadCase2.TotalSF1)
+legend('Load case 1', 'Load case 4', 'Load Case 2')
 grid minor
 
 figure(2) %bending moment
@@ -59,22 +67,25 @@ hold on
 % plot(LoadCase1.sections, LoadCase1.TTBM) %tail trim
 % plot(LoadCase1.sections, LoadCase1.InBM) %just inertial
 plot(LoadCase4.Sections, LoadCase4.BM4)
-legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
+plot(LoadCase2.sections, LoadCase2.TotalBM1)
+legend({'Load case 1', 'Load case 4','Load Case 2'},'Location','SouthEast')
 grid minor
 
 %% Stringer sizing and shear flow around the fuselage
 A_fus = pi * (D / 2)^2;              % Area of the fuselage cross section
-Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
-T = 0;                               % Torque acting on the fuselage
+% Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
+Sy1 = abs(max(LoadCase1.TotalSF1));  % Absolute value of maximum shear force in the fuselage
+Sy2 = abs(max(LoadCase2.TotalSF1));
+T1 = 0;                               % Torque acting on the fuselage 
+T2 = trapz(vertTail.torque,vertTail.span);
+[FusStringers, FusBoom, FusProperties, FusShear,iteratedSkinThickness] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T1, SYS(2), A_fus, Sy1);
+ %this first iteration fails in tension, so scrap it
 
-[Stringers, Boom] = Fuselage_stringer_shear_flow(LoadCase1.TotalBM1, D, T, SYS, A_fus, Sy);
-
-% Displaying the maximum thickness of the fuselage cross section
-fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
-
-% Plotting the shear flow around the fuselage cross section
-figure
-
+%now use the skin thickness output and iterate; compare total weight of the two loops
+ 
+%second iteration - skin thickness & stringer properties tripled
+[FusStringers2, FusBoom2, FusProperties2, FusShear2,iteratedSkinThickness2,FailureCheck] = FusStringer_ShearFlow2(LoadCase1.TotalBM1, D, T1, SYS(2), A_fus, Sy1, T2, Sy2);
+ 
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
 thickness_ratio = ((2 - Poisson) / (1 - Poisson));    % t_c is cylindrical fus thickness
@@ -87,17 +98,6 @@ fuselage.thickness_l = (P * D / (4 * TensileYieldStress));  % Thickness due to l
 fuselage.thickness_pressurisation = [fuselage.thickness_h fuselage.thickness_l];
 fprintf('The extra thickness that needs to be added to the fuselage due to pressurisation is %f m.\n',...
     max(fuselage.thickness_pressurisation))
-
-%% Bending in fuselage
-% Use a datasheet to choose stringer area, as there are too many unknowns
-% Use a brute force method, select As and ts and then iterate twice. Three
-% variables would be As, ts and pitch b. Choose the configuration that gives
-% lowest weight
-
-% We don't have to do the design for every discretised station- simply look
-% for worst case and use that to select variables. Then use those same
-% variables everywhere
-
 
 %% Light frames
 L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
@@ -130,8 +130,10 @@ fprintf('The smallest area obtained is %f m^2.\n',min(fuselage.frame_area))
 T = 0;                                               % Torque in the fuselage
 R = D/2;                                             % Radius of the fuselage
 heavy_theta = 55;                                    % Setting the angle between the fuselage and the wing
-Q = max(wing.lift)*sind(heavy_theta);
-P = max(wing.lift)*cosd(heavy_theta);
+%Q = (max(wing.lift) - max(wing.selfWeight) - max(wing.ucWeight))*sind(heavy_theta);
+%P = (max(wing.lift) - max(wing.selfWeight) - max(wing.ucWeight))*cosd(heavy_theta);
+Q = (max(wing.lift)*max(wing.span)/numSections)*sind(heavy_theta);
+P = (max(wing.lift)*max(wing.span)/numSections)*cosd(heavy_theta);
 [fuselage,theta_deg] = wise_curves(P, R, T, Q, fuselage);
 
 min_area_shear = fuselage.heavyframe_shearforce_max / ShearYieldStress;
@@ -139,12 +141,10 @@ min_area_normal = fuselage.heavyframe_normalforce_max / TensileYieldStress;
 second_moment_of_area = fuselage.heavyframe_bendingmoment_max / TensileYieldStress;
 fprintf('The minimum area required for the heavy frame cross section is %f m^2.\n',max(min_area_shear,min_area_normal))
 fprintf('The second moment of area required for the heavy frame cross section is %f m^4.\n',second_moment_of_area)
-h = linspace(0.01,0.4,100);
-b = linspace(0.01,0.4,100);
-[fuselage,solutions] = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area,...
+H = linspace(0.1,0.2,100);
+B = linspace(0.1,0.2,100);
+[fuselage,solutions] = heavy_frame_Ixx_area_calc(H, B, second_moment_of_area,...
     max(min_area_shear,min_area_normal), fuselage);
-fuselage.heavyframeH;
-fuselage.heavyframeB;
 
 %{
 heavy_theta = linspace(0,90,90);
@@ -187,7 +187,11 @@ grid minor
 str = {'AP'};
 text(55,107000,str,'Color','green','FontSize',8)
 %}
-
+    
+%{ 
+displays an error so commented out - AB
+    
+    
 % Plotting the Wise curves
 figure
 plot(theta_deg,fuselage.heavyframe_bendingmoment,'-r')
@@ -205,3 +209,4 @@ ylabel('Force (N)')
 %title('Shear and normal force variation around the fuselage ring')
 legend({'Normal','Shear'},'Location','North')
 grid minor
+%}
