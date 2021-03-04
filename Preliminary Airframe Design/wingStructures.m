@@ -96,7 +96,7 @@ fig3.Position = [0.5 0.5 0.25 0.4];
 fig4 = figure(4);
 plot(wing.span, wing.torque)
 xlabel('Wing Spanwise Coordinate y (m)')
-ylabel('Torque Distribution (N)')
+ylabel('Torque Distribution (Nm)')
 title('Wing Torque Distribution')
 grid minor
 fig4.Units = 'normalized';

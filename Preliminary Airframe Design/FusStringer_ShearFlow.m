@@ -27,6 +27,7 @@ Boom.Number=1:NumStringers;
 Boom.Angle=0:(2*pi)/NumStringers: 2*pi; %in radians
 Boom.X= (diameter/2).*cos(Boom.Angle); %boom x coordinate
 Boom.Y=(diameter/2).*sin(Boom.Angle);%boom y coordinate
+y_coordinates = Boom.Y;
 
 figure() %plot booms 
 scatter(Boom.X,Boom.Y) 
@@ -74,7 +75,7 @@ fuselageShear.q_b = zeros(1,NumStringers);
 fuselageShear.q_0 = zeros(1,NumStringers);
 
 for i = 1:length(NumStringers)
-    fuselageShear.q_b(i) = (-(Sy / I_xx) * A_s * Boom.Y(i));
+    fuselageShear.q_b(i) = (-(Sy / I_xx) * A_s * y_coordinates(i));
     fuselageShear.q_0(i) = T / (2 * A_fus);
     fuselageShear.q(i) = fuselageShear.q_b(i) + fuselageShear.q_0(i);
     fuselageShear.crossectionthickness(i) = fuselageShear.q(i) / SYS;
