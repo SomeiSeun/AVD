@@ -196,12 +196,22 @@ plot(rSpacing,massHTPBox,'-b')
 hold on 
 plot(rSpacing,massEffRib,'-r')
 plot(rSpacing,massEffSS)
-xlabel('Rib Spacing (m)')
-ylabel('Mass')
+xlabel('Rib Spacing(m)')
+ylabel('Volume')
 legend('Total','Ribs','Skin-Stringer')
 title('Rib Spacing Optimisation')
 grid minor 
 hold off
+
+
+figure 
+plot(optRibParameters.ribPositions,optRibParameters.ribThickness*1000,'bx','Linewidth',1.3)
+xlabel('Position along span(m)')
+ylabel('Rib Thickness (mm)')
+% title('Rib Thickness Distribution')
+grid minor
+
+
 
 
 figure

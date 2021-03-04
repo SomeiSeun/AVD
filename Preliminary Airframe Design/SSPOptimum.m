@@ -46,13 +46,14 @@ for As_bt=0.5:0.015:1.0                                                     % Ru
         % are practical
         bC1=heightStringer<(0.1*boxHeight(end));                            % height of the stringer must be less than 10% of the wingbox
         bC2=b>(8*depthStringer);                                            % stringer pitch must be at least 8 times the depth of the stringer 
-        bC3=heightStringer>0.04;                                          % stringer height must be more than 2 centimeters
-        bC4=tSkin>0.001;
-        bC5=tStringer>0.001;
+        bC3=heightStringer>0.05;                                          % stringer height must be more than 2 centimeters
+        bC4=tSkin>0.0015;
+        bC5=tStringer>0.0015;
        
 
         stringerIndex=stringerIndex(bC1 & bC2 & bC3 & bC4 & bC5);
         heightStringer=heightStringer(bC1 & bC2 & bC3 & bC4 & bC5);
+        depthStringer=depthStringer(bC1 & bC2 & bC3 & bC4 & bC5);
         tSkin=tSkin(bC1 & bC2 & bC3 & bC4 & bC5);
         tStringer=tStringer(bC1 & bC2 & bC3 & bC4 & bC5);
         aStringer=aStringer(bC1 & bC2 & bC3 & bC4 & bC5);
@@ -70,6 +71,7 @@ for As_bt=0.5:0.015:1.0                                                     % Ru
         stringerGeometry.stringerIndex(x,y)=NaN;
         stringerGeometry.tSkin(x,y)=NaN;
         stringerGeometry.heightStringer(x,y)=NaN;
+        stringerGeometry.depthStringer(x,y)=NaN;
         stringerGeometry.b(x,y)=NaN;
         stringerGeometry.sigmaYield(x,y)=NaN;
 
@@ -82,6 +84,7 @@ for As_bt=0.5:0.015:1.0                                                     % Ru
         stringerGeometry.numberStringer(x,y)=stringerIndex(end);
         stringerGeometry.tSkin(x,y)=tSkin(end);
         stringerGeometry.heightStringer(x,y)=heightStringer(end);
+        stringerGeometry.depthStringer(x,y)=depthStringer(end);
         stringerGeometry.b(x,y)=b(end);
         stringerGeometry.sigmaYield(x,y)=sigmaYield(end);
         end
@@ -101,6 +104,7 @@ Optimum.aStringer=stringerGeometry.aStringer(min_x,min_y);
 Optimum.aEffective=stringerGeometry.aEffective(min_x,min_y);
 Optimum.numberStringer=stringerGeometry.numberStringer(min_x,min_y);
 Optimum.heightStringer=stringerGeometry.heightStringer(min_x,min_y);
+Optimum.depthStringer=stringerGeometry.depthStringer(min_x,min_y);
 Optimum.stringerPitch=stringerGeometry.b(min_x,min_y);
 Optimum.sigmaYield=stringerGeometry.sigmaYield(min_x,min_y);
 
