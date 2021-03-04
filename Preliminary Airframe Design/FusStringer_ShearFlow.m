@@ -1,9 +1,7 @@
 function [Stringers, Boom, Fus, fuselageShear] = FusStringer_ShearFlow(BendingMoment, diameter, T, SYS, A_fus, Sy)
-
 % Use a datasheet to choose stringer area, as there are too many unknowns
-% Use a brute force method, select As and ts and then iterate twice. Three
-% variables would be As, ts and pitch b. Choose the configuration that gives
-% lowest weight
+% Use a brute force method: select As, b and ts and then iterate twice and choose the configuration that gives
+% lowest weight. 
 
 % We don't have to do the design for every discretised station- simply look
 % for worst case and use that to select variables. Then use those same
@@ -15,10 +13,17 @@ function [Stringers, Boom, Fus, fuselageShear] = FusStringer_ShearFlow(BendingMo
 %%  1. Bending
 Circ=pi*diameter;
 M=max(-BendingMoment); %use worst bending moment for sizing stringers
+
 StringerSpacing=convlength(7,'in','m');  % Use value from notes as a starting point; range is 6.5-9 inches
+SkinThickness= 0.0025;%t_f; %initial guess - based on literature review
+%initial guesses for stringer profile parameters - based on literature review
+L=15e-3; %flange width
+t_s=2e-3; %stringer thickness
+h=30e-3; %height
+A_s=L*t_s*2+(h-2*t_s)*t_s;
+As_bt=A_s/(StringerSpacing*SkinThickness);
+ts_t=t_s/SkinThickness;
 NumStringers=round(Circ/StringerSpacing); 
-SkinThickness= 0.0005;%t_f; %initial guess - based on literature review
-A_s=0.005;%initial guess - based on literature review
 TtlStringerArea= NumStringers*A_s;
 SkinEquivBoomArea=(SkinThickness*StringerSpacing/6)*(2+1); %Boom area from skin can also be considered as 15*t
 SingleBoomArea=TtlStringerArea+SkinEquivBoomArea; 
@@ -47,6 +52,7 @@ Stringer_stress=zeros(1,NumStringers);
 for i = 1:length(Boom.Number)
         Stringer_stress(i) = (Boom.Y(i)*M)/I_xx; %calculates the stress at each stringer
 end
+
 figure()
 quiver3(Boom.X,Boom.Y,zeros(1,NumStringers+1),zeros(1,NumStringers+1),zeros(1,NumStringers+1),[Stringer_stress, Stringer_stress(1)])
 hold on
@@ -90,6 +96,8 @@ plot(Boom.Number,fuselageShear.q)
 SkinArea_deboom=15*SkinThickness;
 StrArea_deboom=SingleBoomArea-SkinArea_deboom;
 
+%choose a Farrar of 0.75
+t_s= %from farrar plot
 %design stringer shape to match area
 t_s= ;%stringer thickness
 h= ;%stringer height
@@ -106,12 +114,23 @@ end
 %% 3. check against yielding and buckling - NOT DONE!
 %check stringer stress with yield and Euler buckling
 
+TensileYield=525e6; %Pa
+if max(Stringer_stress)>TensileYield
+    TY=0;
+else
+    TY=1;
+end 
+
 %%  4.Check bay area between stringers  with yield and local plate buckling stress - NOT DONE!
 
 %%  outputs
 %create structure of outputs
 Stringers.spacing=StringerSpacing;
-Stringers.Area=TtlStringerArea;
+Stringers.TotalArea=TtlStringerArea;
+Stringers.Area=A_s;
+Stringers.As_bt=As_bt;
+Stringers.ts_t=ts_t;
+Stringers.TY_check=TY;
 Stringers.Stress=Stringer_stress;
 Fus.x_centroid=x_centroid;
 Fus.Ixx=I_xx;

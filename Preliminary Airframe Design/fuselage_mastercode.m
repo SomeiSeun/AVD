@@ -79,7 +79,6 @@ T = 0;                               % Torque acting on the fuselage
 % iterate! - NOT DONE!
 %now use the skin thickness output and iterate; compare total weight of the two loops
 
-
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
 thickness_ratio = ((2 - Poisson) / (1 - Poisson));    % t_c is cylindrical fus thickness
@@ -92,7 +91,6 @@ fuselage.thickness_l = (P * D / (4 * TensileYieldStress));  % Thickness due to l
 fuselage.thickness_pressurisation = [fuselage.thickness_h fuselage.thickness_l];
 fprintf('The extra thickness that needs to be added to the fuselage due to pressurisation is %f m.\n',...
     max(fuselage.thickness_pressurisation))
-
 
 %% Light frames
 L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
