@@ -35,11 +35,11 @@ Boom.X= (diameter/2).*cos(Boom.Angle); %boom x coordinate
 Boom.Y=(diameter/2).*sin(Boom.Angle);%boom y coordinate
 y_coordinates = Boom.Y;
 
-% figure() %plot booms 
-% scatter(Boom.X,Boom.Y) 
-% xlabel('Fuselage cross section x coordinate')
-% ylabel('Fuselage cross section y coordinate')
-% title('Booms around the fuselage cross-section')
+figure() %plot booms 
+scatter(Boom.X,Boom.Y) 
+xlabel('Fuselage cross section x coordinate')
+ylabel('Fuselage cross section y coordinate')
+title('Booms around the fuselage cross-section')
 
 Boom.S_x =SingleBoomArea.*Boom.Y; %first moment of area
 x_centroid=(sum(Boom.S_x))/(SingleBoomArea*NumStringers);
@@ -55,18 +55,18 @@ for i = 1:length(Boom.Number)
         Stringer_stress(i) = (Boom.Y(i)*M)/I_xx; %calculates the stress at each stringer
 end
 
-% figure()
-% quiver3(Boom.X,Boom.Y,zeros(1,NumStringers+1),zeros(1,NumStringers+1),zeros(1,NumStringers+1),[Stringer_stress, Stringer_stress(1)])
-% hold on
-% axis tight
-% grid on
-% grid minor
-% xlabel('X coordinate along fuselage cross section (m)')
-% ylabel('Y coordinate along fuselage cross section (m)')
-% zlabel('Direct Stress (GPa)')
-% plot3(Boom.X,Boom.Y,zeros(1,NumStringers+1),'LineWidth',2.5)
-% legend('Direct Stress at each Stringer', 'Fuselage Cross Section')
-% hold off
+figure()
+quiver3(Boom.X,Boom.Y,zeros(1,NumStringers+1),zeros(1,NumStringers+1),zeros(1,NumStringers+1),[Stringer_stress, Stringer_stress(1)])
+hold on
+axis tight
+grid on
+grid minor
+xlabel('X coordinate along fuselage cross section (m)')
+ylabel('Y coordinate along fuselage cross section (m)')
+zlabel('Direct Stress (GPa)')
+plot3(Boom.X,Boom.Y,zeros(1,NumStringers+1),'LineWidth',2.5)
+legend('Direct Stress at each Stringer', 'Fuselage Cross Section')
+hold off
 %% 2. Shear flow
 % max shear force is Sy
 % torque --> doubt it can be zero, when the whole objective of this is to
@@ -121,13 +121,19 @@ else
     TY=1;
 end 
 
+% Euler buckling
+P_crit=(pi^2*YM_stringer*I_xx)/(0.5^2);
+if max( Stringer_stress)>P_crit
+    Euler_buckling=0;
+else
+     Euler_buckling=1;
+end 
 
 %% Check bay area between stringers  with yield and local plate buckling stress - NOT DONE!
 %yield
 % initial buckling of skin-stringer panel
-for i=1:length(BendingMoment)
-    N=BendingMoment(i)/(A_fus);
-end
+for i=1:length()
+    
 t_e=SkinThickness+A_s/StringerSpacing; %effective thickness
 % BoxWidth=
 % StringerPitch=BoxWidth/(NumStringers+1);
@@ -141,7 +147,7 @@ Stringers.Area=A_s;
 Stringers.As_bt=As_bt;
 Stringers.ts_t=ts_t;
 Stringers.TY_check=TY;
-% Stringers.EulerBuckling_check=Euler_buckling;
+Stringers.EulerBuckling_check=Euler_buckling;
 Stringers.Stress=Stringer_stress;
 Fus.x_centroid=x_centroid;
 Fus.Ixx=I_xx;

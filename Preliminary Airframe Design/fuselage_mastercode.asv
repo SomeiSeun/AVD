@@ -13,7 +13,7 @@ D = fusDiamOuter;
 numMaterial = 2; % Needs to be 1 or 2
 
 %% Material properties
-% Setting and calculating all the relevant materials properties needed
+% Setting anc calculating all the relevant materials properties needed
 % Al2024-T6: 363 MPa Tensile Yield Stress
 % Al7175-T6: 489.5 MPa Tensile Yield Stress
 
@@ -70,12 +70,11 @@ Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in 
 T = 0;                               % Torque acting on the fuselage 
 
 [FusStringers, FusBoom, FusProperties, FusShear,iteratedSkinThickness] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, SYS(2), A_fus, Sy);
- %this first iteration fails in tension, so scrap it
-
+ 
+% iterate! - NOT DONE!
 %now use the skin thickness output and iterate; compare total weight of the two loops
  
-%second iteration - skin thickness & stringer properties tripled
-[FusStringers2, FusBoom2, FusProperties2, FusShear2,iteratedSkinThickness2,FailureCheck] = FusStringer_ShearFlow2(LoadCase1.TotalBM1, D, T, SYS(2), A_fus, Sy);
+% [FusStringers2, FusBoom2, FusProperties2, FusShear2,iteratedSkinThickness2] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, SYS(2), A_fus, Sy, E);
  
 
 %% Presurisation 
