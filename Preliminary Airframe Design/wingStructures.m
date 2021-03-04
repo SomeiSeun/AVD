@@ -52,7 +52,7 @@ bMin = 0.003;
 %% Plotting Results
 
 % Plotting Loading Distribution
-fig1 = figure(1);
+figure(1)
 hold on
 plot(wing.span, wing.lift, '.')
 plot(wing.span, -wing.selfWeight, '.')
@@ -60,15 +60,20 @@ plot(wing.span, -wing.engineWeight, '.')
 plot(wing.span, -wing.ucWeight, '.')
 plot(wing.span, -wing.fuseWeight, '.')
 plot(wing.span, -wing.fuelWeight, '.')
-plot(wing.span, wing.loading, 'k-')
 legend('Lift', 'Self-weight', 'Engine Weight', 'Undercarriage Weight', 'Aircraft Weight',...
-    'Fuel Weight', 'Overall Loading Distribution', 'Location', ' Southeast')
+    'Fuel Weight', 'Location', ' Southeast')
 ylabel('Loading Distribution (N/m)')
 xlabel('Wing Spanwise Coordinate y (m)')
-title('Wing Vertical Loading Distribution')
+%title('Wing Vertical Loading Distribution')
 grid minor
-fig1.Units = 'normalized';
-fig1.Position = [0 0.5 0.25 0.4];
+
+% Plotting overall loading distribution
+figure(20)
+hold on
+plot(wing.span, wing.loading, 'k')
+ylabel('Loading Distribution (N/m)')
+xlabel('Wing Spanwise Coordinate y (m)')
+grid minor
 
 % Plotting Shear Force
 fig2 = figure(2);
@@ -76,7 +81,7 @@ hold on
 plot(wing.span, wing.shearForce)
 ylabel('Shear Force (N)')
 xlabel('Wing Spanwise Coordinate y (m)')
-title('Wing Vertical Shear Force Distribution')
+%title('Wing Vertical Shear Force Distribution')
 grid minor
 fig2.Units = 'normalized';
 fig2.Position = [0.25 0.5 0.25 0.4];
@@ -87,7 +92,7 @@ hold on
 plot(wing.span, wing.bendingMoment)
 ylabel('Bending Moment (Nm)')
 xlabel('Wing Spanwise Coordinate y (m)')
-title('Wing Bending Moment Distribution')
+%title('Wing Bending Moment Distribution')
 grid minor
 fig3.Units = 'normalized';
 fig3.Position = [0.5 0.5 0.25 0.4];
@@ -137,7 +142,7 @@ plot(wing.span, 1000*frontSpar.bReq, '-b')
 xlabel('Spanwise Coordinate y (m)')
 ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
 legend('Actual Flange Breadth', 'Required Flange Breadth')
-title('Wing Front Spar Flange Breadth')
+% title('Wing Front Spar Flange Breadth')
 grid minor
 
 
@@ -149,7 +154,7 @@ plot(wing.span, 1000*frontSpar.tfReq, '-b')
 xlabel('Spanwise Coordinate y (m)')
 ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
 legend('Actual Flange Thickness', 'Required Flange Thickness')
-title('Wing Front Spar Flange Thickness')
+% title('Wing Front Spar Flange Thickness')
 grid minor
 
 % Plotting spar Ixx values
@@ -160,7 +165,18 @@ plot(wing.span, frontSpar.IxxReq, '--b')
 ylabel('Second Moment of Area I_x_x (m^4)')
 xlabel('Wing Spanwise Coordinate y (m)')
 legend('Actual I_x_x', 'Required I_x_x')
-title('Wing Front Spar I_x_x Distribution');
+% title('Wing Front Spar I_x_x Distribution');
+grid minor
+
+% Plotting spar area values
+figure
+hold on
+plot(wing.span, frontSpar.Area, '-b')
+plot(wing.span, frontSpar.AreaReq, '--b')
+ylabel('Cross-sectional Area (m^2)')
+xlabel('Wing Spanwise Coordinate y (m)')
+legend('Actual Area', 'Required Area')
+% title('Wing Front Spar I_x_x Distribution');
 grid minor
 
 % Plotting the aerofoil with points of interest

@@ -52,8 +52,8 @@ plot(horizTail.span, -horizTail.selfWeight, '.')
 plot(horizTail.span, horizTail.loading, 'k-')
 legend('Lift', 'Self-weight', 'Overall Loading Distribution', 'Location', ' Southeast')
 ylabel('Loading Distribution (N/m)')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
-title('Horiz tail Vertical Loading Distribution')
+xlabel('Spanwise Coordinate y (m)')
+% title('Horiz tail Vertical Loading Distribution')
 grid minor
 fig1.Units = 'normalized';
 fig1.Position = [0 0.5 0.25 0.4];
@@ -63,8 +63,8 @@ fig2 = figure(2);
 hold on
 plot(horizTail.span, horizTail.shearForce)
 ylabel('Shear Force (N)')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
-title('Horiz tail Vertical Shear Force Distribution')
+xlabel('Spanwise Coordinate y (m)')
+% title('Horiz tail Vertical Shear Force Distribution')
 grid minor
 fig2.Units = 'normalized';
 fig2.Position = [0.25 0.5 0.25 0.4];
@@ -74,8 +74,8 @@ fig3 = figure(3);
 hold on
 plot(horizTail.span, horizTail.bendingMoment)
 ylabel('Bending Moment (Nm)')
-xlabel('Horiz tail Spanwise Coordinate y (m)')
-title('Horiz tail Bending Moment Distribution')
+xlabel('Spanwise Coordinate y (m)')
+% title('Horiz tail Bending Moment Distribution')
 grid minor
 fig3.Units = 'normalized';
 fig3.Position = [0.5 0.5 0.25 0.4];
@@ -83,9 +83,9 @@ fig3.Position = [0.5 0.5 0.25 0.4];
 % Plotting the torque distribution
 fig4 = figure(4);
 plot(horizTail.span, horizTail.torque)
-xlabel('Horiz tail Spanwise Coordinate y (m)')
+xlabel('Spanwise Coordinate y (m)')
 ylabel('Torque Distribution (N)')
-title('Horiz tail Torque Distribution')
+% title('Horiz tail Torque Distribution')
 grid minor
 fig4.Units = 'normalized';
 fig4.Position = [0.75 0.5 0.25 0.4];
@@ -95,10 +95,10 @@ fig5 = figure(5);
 hold on
 plot(horizTail.span,1000*frontSpar.tw,'r')
 plot(horizTail.span,1000*rearSpar.tw,'b')
-xlabel('Horiz tail span (m)')
+xlabel('Spanwise coordinate y (m)')
 ylabel('Thickness (mm)')
 legend({'Front spar','Rear spar'},'Location','Northeast')
-title('Spar Web Thickness Distribution')
+% title('Spar Web Thickness Distribution')
 grid minor
 fig5.Units = 'normalized';
 fig5.Position = [0 0.05 0.25 0.4];
@@ -109,10 +109,10 @@ fig6 = figure(6);
 plot(horizTail.span,frontSpar.shearstress,'r')
 hold on
 plot(horizTail.span,rearSpar.shearstress,'b')
-xlabel('Horiz tail span (m)')
+xlabel('Spanwise coordinate y (m)')
 ylabel('Shear stress (N/m^2)')
 legend({'Front Spar','Rear Spar'},'Location','Northeast')
-title('Spar Web Shear Stress Distribution')
+% title('Spar Web Shear Stress Distribution')
 grid minor
 fig6.Units = 'normalized';
 fig6.Position = [0.25 0.05 0.25 0.4];
@@ -125,7 +125,7 @@ plot(horizTail.span, 1000*frontSpar.bReq, '-b')
 xlabel('Spanwise Coordinate y (m)')
 ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
 legend('Actual Flange Breadth', 'Required Flange Breadth')
-title('Horizontal Tail Front Spar Flange Breadth')
+% title('Horizontal Tail Front Spar Flange Breadth')
 grid minor
 
 
@@ -137,7 +137,7 @@ plot(horizTail.span, 1000*frontSpar.tfReq, '-b')
 xlabel('Spanwise Coordinate y (m)')
 ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
 legend('Actual Flange Thickness', 'Required Flange Thickness')
-title('Horizontal Tail Front Spar Flange Thickness')
+% title('Horizontal Tail Front Spar Flange Thickness')
 grid minor
 
 % Plotting spar Ixx values
@@ -148,7 +148,18 @@ plot(horizTail.span, frontSpar.IxxReq, '--b')
 ylabel('Second Moment of Area I_x_x (m^4)')
 xlabel('Spanwise Coordinate y (m)')
 legend('Actual I_x_x', 'Required I_x_x')
-title('Horizontal Tail Front Spar I_x_x Distribution');
+% title('Horizontal Tail Front Spar I_x_x Distribution');
+grid minor
+
+% Plotting spar area values
+figure
+hold on
+plot(horizTail.span, frontSpar.Area, '-b')
+plot(horizTail.span, frontSpar.AreaReq, '--b')
+ylabel('Cross-sectional Area (m^2)')
+xlabel('Spanwise Coordinate y (m)')
+legend('Actual Area', 'Required Area')
+% title('Horizontal Tail Front Spar I_x_x Distribution');
 grid minor
 
 % Plotting the aerofoil with points of interest

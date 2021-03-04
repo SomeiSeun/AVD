@@ -26,5 +26,4 @@ ylabel('Limit Load Factor n')
 %title('Chailiner n-V Diagram')
 axis([0, V_D*1.1, -1.5 3])
 grid minor
-str = {'V_D'};
 text(V_D,2.5,str,'Color','red','FontSize',8)
