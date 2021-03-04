@@ -1,4 +1,5 @@
-function [Stringers, Boom, Fus, fuselageShear] = FusStringer_ShearFlow(BendingMoment, diameter, T, SYS, A_fus, Sy, E)
+function [Stringers, Boom, Fus, fuselageShear] = FusStringer_ShearFlow(BendingMoment,...
+    diameter, T, SYS, A_fus, Sy, E, T2, Sy2)
 % Use a datasheet to choose stringer area, as there are too many unknowns
 % Use a brute force method: select As, b and ts and then iterate twice and choose the configuration that gives
 % lowest weight. 
@@ -78,7 +79,7 @@ hold off
 % ShearFlow_Torque=T/2/(pi*diameter^2/4);
 % Tau_max= (ShearFlow_Shear+ShearFlow_Torque)/SkinThickness/10^6; %max shear stress
 
-
+% Shear flow analysis for Load Case 1
 fuselageShear.q_b = zeros(1,NumStringers);
 fuselageShear.q_0 = zeros(1,NumStringers);
 
@@ -96,6 +97,17 @@ if sigma_crit_buckling_shear > maxshearstress
 else
     disp('The maximum shear stress is above the critical buckling load. So change variable values.')
 end
+
+% Shear flow analysis for Load Case 2
+fuselageShear.q_b2 = zeros(1,NumStringers);
+fuselageShear.q_02 = zeros(1,NumStringers);
+
+for i = 1:NumStringers
+    fuselageShear.q_b2(i) = -(Sy2 / I_xx) * A_s * y_coordinates(i);
+    fuselageShear.q_02(i) = T2 / (2 * A_fus);
+    fuselageShear.q2(i) = fuselageShear.q_b(i) + fuselageShear.q_0(i);
+end
+
 %
 %deboom areas into skin and stringer 
 %from size of stringer (geometry) work out contribution of stringers to boom area

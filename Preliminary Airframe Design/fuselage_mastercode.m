@@ -5,7 +5,8 @@ clc
 close all
 
 load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing',...
-    'V_landing', 'mainLength', 'wingRootLE','cRootWing','fusDiamOuter','rho_cruise', 'V_Cruise', 'SHoriz', 'SWing')
+    'V_landing', 'mainLength', 'wingRootLE','cRootWing','fusDiamOuter','rho_cruise', 'V_Cruise',...
+    'SHoriz', 'SWing','rho_takeoff','V_takeoff')
 load('Materials.mat', 'FuselageMaterial')
 load('../Preliminary Design Optimiser/trimAnalysis.mat')
 load('wingStructures.mat','wing')
@@ -31,7 +32,12 @@ numSections = input('How many points do you want to discretise the fuselage sect
 % Load case 1 complete (AB)
 n1 = 1.5*2.5;
 LoadCase1 = fuselage_distributions_LC1(components, n1, numSections, W0,...
-    mainLength, wingRootLE, cRootWing, CL_trimHoriz,rho_cruise, V_Cruise, CL_trimWings, etaH, SHoriz, SWing);
+    mainLength, wingRootLE, cRootWing, CL_trimHoriz, rho_cruise, V_Cruise, CL_trimWings, etaH, SHoriz, SWing);
+
+% Load case 2
+n = 1;
+LoadCase2 = fuselage_distributions_LC2(components, n, numSections, W0,...
+    mainLength, wingRootLE, cRootWing, CL_trimHoriz, rho_takeoff, V_takeoff, CL_trimWings, etaH, SHoriz, SWing);
 
 % Load case 4- repeat BM and SF distributions
 n4 = 1; %landing load factor
@@ -47,7 +53,8 @@ hold on
 % plot(LoadCase1.sections, LoadCase1.TTSF) %tail trim
 % plot(LoadCase1.sections, LoadCase1.InSF) %just inertial
 plot(LoadCase4.Sections, LoadCase4.SF4)
-legend('Load case 1', 'Load case 4')
+plot(LoadCase2.sections, LoadCase2.TotalSF1)
+legend('Load case 1', 'Load case 4', 'Load Case 2')
 grid minor
 
 figure(2) %bending moment
@@ -59,22 +66,20 @@ hold on
 % plot(LoadCase1.sections, LoadCase1.TTBM) %tail trim
 % plot(LoadCase1.sections, LoadCase1.InBM) %just inertial
 plot(LoadCase4.Sections, LoadCase4.BM4)
-legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
+plot(LoadCase2.sections, LoadCase2.TotalBM1)
+legend({'Load case 1', 'Load case 4','Load Case 2'},'Location','SouthEast')
 grid minor
-
-
 
 %% Stringer sizing and shear flow around the fuselage
 A_fus = pi * (D / 2)^2;              % Area of the fuselage cross section
-Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
-T = 0;                               % Torque acting on the fuselage 
-
-[FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, SYS(2), A_fus, Sy, E);
+Sy1 = abs(max(LoadCase1.TotalSF1));  % Absolute value of maximum shear force in the fuselage
+T1 = 0;                              % Torque acting on the fuselage 
+%T2 = ;
+[FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T1,...
+    SYS(2), A_fus, Sy1, E, T2, Sy2);
  
-% iterate! - NOT DONE!
+% iterate! - NOT DONE
 %now use the skin thickness output and iterate; compare total weight of the two loops
- 
-
 
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
@@ -177,8 +182,6 @@ grid minor
 str = {'AP'};
 text(55,107000,str,'Color','green','FontSize',8)
 %}
-    
-    
     
 %{ 
 displays an error so commented out - AB
