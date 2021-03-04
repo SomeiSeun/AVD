@@ -10,6 +10,7 @@ load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing',...
 load('Materials.mat', 'FuselageMaterial')
 load('../Preliminary Design Optimiser/trimAnalysis.mat')
 load('wingStructures.mat','wing')
+load('vertTailStructures.mat','vertTail')
 D = fusDiamOuter;
 numMaterial = 2; % Needs to be 1 or 2
 
@@ -74,7 +75,7 @@ grid minor
 A_fus = pi * (D / 2)^2;              % Area of the fuselage cross section
 Sy1 = abs(max(LoadCase1.TotalSF1));  % Absolute value of maximum shear force in the fuselage
 T1 = 0;                              % Torque acting on the fuselage 
-%T2 = ;
+T2 = trapz(vertTail.torque,vertTail.span);
 [FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T1,...
     SYS(2), A_fus, Sy1, E, T2, Sy2);
  
