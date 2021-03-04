@@ -1,4 +1,5 @@
-function [Stringers, Boom, Fus] = FusStringerSizing(BendingMoment, diameter)
+function [Stringers, Boom, Fus, fuselageShear] = FusStringer_ShearFlow(BendingMoment, diameter, T, SYS, A_fus, Sy)
+
 % Use a datasheet to choose stringer area, as there are too many unknowns
 % Use a brute force method, select As and ts and then iterate twice. Three
 % variables would be As, ts and pitch b. Choose the configuration that gives
@@ -21,7 +22,6 @@ A_s=0.005;%initial guess - based on literature review
 TtlStringerArea= NumStringers*A_s;
 SkinEquivBoomArea=(SkinThickness*StringerSpacing/6)*(2+1); %Boom area from skin can also be considered as 15*t
 SingleBoomArea=TtlStringerArea+SkinEquivBoomArea; 
-
 %idealise into booms
 Boom.Number=1:NumStringers;
 Boom.Angle=0:(2*pi)/NumStringers: 2*pi; %in radians
@@ -59,16 +59,40 @@ zlabel('Direct Stress (GPa)')
 plot3(Boom.X,Boom.Y,zeros(1,NumStringers+1),'LineWidth',2.5)
 legend('Direct Stress at each Stringer', 'Fuselage Cross Section')
 hold off
+%% shear flow
+%max shear force is Sy
+%torque --> doubt it can be zero, when the whole objective of this is to
+%size for worst case scenario??? (AB)
 
-%% iterate! - NOT DONE!
-%now use these values in shear flow code, and get a skin thickness. Iterate
-%again and compare total weight of the two loops
+TtlSectionArea=SingleBoomArea*NumStringers;
+ShearFlow_Shear=Sy/pi/diameter/2;
+ShearFlow_Torque=T/2/(pi*diameter^2/4);
+Tau_max= (ShearFlow_Shear+ShearFlow_Torque)/SkinThickness/10^6; %max shear stress
+
+
+fuselageShear.q_b = zeros(1,NumStringers);
+fuselageShear.q_0 = zeros(1,NumStringers);
+
+for i = 1:length(NumStringers)
+    fuselageShear.q_b(i) = (-(Sy / I_xx) * A_s * Boom.Y(i));
+    fuselageShear.q_0(i) = T / (2 * A_fus);
+    fuselageShear.q(i) = fuselageShear.q_b(i) + fuselageShear.q_0(i);
+    fuselageShear.crossectionthickness(i) = fuselageShear.q(i) / SYS;
+end
+%plot shear flow
+figure()
+plot(Boom.Number,fuselageShear.q)
+
+%deboom areas into skin and stringer
+
+
+%design stringer shape to match area
+
 
 %% check against yielding and buckling - NOT DONE!
 %check stringer stress with yield and Euler buckling
 
 %%  4.Check bay area between stringers  with yield and local plate buckling stress - NOT DONE!
-
 
 %%  outputs
 %create structure of outputs
@@ -79,5 +103,4 @@ Fus.x_centroid=x_centroid;
 Fus.Ixx=I_xx;
 Fus.maxBM=M;
 Fus.principleStress=sigma;
-
 end

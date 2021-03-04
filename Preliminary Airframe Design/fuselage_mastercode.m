@@ -37,6 +37,7 @@ LoadCase1 = fuselage_distributions_LC1(components, n1, numSections, W0,...
 n4 = 1; %landing load factor
 LoadCase4 = fuselage_distributions_LC4(components, n4, numSections, W0, mainLength, LoadCase1.weightDistributionIN);
 
+%{
 % Plot SF and BM
 figure(1) % Shear force 
 plot(LoadCase1.sections, LoadCase1.TotalSF1) % Total
@@ -61,19 +62,24 @@ hold on
 plot(LoadCase4.Sections, LoadCase4.BM4)
 legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
+%}
 
 %% Stringer sizing and shear flow around the fuselage
 A_fus = pi * (D / 2)^2;              % Area of the fuselage cross section
 Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
-T = 0;                               % Torque acting on the fuselage
+T = 0;                               % Torque acting on the fuselage 
 
-[Stringers, Boom] = Fuselage_stringer_shear_flow(LoadCase1.TotalBM1, D, T, SYS, A_fus, Sy);
+% [Stringers, Boom, FusProperties] = Fuselage_stringer_shear_flow(LoadCase1.TotalBM1, D, T, SYS, A_fus, Sy);
+ [FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, SYS(1), A_fus, Sy);
 
 % Displaying the maximum thickness of the fuselage cross section
-fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
+% fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
+%^this line displays an error message so commented out
+ 
+% iterate! - NOT DONE!
+%now use the skin thickness output and iterate; compare total weight of the two loops
 
-% Plotting the shear flow around the fuselage cross section
-figure
+
 
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
@@ -88,17 +94,8 @@ fuselage.thickness_pressurisation = [fuselage.thickness_h fuselage.thickness_l];
 fprintf('The extra thickness that needs to be added to the fuselage due to pressurisation is %f m.\n',...
     max(fuselage.thickness_pressurisation))
 
-%% Bending in fuselage
-% Use a datasheet to choose stringer area, as there are too many unknowns
-% Use a brute force method, select As and ts and then iterate twice. Three
-% variables would be As, ts and pitch b. Choose the configuration that gives
-% lowest weight
 
-% We don't have to do the design for every discretised station- simply look
-% for worst case and use that to select variables. Then use those same
-% variables everywhere
-
-
+%{
 %% Light frames
 L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
 M = max(abs(LoadCase1.TotalBM1));
@@ -145,7 +142,7 @@ b = linspace(0.01,0.4,100);
     max(min_area_shear,min_area_normal), fuselage);
 fuselage.heavyframeH;
 fuselage.heavyframeB;
-
+%}
 %{
 heavy_theta = linspace(0,90,90);
 
@@ -188,6 +185,9 @@ str = {'AP'};
 text(55,107000,str,'Color','green','FontSize',8)
 %}
 
+    
+    %{ 
+%%%%%displays an error so commented out to make the other bits run%%%%%%
 % Plotting the Wise curves
 figure
 plot(theta_deg,fuselage.heavyframe_bendingmoment,'-r')
@@ -205,3 +205,4 @@ ylabel('Force (N)')
 %title('Shear and normal force variation around the fuselage ring')
 legend({'Normal','Shear'},'Location','North')
 grid minor
+%}

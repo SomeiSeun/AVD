@@ -38,7 +38,11 @@ for i=2:numSections
     dBM4(i)=SF4(i-1)*(fusSections_x(i)-fusSections_x(i-1))+(SF4(i)+SF4(i-1))*(fusSections_x(i)-fusSections_x(i-1))/2; 
     BM4(i)=BM4(i-1)+dBM4(i); 
 end 
- 
+
+while BM4(end)~=0
+    BM4=BM4*0.1;
+    
+
 %save in a structure 
 LoadCase4.SF4=SF4; 
 LoadCase4.BM4=BM4; 

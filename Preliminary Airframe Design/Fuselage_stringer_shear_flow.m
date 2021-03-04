@@ -14,29 +14,31 @@ function [Stringers, Boom] = Fuselage_stringer_shear_flow(BendingMoment, diamete
 % Stringers = structure with the appropriate variables
 % Boom = structure with the appropriate variables
 
-% Bending moment 
-Circ = pi*diameter;
-%M = max(BendingMoment);                     % Using worst bending moment as a worst case scenario
-StringerSpacing = convlength(7,'in','m');   % Setting an inital guess for stringer spacing (range is 6.5-9 inches)
-NumStringers = round(Circ/StringerSpacing); % Number of stringers around the fuselage
+%%  bending
+Circ=pi*diameter;
+M=max(-BendingMoment); %use worst bending moment for sizing stringers
+StringerSpacing=convlength(7,'in','m');  % Use value from notes as a starting point; range is 6.5-9 inches
+NumStringers=round(Circ/StringerSpacing); 
+SkinThickness= 0.0005;%t_f; %initial guess - based on literature review
+A_s=0.005;%initial guess - based on literature review
+TtlStringerArea= NumStringers*A_s;
+SkinEquivBoomArea=(SkinThickness*StringerSpacing/6)*(2+1); %Boom area from skin can also be considered as 15*t
+SingleBoomArea=TtlStringerArea+SkinEquivBoomArea; 
 
-% Idealising the stringers into booms
-Boom.Number = 1:NumStringers;
-% Boom.Location=linspace(0,2*pi,NumStringers);
-Boom.Angle = 0:(2*pi)/NumStringers: 2*pi; % Angle in radians
-Boom.X = (diameter/2).*cos(Boom.Angle);   % X coordinates
-Boom.Y = (diameter/2).*sin(Boom.Angle);   % Y coordinates
-% Boom.Area=Boom.Y*SingleBoomArea;
+%idealise into booms
+Boom.Number=1:NumStringers;
+Boom.Angle=0:(2*pi)/NumStringers: 2*pi; %in radians
+Boom.X= (diameter/2).*cos(Boom.Angle); %boom x coordinate
+Boom.Y=(diameter/2).*sin(Boom.Angle);%boom y coordinate
 
-% Plotting the booms
-figure
-scatter(Boom.X,Boom.Y)
-xlabel('X')
-ylabel('Y')
+figure() %plot booms 
+scatter(Boom.X,Boom.Y) 
+xlabel('Fuselage cross section x coordinate')
+ylabel('Fuselage cross section y coordinate')
 title('Booms around the fuselage cross-section')
 
-SkinThickness = 0.001;                                       % Initial guess for the fuselage skin thickness
-A_s = 2.4e-5;                                                % Initial guess for the area of a stringer
+% SkinThickness = 0.001;                                       % Initial guess for the fuselage skin thickness
+% A_s = 2.4e-5;                                                % Initial guess for the area of a stringer
 fuselage.q_b = zeros(1,NumStringers);
 fuselage.q_0 = zeros(1,NumStringers);
 
@@ -65,17 +67,8 @@ for i = 1:length(N)
 end
 SkinThickness = max(fuselage.crosssectionskinthickness);
 end
+
 % 4.Check bay area between stringers  with yield and local plate buckling stress.
-
-
-%extra: not sure where this goes (AB)
-% StringerShape: Z stringers
-FrameDepth = convlength(4.0, 'in','m');    % Range is 3.5-4.4
-FrameSpacing = convlength(20, 'in','m');
-
-% Materials to use: 2000 series for skin and 7000 series for stringer
-
-% Aassume constant stringer pitch for both tensile side and compression side
 
 % Create structure of outputs
 Stringers.spacing = StringerSpacing;

@@ -4,7 +4,7 @@ function fuselage = shear_flow_fuselage(A_s, y_s, Sy, A_fus, N, T, SYS, fuselage
 % The INPUTS are:
 % A_s = area of a stringer
 % y_s = distance of the stringers from neutral axis in y axis
-% Sy = shear force
+% Sy = shear forceD
 % A_fus = area of the fuselage section
 % N = number of stringers
 % T = torque on the fuselage cross section
