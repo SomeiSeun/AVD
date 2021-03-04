@@ -69,14 +69,10 @@ A_fus = pi * (D / 2)^2;              % Area of the fuselage cross section
 Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
 T = 0;                               % Torque acting on the fuselage 
 
-% [Stringers, Boom, FusProperties] = Fuselage_stringer_shear_flow(LoadCase1.TotalBM1, D, T, SYS, A_fus, Sy);
- [FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, SYS(1), A_fus, Sy);
+[FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, SYS(2), A_fus, Sy, E);
+ 
 % iterate! - NOT DONE!
 %now use the skin thickness output and iterate; compare total weight of the two loops
- 
-% Displaying the maximum thickness of the fuselage cross section
-% fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
-%^this line displays an error message so commented out
  
 
 
@@ -124,8 +120,10 @@ fprintf('The smallest area obtained is %f m^2.\n',min(fuselage.frame_area))
 T = 0;                                               % Torque in the fuselage
 R = D/2;                                             % Radius of the fuselage
 heavy_theta = 55;                                    % Setting the angle between the fuselage and the wing
-Q = (max(wing.lift) - max(wing.selfWeight) - max(wing.ucWeight))*sind(heavy_theta);
-P = (max(wing.lift) - max(wing.selfWeight) - max(wing.ucWeight))*cosd(heavy_theta);
+%Q = (max(wing.lift) - max(wing.selfWeight) - max(wing.ucWeight))*sind(heavy_theta);
+%P = (max(wing.lift) - max(wing.selfWeight) - max(wing.ucWeight))*cosd(heavy_theta);
+Q = (max(wing.lift)*max(wing.span)/numSections)*sind(heavy_theta);
+P = (max(wing.lift)*max(wing.span)/numSections)*cosd(heavy_theta);
 [fuselage,theta_deg] = wise_curves(P, R, T, Q, fuselage);
 
 min_area_shear = fuselage.heavyframe_shearforce_max / ShearYieldStress;

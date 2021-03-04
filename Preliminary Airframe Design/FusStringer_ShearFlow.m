@@ -1,4 +1,4 @@
-function [Stringers, Boom, Fus, fuselageShear] = FusStringer_ShearFlow(BendingMoment, diameter, T, SYS, A_fus, Sy)
+function [Stringers, Boom, Fus, fuselageShear] = FusStringer_ShearFlow(BendingMoment, diameter, T, SYS, A_fus, Sy, E)
 % Use a datasheet to choose stringer area, as there are too many unknowns
 % Use a brute force method: select As, b and ts and then iterate twice and choose the configuration that gives
 % lowest weight. 
@@ -15,7 +15,7 @@ Circ=pi*diameter;
 M=max(-BendingMoment); %use worst bending moment for sizing stringers
 
 StringerSpacing=convlength(7,'in','m');  % Use value from notes as a starting point; range is 6.5-9 inches
-SkinThickness= 0.0025;%t_f; %initial guess - based on literature review
+SkinThickness= 0.0005;%t_f; %initial guess - based on literature review
 %initial guesses for stringer profile parameters - based on literature review
 L=15e-3; %flange width
 t_s=2e-3; %stringer thickness
@@ -34,6 +34,7 @@ Boom.Number=1:NumStringers;
 Boom.Angle=0:(2*pi)/NumStringers: 2*pi; %in radians
 Boom.X= (diameter/2).*cos(Boom.Angle); %boom x coordinate
 Boom.Y=(diameter/2).*sin(Boom.Angle);%boom y coordinate
+y_coordinates = Boom.Y;
 
 figure() %plot booms 
 scatter(Boom.X,Boom.Y) 
@@ -72,25 +73,33 @@ hold off
 %torque --> doubt it can be zero, when the whole objective of this is to
 %size for worst case scenario??? (AB)
 
-TtlSectionArea=SingleBoomArea*NumStringers;
-ShearFlow_Shear=Sy/pi/diameter/2;
-ShearFlow_Torque=T/2/(pi*diameter^2/4);
-Tau_max= (ShearFlow_Shear+ShearFlow_Torque)/SkinThickness/10^6; %max shear stress
+% TtlSectionArea=SingleBoomArea*NumStringers;
+% ShearFlow_Shear=Sy/pi/diameter/2;
+% ShearFlow_Torque=T/2/(pi*diameter^2/4);
+% Tau_max= (ShearFlow_Shear+ShearFlow_Torque)/SkinThickness/10^6; %max shear stress
 
 
 fuselageShear.q_b = zeros(1,NumStringers);
 fuselageShear.q_0 = zeros(1,NumStringers);
 
-for i = 1:length(NumStringers)
-    fuselageShear.q_b(i) = (-(Sy / I_xx) * A_s * Boom.Y(i));
+for i = 1:NumStringers
+    fuselageShear.q_b(i) = -(Sy / I_xx) * A_s * y_coordinates(i);
     fuselageShear.q_0(i) = T / (2 * A_fus);
     fuselageShear.q(i) = fuselageShear.q_b(i) + fuselageShear.q_0(i);
 end
+maxshearstress = max(fuselageShear.q) / SkinThickness;
+iteratedSkinThickness = max(fuselageShear.q) / SYS;
+sigma_crit_buckling_shear = 5 * E * (iteratedSkinThickness/StringerSpacing)^2;
 
+if sigma_crit_buckling_shear > maxshearstress
+    disp('The maximum shear stress is below the critical buckling load.')
+else
+    disp('The maximum shear stress is above the critical buckling load. So change variable values.')
+end
+%
 %deboom areas into skin and stringer 
 %from size of stringer (geometry) work out contribution of stringers to boom area
 
-%{
 % skin contribution - 15*t (from notes)
 SkinArea_deboom=15*SkinThickness;
 StrArea_deboom=SingleBoomArea-SkinArea_deboom;
@@ -107,7 +116,7 @@ if A_s==A_s_check
 end 
 
 %plot stringer geometry
-%}
+
 
 %% 3. check against yielding and buckling - NOT DONE!
 %check stringer stress with yield 
@@ -125,7 +134,7 @@ end
 t_e=SkinThickness+A_s/StringerSpacing; %effective thickness
 BoxWidth=
 StringerPitch=BoxWidth/(NumStringers+1);
-
+%}
 %%  outputs
 %create structure of outputs
 Stringers.spacing=StringerSpacing;
@@ -139,5 +148,5 @@ Fus.x_centroid=x_centroid;
 Fus.Ixx=I_xx;
 Fus.maxBM=M;
 Fus.principleStress=sigma;
-fuselageShear.Tau_max=Tau_max;
+fuselageShear.Tau_max=maxshearstress;
 end
