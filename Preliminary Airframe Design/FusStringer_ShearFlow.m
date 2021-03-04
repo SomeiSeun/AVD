@@ -23,6 +23,8 @@ h=30e-3; %height
 A_s=L*t_s*2+(h-2*t_s)*t_s;
 As_bt=A_s/(StringerSpacing*SkinThickness);
 ts_t=t_s/SkinThickness;
+%from Farrar diagram, with F=0.6--> 
+t_s=0.375*SkinThickness;
 NumStringers=round(Circ/StringerSpacing); 
 TtlStringerArea= NumStringers*A_s;
 SkinEquivBoomArea=(SkinThickness*StringerSpacing/6)*(2+1); %Boom area from skin can also be considered as 15*t
@@ -83,21 +85,17 @@ for i = 1:length(NumStringers)
     fuselageShear.q_b(i) = (-(Sy / I_xx) * A_s * Boom.Y(i));
     fuselageShear.q_0(i) = T / (2 * A_fus);
     fuselageShear.q(i) = fuselageShear.q_b(i) + fuselageShear.q_0(i);
-    fuselageShear.crossectionthickness(i) = fuselageShear.q(i) / SYS;
 end
-%plot shear flow
-figure()
-plot(Boom.Number,fuselageShear.q)
 
 %deboom areas into skin and stringer 
 %from size of stringer (geometry) work out contribution of stringers to boom area
+
 %{
 % skin contribution - 15*t (from notes)
 SkinArea_deboom=15*SkinThickness;
 StrArea_deboom=SingleBoomArea-SkinArea_deboom;
 
-%choose a Farrar of 0.75
-t_s= %from farrar plot
+
 %design stringer shape to match area
 t_s= ;%stringer thickness
 h= ;%stringer height
@@ -112,8 +110,7 @@ end
 %}
 
 %% 3. check against yielding and buckling - NOT DONE!
-%check stringer stress with yield and Euler buckling
-
+%check stringer stress with yield 
 TensileYield=525e6; %Pa
 if max(Stringer_stress)>TensileYield
     TY=0;
@@ -121,7 +118,13 @@ else
     TY=1;
 end 
 
+%stringers - Euler buckling
+
 %%  4.Check bay area between stringers  with yield and local plate buckling stress - NOT DONE!
+%initial buckling of skin-stringer panel
+t_e=SkinThickness+A_s/StringerSpacing; %effective thickness
+BoxWidth=
+StringerPitch=BoxWidth/(NumStringers+1);
 
 %%  outputs
 %create structure of outputs
