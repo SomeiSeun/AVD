@@ -1,4 +1,4 @@
-function [fuselage,solutions] = heavy_frame_Ixx_area_calc(h, b, second_moment_of_area, area, fuselage)
+function [fuselage,solutions] = heavy_frame_Ixx_area_calc(H, B, second_moment_of_area, area, fuselage)
 
 % Creating a function which finds out the dimensions of an I cross section
 % to be used in heavy frames
@@ -13,19 +13,26 @@ function [fuselage,solutions] = heavy_frame_Ixx_area_calc(h, b, second_moment_of
 % The OUTPUTS are:
 % fuselage = structure
 
-syms H
-solutions = zeros(3,length(b));
+syms h
+solutions = zeros(3,length(B));
 
-for i = 1:length(b)
-    eqn = (b(i) * H^3 / 12) + (h(i)^3 / 6) * ((50 * area) - (0.5 * H)) + ...
-        (h(i) / 2) * ((50 * area) - (0.5 * H)) * (H + h(i))^2 == second_moment_of_area;
-    solx = solve(eqn,H);
+for i = 1:length(B)
+    eqn = (H(i)^2 / 12) * (area - 2*B(i)*h) + (B(i) * h^3 / 6) + ...
+        (h * B(i) / 2) * (H(i) + h)^2 == second_moment_of_area;
+    solx = solve(eqn,h);
     solutions_normal = double(solx);
     solutions(1,i) = solutions_normal(1);
     solutions(2,i) = solutions_normal(2);
     solutions(3,i) = solutions_normal(3);
 end
 
-fuselage.heavyframeH = solutions(imag(solutions) == 0);
-fuselage.heavyframeB = (50 * area) - (0.5.*fuselage.heavyframeH);
+fuselage.heavyframehimag = solutions;
+
+for i = 1:length(B)
+    fuselage.heavyframebimag(1,i) = (area - 2*B(i)*fuselage.heavyframehimag(1,i)) / H(i);  
+end
+
+fuselage.heavyframeh = fuselage.heavyframehimag(imag(fuselage.heavyframehimag)==0);
+fuselage.heavyframeb = fuselage.heavyframebimag(imag(fuselage.heavyframebimag)==0);
+
 end
