@@ -63,25 +63,16 @@ legend({'Load case 1', 'Load case 4'},'Location','SouthEast')
 grid minor
 
 
-%
+
 %% Stringer sizing and shear flow around the fuselage
 A_fus = pi * (D / 2)^2;              % Area of the fuselage cross section
 Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
 T = 0;                               % Torque acting on the fuselage 
 
-% [Stringers, Boom, FusProperties] = Fuselage_stringer_shear_flow(LoadCase1.TotalBM1, D, T, SYS, A_fus, Sy);
-<<<<<<< HEAD
- [FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, E, A_fus, Sy);
-
-=======
- [FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, SYS(1), A_fus, Sy);
+[FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, SYS(2), A_fus, Sy, E);
+ 
 % iterate! - NOT DONE!
 %now use the skin thickness output and iterate; compare total weight of the two loops
- 
->>>>>>> main
-% Displaying the maximum thickness of the fuselage cross section
-% fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
-%^this line displays an error message so commented out
  
 
 
