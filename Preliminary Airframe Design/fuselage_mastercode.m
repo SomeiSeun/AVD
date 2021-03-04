@@ -70,14 +70,19 @@ Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in 
 T = 0;                               % Torque acting on the fuselage 
 
 % [Stringers, Boom, FusProperties] = Fuselage_stringer_shear_flow(LoadCase1.TotalBM1, D, T, SYS, A_fus, Sy);
+<<<<<<< HEAD
  [FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, E, A_fus, Sy);
 
+=======
+ [FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T, SYS(1), A_fus, Sy);
+% iterate! - NOT DONE!
+%now use the skin thickness output and iterate; compare total weight of the two loops
+ 
+>>>>>>> main
 % Displaying the maximum thickness of the fuselage cross section
 % fprintf('The maximum thickness of the fuselage cross section is %f m.\n',max(fuselage.crosssectionthickness))
 %^this line displays an error message so commented out
  
-% iterate! - NOT DONE!
-%now use the skin thickness output and iterate; compare total weight of the two loops
 
 
 %% Presurisation 
@@ -92,7 +97,6 @@ fuselage.thickness_l = (P * D / (4 * TensileYieldStress));  % Thickness due to l
 fuselage.thickness_pressurisation = [fuselage.thickness_h fuselage.thickness_l];
 fprintf('The extra thickness that needs to be added to the fuselage due to pressurisation is %f m.\n',...
     max(fuselage.thickness_pressurisation))
-
 
 %% Light frames
 L = 0.5;  % Frame spacing is chosen to be 0.5m out of convention
