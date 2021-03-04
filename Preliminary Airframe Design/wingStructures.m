@@ -182,7 +182,7 @@ grid minor
 [N_alongSpan,t2_alongSpan,sigma,boxHeight] = skinStringerFunction(numSections, wing,UpperSkinMaterial(numMaterial));
 
 %% Skin Stringer Panel Sizing and Optimization
-[WSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(wing,N_alongSpan,UpperSkinMaterial);
+[WSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(wing,N_alongSpan,UpperSkinMaterial(3));
 [noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,wing.boxLength,WSSOptimum);
 
 [LWSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(wing,N_alongSpan,LowerSkinMaterial(numMaterial));
@@ -200,6 +200,8 @@ end
 [val,idx]=min(abs(skinStep-optRibSpacing));
 minVal=skinStep(idx);
 
+
+% Upper Skin Thickness Distribution 
 figure
 x=[wing.span(end-idx:-2*idx:1)];
 y=[skinThicknessDist(end-idx:-2*idx:1)*1000];
@@ -212,6 +214,18 @@ legend('Optimum','Altered for Manufacturing')
 % title('Skin Thickness Distribution')
 grid minor
 
+% Lower Skin Thickness Distribution 
+figure
+x=[wing.span(end-idx:-2*idx:1)];
+y=[LskinThicknessDist(end-idx:-2*idx:1)*1000];
+plot(wing.span,LskinThicknessDist*1000,'r')
+hold on
+stairs(x,y,'b')
+xlabel('Distance along wing (m)') 
+ylabel('Skin Thickness (mm)')
+legend('Optimum','Altered for Manufacturing')
+title('Lower Skin Thickness Distribution')
+grid minor
 
 % Plotting Mass Vs Rib Spacing
 figure 

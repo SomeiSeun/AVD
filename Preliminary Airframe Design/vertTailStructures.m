@@ -15,7 +15,7 @@ y = NACA_0012_plotting_purposes(:,2);
 % Defining Parameters
 numSections = input('How many sections do you want to discretise the vertical tailplane into? ');
 Nz = 1.5;             % Limit load factor
-numMaterial = 1;    % From Materials.mat, must be integer between 1 and 4
+numMaterial=1;    % From Materials.mat, must be integer between 1 and 4
 
 % Evaluating lift and weight distributions
 liftReq = Engine_SeaLevelThrust*Thrustline_position(2)/(vertAC(1) - CG_all(1,1));
@@ -127,7 +127,7 @@ title('Vertical Tail Front Spar Flange Breadth')
 grid minor
 
 
-% Plotting front Spar flange thickness
+% 1 front Spar flange thickness
 figure
 hold on
 plot(vertTail.span, 1000*frontSpar.tf, '-r')
@@ -169,62 +169,73 @@ grid minor
 
 %% Skin Stringer Panel Sizing and Optimization
 %% Skin Stringer Panel Sizing and Optimization
+
+
 [VSSOptimum,ESkin,stringerGeometry,stringerIndex]=SSPOptimum(vertTail,N_alongSpan,UpperSkinMaterial);
 [noStringersDist,skinThicknessDist,stringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,VSSOptimum);
 
 [LVSSOptimum,LESkin,lowerstringerGeometry,LowerstringerIndex]=SSPOptimum(vertTail,N_alongSpan,LowerSkinMaterial(numMaterial));
 [LnoStringersDist,LskinThicknessDist,lowerStringerThicknessDist]=skinStringerDistribution(N_alongSpan,vertTail.boxLength,LVSSOptimum);
-% Plotting skin thickness distribution along span 
-figure
-x=[vertTail.span(end:-50:1)];
-y=[skinThicknessDist(end:-50:1)*1000];
-plot(vertTail.span(end:-50:1),skinThicknessDist(end:-50:1)*1000,'.-r')
-hold on
-stairs(x,y,'b')
-xlabel('Distance alo1ng Vertical Tailplane (m)') 
-ylabel('Skin Thickness (mm)')
-title('Skin Thickness Distribution')
-grid minor
 
 
 %% Rib Spacing and Rib Thickness Optimisation
 [rSpacing,optRibSpacing,massVTPBox,massEffRib,massEffSS,ribThickness,minMassIndex]=ribSpacing(vertTail,VSSOptimum,boxHeight,skinThicknessDist,N_alongSpan,noStringersDist,LskinThicknessDist,LnoStringersDist,LVSSOptimum);
 [optRibParameters]=RibThickness(optRibSpacing,vertTail,minMassIndex,ribThickness);
 
-% Plotting Mass Vs Rib Spacing
-figure 
-plot(rSpacing,massVTPBox,'-b')
-hold on 
-plot(rSpacing,massEffRib,'-r')
-plot(rSpacing,massEffSS)
-xlabel('Rib Spacing (m)')
-ylabel('Mass')
-legend('Total','Ribs','Skin-Stringer')
-title('Rib Spacing Optimisation')
-grid minor 
-hold off
+for i=1:length(vertTail.span)
+    skinStep(i)=vertTail.span(1)-vertTail.span(i);
+end 
+[val,idx]=min(abs(skinStep-optRibParameters.ribSpacing));
+minVal=skinStep(idx);
 
 
+% Upper Skin Thickness Distribution 
 figure
-surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,stringerGeometry.aEffective)
-xlabel('As/bt')
-ylabel('Ts/t')
-zlabel('Skin Thickness (m)') 
-title('Skin Thickness for different Skin-Stringer Ratios')
-colormap('turbo')
-s=colorbar();
-s.Label.String ='Total Area (m^2)';
+x=[vertTail.span(end:-idx:1)];
+y=[skinThicknessDist(end:-idx:1)*1000];
+plot(vertTail.span,skinThicknessDist*1000,'r')
+hold on
+stairs(x,y,'b')
+xlabel('Distance along Vertical Tailplane(m)') 
+ylabel('Skin Thickness (mm)')
+legend('Required Skin Thickness','Actual Skin Thickness')
+% title('Skin Thickness Distribution')
+grid minor
 
-
+% Lower Skin Thickness Distribution 
 figure
-surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tStringer,stringerGeometry.aEffective)
-xlabel('As/bt')
-ylabel('Ts/t')
-zlabel('Stringer Thickness (m)') 
-title('Stringer Thickness for different Skin-Stringer Ratios')
-colormap('turbo')
-s=colorbar();
-s.Label.String ='Total Area (m^2)';
+x=[vertTail.span(end:-idx:1)];
+y=[LskinThicknessDist(end:-idx:1)*1000];
+plot(vertTail.span,LskinThicknessDist*1000,'r')
+hold on
+stairs(x,y,'b')
+xlabel('Distance along Vertical Tailplane(m)') 
+ylabel('Skin Thickness (mm)')
+legend('Required Skin Thickness','Actual Skin Thickness')
+%title('Lower Skin Thickness Distribution')
+grid minor
+
+
+% figure
+% surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tSkin,stringerGeometry.aEffective)
+% xlabel('As/bt')
+% ylabel('Ts/t')
+% zlabel('Skin Thickness (m)') 
+% title('Skin Thickness for different Skin-Stringer Ratios')
+% colormap('turbo')
+% s=colorbar();
+% s.Label.String ='Total Area (m^2)';
+
+
+% figure
+% surf(stringerGeometry.AStoBT,stringerGeometry.TStoT,stringerGeometry.tStringer,stringerGeometry.aEffective)
+% xlabel('As/bt')
+% ylabel('Ts/t')
+% zlabel('Stringer Thickness (m)') 
+% title('Stringer Thickness for different Skin-Stringer Ratios')
+% colormap('turbo')
+% s=colorbar();
+% s.Label.String ='Total Area (m^2)';
 
 % Saving the workspace for other programmes
 save('vertTailStructures.mat')
