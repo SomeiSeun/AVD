@@ -10,6 +10,7 @@ load('ConceptualDesign.mat', 'W0', 'components', 'rho_landing',...
 load('Materials.mat', 'FuselageMaterial')
 load('../Preliminary Design Optimiser/trimAnalysis.mat')
 load('wingStructures.mat','wing')
+load('vertTailStructures.mat','vertTail')
 D = fusDiamOuter;
 numMaterial = 2; % Needs to be 1 or 2
 
@@ -72,15 +73,19 @@ grid minor
 
 %% Stringer sizing and shear flow around the fuselage
 A_fus = pi * (D / 2)^2;              % Area of the fuselage cross section
+% Sy = abs(max(LoadCase1.TotalSF1));   % Absolute value of maximum shear force in the fuselage
 Sy1 = abs(max(LoadCase1.TotalSF1));  % Absolute value of maximum shear force in the fuselage
-T1 = 0;                              % Torque acting on the fuselage 
-%T2 = ;
-[FusStringers, FusBoom, FusProperties, FusShear] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T1,...
-    SYS(2), A_fus, Sy1, E, T2, Sy2);
- 
-% iterate! - NOT DONE
-%now use the skin thickness output and iterate; compare total weight of the two loops
+Sy2 = abs(max(LoadCase2.TotalSF1));
+T1 = 0;                               % Torque acting on the fuselage 
+T2 = trapz(vertTail.torque,vertTail.span);
+[FusStringers, FusBoom, FusProperties, FusShear,iteratedSkinThickness] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T1, SYS(2), A_fus, Sy1);
+ %this first iteration fails in tension, so scrap it
 
+%now use the skin thickness output and iterate; compare total weight of the two loops
+ 
+%second iteration - skin thickness & stringer properties tripled
+[FusStringers2, FusBoom2, FusProperties2, FusShear2,iteratedSkinThickness2,FailureCheck] = FusStringer_ShearFlow2(LoadCase1.TotalBM1, D, T1, SYS(2), A_fus, Sy1, T2, Sy2);
+ 
 %% Presurisation 
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
 thickness_ratio = ((2 - Poisson) / (1 - Poisson));    % t_c is cylindrical fus thickness
