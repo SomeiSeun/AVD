@@ -96,7 +96,7 @@ if sigma_crit_buckling_shear > maxshearstress
 else
     disp('The maximum shear stress is above the critical buckling load. So change variable values.')
 end
-%{
+%
 %deboom areas into skin and stringer 
 %from size of stringer (geometry) work out contribution of stringers to boom area
 
@@ -142,7 +142,7 @@ Stringers.TotalArea=TtlStringerArea;
 Stringers.Area=A_s;
 Stringers.As_bt=As_bt;
 Stringers.ts_t=ts_t;
-%Stringers.TY_check=TY;
+Stringers.TY_check=TY;
 Stringers.Stress=Stringer_stress;
 Fus.x_centroid=x_centroid;
 Fus.Ixx=I_xx;
