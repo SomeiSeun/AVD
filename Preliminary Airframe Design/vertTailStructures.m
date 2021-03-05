@@ -51,8 +51,8 @@ hold on
 plot(vertTail.span, vertTail.loading, 'k-')
 legend('Overall Loading Distribution', 'Location', ' Southeast')
 ylabel('Loading Distribution (N/m)')
-xlabel('Vert Tail Spanwise Coordinate y (m)')
-title('Vert Tail Vertical Loading Distribution')
+xlabel('Spanwise Coordinate y (m)')
+% title('Vert Tail Vertical Loading Distribution')
 grid minor
 fig1.Units = 'normalized';
 fig1.Position = [0 0.5 0.25 0.4];
@@ -62,8 +62,8 @@ fig2 = figure(2);
 hold on
 plot(vertTail.span, vertTail.shearForce)
 ylabel('Shear Force (N)')
-xlabel('Vert Tail Spanwise Coordinate y (m)')
-title('Vert Tail Vertical Shear Force Distribution')
+xlabel('Spanwise Coordinate y (m)')
+% title('Vert Tail Vertical Shear Force Distribution')
 grid minor
 fig2.Units = 'normalized';
 fig2.Position = [0.25 0.5 0.25 0.4];
@@ -73,8 +73,8 @@ fig3 = figure(3);
 hold on
 plot(vertTail.span, vertTail.bendingMoment)
 ylabel('Bending Moment (Nm)')
-xlabel('Vert Tail Spanwise Coordinate y (m)')
-title('Vert Tail Bending Moment Distribution')
+xlabel('Spanwise Coordinate y (m)')
+% title('Vert Tail Bending Moment Distribution')
 grid minor
 fig3.Units = 'normalized';
 fig3.Position = [0.5 0.5 0.25 0.4];
@@ -123,7 +123,7 @@ plot(vertTail.span, 1000*frontSpar.bReq, '-b')
 xlabel('Spanwise Coordinate y (m)')
 ylabel('Spar Flange Breadth b (mm)', 'Color', 'k')
 legend('Actual Flange Breadth', 'Required Flange Breadth')
-title('Vertical Tail Front Spar Flange Breadth')
+% title('Vertical Tail Front Spar Flange Breadth')
 grid minor
 
 
@@ -135,7 +135,7 @@ plot(vertTail.span, 1000*frontSpar.tfReq, '-b')
 xlabel('Spanwise Coordinate y (m)')
 ylabel('Spar Flange Thickness t_f (mm)', 'Color', 'k')
 legend('Actual Flange Thickness', 'Required Flange Thickness')
-title('Vertical Tail Front Spar Flange Thickness')
+% title('Vertical Tail Front Spar Flange Thickness')
 grid minor
 
 % Plotting spar Ixx values
@@ -146,7 +146,17 @@ plot(vertTail.span, frontSpar.IxxReq, '--b')
 ylabel('Second Moment of Area I_x_x (m^4)')
 xlabel('Spanwise Coordinate y (m)')
 legend('Actual I_x_x', 'Required I_x_x')
-title('Vertical Tail Front Spar I_x_x Distribution');
+% title('Vertical Tail Front Spar I_x_x Distribution');
+grid minor
+
+figure
+hold on
+plot(vertTail.span, frontSpar.Ixx, '-b')
+plot(vertTail.span, frontSpar.IxxReq, '--b')
+ylabel('Cross-sectional Area (m^2)')
+xlabel('Spanwise Coordinate y (m)')
+legend('Actual Area', 'Required Area')
+% title('Vertical Tail Front Spar I_x_x Distribution');
 grid minor
 
 % Plotting the aerofoil with points of interest
