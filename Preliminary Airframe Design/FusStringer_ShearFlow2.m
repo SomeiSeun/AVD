@@ -1,4 +1,5 @@
-function [Stringers, Boom, Fus, fuselageShear,iteratedSkinThickness,FailureCheck] = FusStringer_ShearFlow2(BendingMoment, diameter, T, SYS, A_fus, Sy, T2, Sy2)
+function [Stringers, Boom, Fus, fuselageShear,iteratedSkinThickness,FailureCheck] = FusStringer_ShearFlow2(BendingMoment,...
+    diameter, T, SYS, A_fus, Sy, T2, Sy2, SkinThickness_iteration1)
 
 %second iteration
 % Use a datasheet to choose stringer area, as there are too many unknowns
@@ -16,7 +17,7 @@ YM_stringer= 78e9; %Pa
 Circ=pi*diameter;
 M=max(-BendingMoment); %use worst bending moment for sizing stringers
 StringerSpacing=convlength(7,'in','m');  % Use value from notes as a starting point; range is 6.5-9 inches
-SkinThickness= 0.0060;%t_f; %initial guess - based on literature review
+SkinThickness = 0.006;
 %initial guesses for stringer profile parameters - based on literature review
 L=45e-3; %flange width
 t_s=6e-3; %stringer thickness
@@ -32,16 +33,23 @@ SkinEquivBoomArea=(SkinThickness*StringerSpacing/6)*(2+1); %Boom area from skin 
 SingleBoomArea=A_s+SkinEquivBoomArea; %i think it needs to be A_s and not TtlStringerArea
 %idealise into booms
 Boom.Number=1:NumStringers;
-Boom.Angle=0:(2*pi)/NumStringers: 2*pi; %in radians
+Boom.Angle=linspace(0,2*pi,NumStringers); %in radians
 Boom.X= (diameter/2).*cos(Boom.Angle); %boom x coordinate
 Boom.Y=(diameter/2).*sin(Boom.Angle);%boom y coordinate
 y_coordinates = Boom.Y;
 
-figure() %plot booms 
-scatter(Boom.X,Boom.Y) 
+radius = diameter/2;
+theta_plotting = linspace(0,2*pi,1000);
+x_boom_plotting = radius.*cos(theta_plotting);
+y_boom_plotting = radius.*sin(theta_plotting);
+
+figure % Plot booms
+scatter(Boom.X,Boom.Y,'og','MarkerFaceColor','g')
+hold on
+plot(x_boom_plotting,y_boom_plotting,'r')
 xlabel('Fuselage cross section x coordinate')
 ylabel('Fuselage cross section y coordinate')
-title('Booms around the fuselage cross-section')
+%title('Booms around the fuselage cross-section')
 
 Boom.S_x =SingleBoomArea.*Boom.Y; %first moment of area
 x_centroid=(sum(Boom.S_x))/(SingleBoomArea*NumStringers);
@@ -49,15 +57,15 @@ Boom.I_individual=SingleBoomArea.*(Boom.Y.^2);
 
 I_xx=sum(Boom.I_individual); %second moment of area
 Edge_maxStress=max(Boom.Y); %use the y value of highest stringer as that is the furthest from neutral axis
-sigma= M*Edge_maxStress/I_xx/10^6; %max principle stress
+sigma= M*Edge_maxStress/I_xx; %max principle stress
 
 %plot of direct stress at each stringer
 Stringer_stress=zeros(1,NumStringers); 
 for i = 1:length(Boom.Number)
         Stringer_stress(i) = (Boom.Y(i)*M)/I_xx; %calculates the stress at each stringer
 end
-
-figure()
+%{
+figure
 quiver3(Boom.X,Boom.Y,zeros(1,NumStringers+1),zeros(1,NumStringers+1),zeros(1,NumStringers+1),[Stringer_stress, Stringer_stress(1)])
 hold on
 axis tight
@@ -69,6 +77,7 @@ zlabel('Direct Stress (GPa)')
 plot3(Boom.X,Boom.Y,zeros(1,NumStringers+1),'LineWidth',2.5)
 legend('Direct Stress at each Stringer', 'Fuselage Cross Section')
 hold off
+%}
 %% 2. Shear flow
 %max shear force is Sy
 
@@ -87,16 +96,21 @@ for i = 1:NumStringers
     fuselageShear.q(i) = fuselageShear.q_b(i) + fuselageShear.q_0(i);
 end
 maxshearstress = max(fuselageShear.q) / SkinThickness;
-iteratedSkinThickness = max(fuselageShear.q) / SYS/10^6;
-sigma_crit_buckling_shear = 5 * YM_stringer * (iteratedSkinThickness/StringerSpacing)^2;
+iteratedSkinThickness = max(fuselageShear.q) / SYS
+tresca_yield_criterion = 2 * max(fuselageShear.q) / sigma
 
-if sigma_crit_buckling_shear > maxshearstress
+if iteratedSkinThickness > tresca_yield_criterion
     disp('The maximum shear stress is below the critical buckling load.')
     shear_check=1;
 else
     disp('The maximum shear stress is above the critical buckling load. So change variable values.')
     shear_check=0;
 end
+
+figure
+plot(Boom.Angle,fuselageShear.q,'r')
+xlabel('Angle (radians)')
+ylabel('Shear flow (N/m)')
 
 % Shear flow analysis for Load Case 2
 fuselageShear.q_b2 = zeros(1,NumStringers);
@@ -105,8 +119,13 @@ fuselageShear.q_02 = zeros(1,NumStringers);
 for i = 1:NumStringers
     fuselageShear.q_b2(i) = -(Sy2 / I_xx) * A_s * y_coordinates(i);
     fuselageShear.q_02(i) = T2 / (2 * A_fus);
-    fuselageShear.q2(i) = fuselageShear.q_b(i) + fuselageShear.q_0(i);
+    fuselageShear.q2(i) = fuselageShear.q_b2(i) + fuselageShear.q_02(i);
 end
+
+figure
+plot(Boom.Angle,fuselageShear.q2,'r')
+xlabel('Angle (radians)')
+ylabel('Shear flow (N/m)')
 
 %deboom areas into skin and stringer 
 %from size of stringer (geometry) work out contribution of stringers to boom area

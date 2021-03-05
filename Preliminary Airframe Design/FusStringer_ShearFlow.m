@@ -1,4 +1,5 @@
-function [Stringers, Boom, Fus, fuselageShear,iteratedSkinThickness] = FusStringer_ShearFlow(BendingMoment, diameter, T, SYS, A_fus, Sy)
+function [Stringers, Boom, Fus, fuselageShear,iteratedSkinThickness] = FusStringer_ShearFlow(BendingMoment,...
+    diameter, T, SYS, A_fus, Sy)
 %%function for first iteration
 
 % Use a datasheet to choose stringer area, as there are too many unknowns
@@ -32,7 +33,7 @@ SkinEquivBoomArea=(SkinThickness*StringerSpacing/6)*(2+1); %Boom area from skin 
 SingleBoomArea=A_s+SkinEquivBoomArea; %i think it needs to be A_s and not TtlStringerArea
 % idealise into booms
 Boom.Number=1:NumStringers;
-Boom.Angle=0:(2*pi)/NumStringers: 2*pi; %in radians
+Boom.Angle=linspace(0,2*pi,NumStringers); %in radians
 Boom.X= (diameter/2).*cos(Boom.Angle); %boom x coordinate
 Boom.Y=(diameter/2).*sin(Boom.Angle);%boom y coordinate
 y_coordinates = Boom.Y;
@@ -58,7 +59,8 @@ for i = 1:length(Boom.Number)
 end
 
 % figure()
-% quiver3(Boom.X,Boom.Y,zeros(1,NumStringers+1),zeros(1,NumStringers+1),zeros(1,NumStringers+1),[Stringer_stress, Stringer_stress(1)])
+% quiver3(Boom.X,Boom.Y,zeros(1,NumStringers+1),zeros(1,NumStringers+1),...
+%zeros(1,NumStringers+1),[Stringer_stress, Stringer_stress(1)])
 % hold on
 % axis tight
 % grid on
@@ -89,10 +91,10 @@ for i = 1:NumStringers
     fuselageShear.q(i) = fuselageShear.q_b(i) + fuselageShear.q_0(i);
 end
 maxshearstress = max(fuselageShear.q) / SkinThickness;
-iteratedSkinThickness = max(fuselageShear.q) / SYS/10^6;
-sigma_crit_buckling_shear = 5 * YM_stringer * (iteratedSkinThickness/StringerSpacing)^2;
+iteratedSkinThickness = max(fuselageShear.q) / SYS
+tresca_yield_criterion = 2 * max(fuselageShear.q) / sigma;
 
-if sigma_crit_buckling_shear > maxshearstress
+if iteratedSkinThickness > tresca_yield_criterion
     disp('The maximum shear stress is below the critical buckling load.')
 else
     disp('The maximum shear stress is above the critical buckling load. So change variable values.')

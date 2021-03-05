@@ -83,9 +83,9 @@ fig3.Position = [0.5 0.5 0.25 0.4];
 % Plotting the torque distribution
 fig4 = figure(4);
 plot(horizTail.span, horizTail.torque)
-xlabel('Spanwise Coordinate y (m)')
-ylabel('Torque Distribution (N)')
-% title('Horiz tail Torque Distribution')
+xlabel('Horiz tail Spanwise Coordinate y (m)')
+ylabel('Torque Distribution (Nm)')
+%title('Horiz tail Torque Distribution')
 grid minor
 fig4.Units = 'normalized';
 fig4.Position = [0.75 0.5 0.25 0.4];
@@ -93,12 +93,14 @@ fig4.Position = [0.75 0.5 0.25 0.4];
 % Plotting the thickness variations
 fig5 = figure(5);
 hold on
-plot(horizTail.span,1000*frontSpar.tw,'r')
-plot(horizTail.span,1000*rearSpar.tw,'b')
-xlabel('Spanwise coordinate y (m)')
+plot(horizTail.span,1000*frontSpar.tw,'--r')
+plot(horizTail.span,1000*rearSpar.tw,'--b')
+stairs(horizTail.span(1:20:numSections),1000*frontSpar.tw(1:20:numSections),'r')
+stairs(horizTail.span(1:20:numSections),1000*rearSpar.tw(1:20:numSections),'b')
+xlabel('Horiz tail span (m)')
 ylabel('Thickness (mm)')
 legend({'Front spar','Rear spar'},'Location','Northeast')
-% title('Spar Web Thickness Distribution')
+%%title('Spar Web Thickness Distribution')
 grid minor
 fig5.Units = 'normalized';
 fig5.Position = [0 0.05 0.25 0.4];
@@ -112,7 +114,7 @@ plot(horizTail.span,rearSpar.shearstress,'b')
 xlabel('Spanwise coordinate y (m)')
 ylabel('Shear stress (N/m^2)')
 legend({'Front Spar','Rear Spar'},'Location','Northeast')
-% title('Spar Web Shear Stress Distribution')
+%title('Spar Web Shear Stress Distribution')
 grid minor
 fig6.Units = 'normalized';
 fig6.Position = [0.25 0.05 0.25 0.4];

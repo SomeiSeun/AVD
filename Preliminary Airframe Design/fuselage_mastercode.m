@@ -78,15 +78,20 @@ Sy1 = abs(max(LoadCase1.TotalSF1));  % Absolute value of maximum shear force in 
 Sy2 = abs(max(LoadCase2.TotalSF1));
 T1 = 0;                               % Torque acting on the fuselage 
 T2 = trapz(vertTail.torque,vertTail.span);
-[FusStringers, FusBoom, FusProperties, FusShear,iteratedSkinThickness] = FusStringer_ShearFlow(LoadCase1.TotalBM1, D, T1, SYS(2), A_fus, Sy1);
- %this first iteration fails in tension, so scrap it
+[FusStringers, FusBoom, FusProperties, FusShear,iteratedSkinThickness] = FusStringer_ShearFlow(LoadCase1.TotalBM1,...
+    D, T1, SYS(1), A_fus, Sy1);
+% This first iteration fails in tension, so scrap it
 
-%now use the skin thickness output and iterate; compare total weight of the two loops
- 
+% Now use the skin thickness output and iterate; compare total weight of the two loops
+
 %second iteration - skin thickness & stringer properties tripled
-[FusStringers2, FusBoom2, FusProperties2, FusShear2,iteratedSkinThickness2,FailureCheck] = FusStringer_ShearFlow2(LoadCase1.TotalBM1, D, T1, SYS(2), A_fus, Sy1, T2, Sy2);
- 
-%% Presurisation 
+[FusStringers2, FusBoom2, FusProperties2, FusShear2,iteratedSkinThickness2,FailureCheck] =...
+    FusStringer_ShearFlow2(LoadCase1.TotalBM1, D, T1, SYS(1), A_fus, Sy1, T2, Sy2, iteratedSkinThickness);
+
+% [FusStringers3, FusBoom3, FusProperties3, FusShear3,iteratedSkinThickness3,FailureCheck] =...
+%     FusStringer_ShearFlow2(LoadCase1.TotalBM1, D, T1, SYS(1), A_fus, Sy1, T2, Sy2, iteratedSkinThickness2);
+
+%% Presurisation
 % Ratio of cylindrical fus thickness to hemispherical ends thickness
 thickness_ratio = ((2 - Poisson) / (1 - Poisson));    % t_c is cylindrical fus thickness
 fprintf('The thickness ratio of cylinder to the spherical cap is %f.\n',thickness_ratio)
